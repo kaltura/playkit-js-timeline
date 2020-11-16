@@ -1,6 +1,6 @@
 //@flow
 import * as KalturaPlayer from 'kaltura-player-js';
-import {CuePoint} from 'components/cue-point';
+import {CuePoint} from './components/cue-point';
 
 const {preact, redux, reducers, style} = KalturaPlayer.ui;
 const {actions} = reducers.seekbar;
@@ -10,7 +10,7 @@ const {actions} = reducers.seekbar;
  */
 class TimelineManager {
   static _logger: any;
-  _uiManager: UIManager;
+  _uiManager: any;
   _logger: any;
   _store: any;
   _cuePointsRemoveMap: {[id: string]: Function};

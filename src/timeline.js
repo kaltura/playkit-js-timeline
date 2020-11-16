@@ -42,7 +42,7 @@ class Timeline extends BasePlugin {
       }
     });
     // move this line to plugin ready
-    this.eventManager.listen(this.player, this.player.Event.SOURCE_SELECTED, e => this._onSourceSelected(e));
+    this.eventManager.listen(this.player, this.player.Event.SOURCE_SELECTED, e => this._onSourceSelected());
     this.eventManager.listen(this.player, this.player.Event.AD_MANIFEST_LOADED, e => this._onAdManifestLoaded(e));
   }
 
@@ -50,7 +50,7 @@ class Timeline extends BasePlugin {
     this.player.ui.registerManager('timeline', new TimelineManager(this.player, this.logger));
   }
 
-  _onAdManifestLoaded(e): void {
+  _onAdManifestLoaded(e: any): void {
     const cuePoints = e.payload.adBreaksPosition;
     cuePoints.forEach(cuePoint => {
       this.player.ui.getManager('timeline').addCuePoint({
