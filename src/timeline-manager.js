@@ -30,10 +30,10 @@ class TimelineManager {
   }
 
   /**
-   * @param {CuePointOptionsObject} newCuePoint - The cue point options
+   * @param {TimedCuePointOptionsObject} newCuePoint - The cue point options
    * @return {null|{id: string}} - An object contains the cue point id
    */
-  addCuePoint(newCuePoint: CuePointOptionsObject = {}): {id: string} | null {
+  addCuePoint(newCuePoint: TimedCuePointOptionsObject = {}): {id: string} | null {
     if (this._store.getState().engine.isLive) {
       this._logger.warn('Impossible to add cue points while LIVE playback');
       return null;

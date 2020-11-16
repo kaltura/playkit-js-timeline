@@ -15,7 +15,9 @@ class Timeline extends BasePlugin {
    * @type {Object}
    * @static
    */
-  static defaultConfig: Object = {};
+  static defaultConfig: Object = {
+    adBreakCuePoint: null
+  };
 
   /**
    * @static
@@ -41,7 +43,6 @@ class Timeline extends BasePlugin {
         'progress-bar-border-radius': style.progressBarBorderRadius
       }
     });
-    // move this line to plugin ready
     this.eventManager.listen(this.player, this.player.Event.SOURCE_SELECTED, () => this._onSourceSelected());
     this.eventManager.listen(this.player, this.player.Event.AD_MANIFEST_LOADED, e => this._onAdManifestLoaded(e));
   }
@@ -51,12 +52,15 @@ class Timeline extends BasePlugin {
   }
 
   _onAdManifestLoaded(e: any): void {
-    const cuePoints = e.payload.adBreaksPosition;
-    cuePoints.forEach(cuePoint => {
-      this.player.ui.getManager('timeline').addCuePoint({
-        time: cuePoint !== -1 ? cuePoint : Infinity
+    if (this.config.adBreakCuePoint) {
+      const cuePoints = e.payload.adBreaksPosition;
+      cuePoints.forEach(cuePoint => {
+        this.player.ui.getManager('timeline').addCuePoint({
+          time: cuePoint !== -1 ? cuePoint : Infinity,
+          ...this.config.adBreakCuePoint
+        });
       });
-    });
+    }
   }
 }
 

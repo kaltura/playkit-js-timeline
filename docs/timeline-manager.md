@@ -143,7 +143,7 @@ Returns an object with the cue point id, to remove the cue point by `removeCuePo
         <tr>
             <td><code>sticky</code></td>
             <td><code>boolean</code></td>
-            <td>whether the preview is shown on hovering</td>
+            <td>whether the preview is accessible on hovering</td>
             <td>No</td>
             <td><code>true</code></td>
             <td></td>
@@ -152,7 +152,7 @@ Returns an object with the cue point id, to remove the cue point by `removeCuePo
 </table>
 
 ###### Examples 
-
+  
 1. Simple cue point without custom preview:
 
 ![simple cue point](./images/simple-cue-point.gif)
@@ -264,7 +264,7 @@ Returns a function for restoring the default.
 | `height`    	| `number`           	| the preview height                          	| `90px`                      	|                                                                                                                                	|
 | `className` 	| `string`           	| The preview custom classes                  	|                             	| don't use it for width                                                                                                         	|
 | `hideTime`  	| `boolean`          	| whether to hide the time bubble             	| `false`                     	|                                                                                                                                	|
-| `sticky`    	| `boolean`          	| whether the preview is shown on hovering    	| `true`                      	|                                                                                                                                	|
+| `sticky`    	| `boolean`          	| whether the preview is accessible on hovering    	| `true`                      	|                                                                                                                                	|
 
 ###### Examples 
 

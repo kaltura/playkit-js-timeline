@@ -1,14 +1,17 @@
 // @flow
 
 declare type CuePointOptionsObject = {
-  time: number,
   presets?: Array<string>,
   marker?: MarkerOptionsObject,
   preview?: PreviewOptionsObject
 };
 
+declare type TimedCuePointOptionsObject = CuePointOptionsObject & {
+  time: number
+};
+
 declare type MarkerOptionsObject = {
-  get: Function | string,
+  get?: Function | string,
   props?: Object,
   color?: string,
   width?: number,
@@ -16,7 +19,7 @@ declare type MarkerOptionsObject = {
 };
 
 declare type PreviewOptionsObject = {
-  get: Function | string,
+  get?: Function | string,
   props?: Object,
   width?: number,
   height?: number,

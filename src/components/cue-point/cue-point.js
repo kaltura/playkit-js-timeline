@@ -37,8 +37,8 @@ class CuePoint extends preact.Component {
    * @returns {number} - the marker left position
    * @private
    */
-  _getMarkerPositionStyle(): {left: string, borderRadius: string} {
-    const styleObj = {left: '0', borderRadius: 'left'};
+  _getMarkerPositionStyle(): {left: string, edge: string} {
+    const styleObj = {left: '0', edge: 'Left'};
     if (this._markerRef && this.props.duration) {
       const markerRect = this._markerRef.getBoundingClientRect();
       const seekbarRect = this.props.seekbarClientRect;
@@ -48,10 +48,10 @@ class CuePoint extends preact.Component {
       if (markerPosition - markerWidth / 2 > 0) {
         if (markerPosition + markerWidth / 2 > seekbarWidth) {
           styleObj.left = `${seekbarWidth - markerWidth}px`;
-          styleObj.borderRadius = 'right';
+          styleObj.edge = 'Right';
         } else {
           styleObj.left = `${markerPosition - markerWidth / 2}px`;
-          styleObj.borderRadius = 'none';
+          styleObj.edge = 'none';
         }
       }
     }
@@ -169,13 +169,18 @@ class CuePoint extends preact.Component {
    */
   render(props: any): React$Element<any> | void {
     const {marker, preview, virtualTime, config} = props;
-    const {borderRadius, left} = this._getMarkerPositionStyle();
+    const {edge, left} = this._getMarkerPositionStyle();
+
+    const cuePointContainerStyle = {left};
+    if (edge !== 'none') {
+      cuePointContainerStyle[`padding${edge}`] = 0;
+    }
 
     const markerStyle = {backgroundColor: marker.color, width: marker.width};
     const cuePointClassName = [
       CUE_POINT_CLASS,
       this.state.hover ? style.hover : '',
-      borderRadius !== 'none' ? `playkit-${borderRadius}-border-radius` : ''
+      edge !== 'none' ? `playkit-${edge.toLowerCase()}-border-radius` : ''
     ];
     let markerProps = {
       className: (marker.className ? [...cuePointClassName, marker.className] : cuePointClassName).join(' '),
@@ -210,7 +215,7 @@ class CuePoint extends preact.Component {
         onMouseOver={() => this.onMarkerMouseOver()}
         onMouseLeave={() => this.onMarkerMouseLeave()}
         className={CUE_POINT_CONTAINER_CLASS}
-        style={{left}}
+        style={cuePointContainerStyle}
         ref={this._setMarkerRef}>
         {marker.get ? preact.h(marker.get, markerProps) : <div style={markerStyle} className={[...cuePointClassName, marker.className].join(' ')} />}
         {this._markerRef && preview.get ? (
