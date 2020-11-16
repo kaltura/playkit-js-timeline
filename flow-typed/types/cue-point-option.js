@@ -1,13 +1,13 @@
 // @flow
 
 declare type CuePointOptionsObject = {
-  presets?: Array<string>,
   marker?: MarkerOptionsObject,
   preview?: PreviewOptionsObject
 };
 
 declare type TimedCuePointOptionsObject = CuePointOptionsObject & {
-  time: number
+  time: number,
+  presets?: Array<string>
 };
 
 declare type MarkerOptionsObject = {

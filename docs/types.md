@@ -17,23 +17,22 @@
 >
 > ##### Description: The cue point time  
 >
-## `CuePointOptionsObject`
->
-> ```js
-> {
->   presets?: Array<string>,
->   marker?: MarkerOptionsObject,
->   preview?: PreviewOptionsObject
-> } 
-> ```
->
 > ##
 >
 > ### `presets`
 > 
 > ##### Type: `Array<string>`
 >
-> ##### Description: The presets the cue point should be displayed  
+> ##### Description: The presets the cue point should be displayed
+>  
+## `CuePointOptionsObject`
+>
+> ```js
+> {
+>   marker?: MarkerOptionsObject,
+>   preview?: PreviewOptionsObject
+> } 
+> ```
 >
 > ##
 >
@@ -210,7 +209,7 @@
 > 
 > ##### Type: `Array<string>`
 >
- ##### Description: The presets the seekbar preview should be displayed  
+> ##### Description: The presets the seekbar preview should be displayed  
 >
 > ##
 >
