@@ -25,6 +25,22 @@
 >
 > ##### Description: The presets the cue point should be displayed
 >  
+> ##
+>
+> ### `marker`
+> 
+> ##### Type: [`MarkerOptionsObject`](#markeroptionsobject)
+>
+> ##### Description: The marker options  
+>
+> ##
+>
+> ### `preview`
+> 
+> ##### Type: [`PreviewOptionsObject`](#previewoptionsobject)
+>
+> ##### Description: The preview options
+>  
 ## `CuePointOptionsObject`
 >
 > ```js
