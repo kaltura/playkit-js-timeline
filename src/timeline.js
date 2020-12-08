@@ -52,11 +52,11 @@ class Timeline extends BasePlugin {
   }
 
   _onAdManifestLoaded(e: any): void {
-    if (this.config.adBreakCuePoint) {
-      const cuePoints = e.payload.adBreaksPosition;
-      cuePoints.forEach(cuePoint => {
+    const adBreaksPosition = e.payload.adBreaksPosition;
+    if (this.config.adBreakCuePoint && adBreaksPosition) {
+      adBreaksPosition.forEach(position => {
         this.player.ui.getManager('timeline').addCuePoint({
-          time: cuePoint !== -1 ? cuePoint : Infinity,
+          time: position !== -1 ? position : Infinity,
           ...this.config.adBreakCuePoint
         });
       });

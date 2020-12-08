@@ -93,11 +93,11 @@ class CuePoint extends preact.Component {
   onMarkerMouseOver(): void {
     this.setState({hover: true});
     if (this.props.preview.get) {
-      this.props.updateCuePointActive(true);
+      this.props.updateHideSeekbarPreview(true);
     }
     if (!this.props.hideTimeBubble && this.props.preview.hideTime) {
       this._hideTimeBubble = true;
-      this.props.updateHideTimeBubble(true);
+      this.props.updateHideSeekbarTimeBubble(true);
     }
   }
 
@@ -107,10 +107,10 @@ class CuePoint extends preact.Component {
    */
   onMarkerMouseLeave(): void {
     this.setState({hover: false});
-    this.props.updateCuePointActive(false);
+    this.props.updateHideSeekbarPreview(false);
     if (this._hideTimeBubble) {
       this._hideTimeBubble = false;
-      this.props.updateHideTimeBubble(false);
+      this.props.updateHideSeekbarTimeBubble(false);
     }
   }
 
@@ -143,9 +143,9 @@ class CuePoint extends preact.Component {
    * @returns {void}
    */
   componentWillUnmount(): void {
-    this.props.updateCuePointActive(false);
+    this.props.updateHideSeekbarPreview(false);
     if (this._hideTimeBubble) {
-      this.props.updateHideTimeBubble(false);
+      this.props.updateHideSeekbarTimeBubble(false);
     }
   }
 

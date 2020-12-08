@@ -106,13 +106,13 @@ class TimelineManager {
         : undefined,
       replaceComponent: 'SeekBarPreview'
     });
-    this._store.dispatch(actions.updateHideTimeBubble(false));
+    this._store.dispatch(actions.updateHideSeekbarTimeBubble(false));
     if (preview.hideTime) {
-      this._store.dispatch(actions.updateHideTimeBubble(true));
+      this._store.dispatch(actions.updateHideSeekbarTimeBubble(true));
     }
     return () => {
       removePreview();
-      this._store.dispatch(actions.updateHideTimeBubble(false));
+      this._store.dispatch(actions.updateHideSeekbarTimeBubble(false));
     };
   }
 
