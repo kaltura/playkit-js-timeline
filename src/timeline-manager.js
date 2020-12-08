@@ -33,12 +33,12 @@ class TimelineManager {
    * @param {TimedCuePointOptionsObject} newCuePoint - The cue point options
    * @return {null|{id: string}} - An object contains the cue point id
    */
-  addCuePoint(newCuePoint: TimedCuePointOptionsObject = {}): {id: string} | null {
+  addCuePoint(newCuePoint: TimedCuePointOptionsObject): {id: string} | null {
     if (this._store.getState().engine.isLive) {
       this._logger.warn('Impossible to add cue points while LIVE playback');
       return null;
     }
-    if (typeof newCuePoint.time !== 'number') {
+    if (!(newCuePoint && typeof newCuePoint.time === 'number')) {
       this._logger.warn('Cue point time is missing');
       return null;
     }
