@@ -1,15 +1,18 @@
 // @flow
-import {BasePlugin, ui} from 'kaltura-player-js';
+import {BasePlugin, ui, core} from 'kaltura-player-js';
 import {TimelineManager} from './timeline-manager';
-import cssVars from 'css-vars-ponyfill';
 
 const {style} = ui;
+const {Env, Utils} = core;
+
+const CSS_VARS_CDN_URL = 'https://cdn.jsdelivr.net/npm/css-vars-ponyfill';
 
 /**
  * Timeline class.
  * @classdesc
  */
 class Timeline extends BasePlugin {
+  static _cssVarsLibRequested: boolean = false;
   /**
    * The default configuration of the plugin.
    * @type {Object}
@@ -36,19 +39,26 @@ class Timeline extends BasePlugin {
    */
   constructor(name: string, player: Player, config: Object) {
     super(name, player, config);
-    cssVars({
-      variables: {
-        white: style.white,
-        'progress-bar-height': style.progressBarHeight,
-        'progress-bar-border-radius': style.progressBarBorderRadius
-      }
-    });
-    this.eventManager.listen(this.player, this.player.Event.SOURCE_SELECTED, () => this._onSourceSelected());
+    this.player.ui.registerManager('timeline', new TimelineManager(this.player, this.logger));
     this.eventManager.listen(this.player, this.player.Event.AD_MANIFEST_LOADED, e => this._onAdManifestLoaded(e));
   }
 
-  _onSourceSelected(): void {
-    this.player.ui.registerManager('timeline', new TimelineManager(this.player, this.logger));
+  get ready(): Promise<*> {
+    if (Env.browser.name === 'IE' && !Timeline._cssVarsLibRequested) {
+      Timeline._cssVarsLibRequested = true;
+      return Utils.Dom.loadScriptAsync(CSS_VARS_CDN_URL).then(() => {
+        cssVars({
+          variables: {
+            white: style.white,
+            'progress-bar-height': style.progressBarHeight,
+            'progress-bar-border-radius': style.progressBarBorderRadius
+          }
+        });
+      }).catch(() => {
+        this.logger.warn(`Failed to load css-vars-ponyfill lib from ${CSS_VARS_CDN_URL}`);
+      });
+    }
+    return Promise.resolve();
   }
 
   _onAdManifestLoaded(e: any): void {

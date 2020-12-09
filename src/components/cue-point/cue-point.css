@@ -1,6 +1,7 @@
 .playkit-cue-point-container {
   position: absolute;
   height: inherit;
+  padding: 12px 2px 16px 2px;
   padding: 12px 2px calc(12px + var(--progress-bar-height)) 2px;
   margin: -12px 0;
 }
@@ -12,6 +13,7 @@
 .playkit-cue-point {
   height: inherit;
   width: 2px;
+  background-color: #ffffff;
   background-color: var(--white);
   transition: transform 100ms;
 }
@@ -23,16 +25,19 @@
 
 
 .playkit-left-border-radius {
+  border-radius: 4px 0 0 4px;
   border-radius: calc(2 * var(--progress-bar-border-radius)) 0 0 calc(2 * var(--progress-bar-border-radius));
 }
 
 .playkit-right-border-radius {
+  border-radius: 0 4px 4px 0;
   border-radius: 0 calc(2 * var(--progress-bar-border-radius)) calc(2 * var(--progress-bar-border-radius)) 0;
 }
 
 .playkit-cue-point-preview-container {
   display: none;
   position: absolute;
+  bottom: 28px;
   bottom: calc(24px + var(--progress-bar-height));
 }
 

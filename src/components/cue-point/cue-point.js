@@ -3,6 +3,8 @@ import * as KalturaPlayer from 'kaltura-player-js';
 import './cue-point.css';
 
 const {preact, redux, reducers, utils, style} = KalturaPlayer.ui;
+const {Env, Utils} = KalturaPlayer.core;
+
 const CUE_POINT_CONTAINER_CLASS: string = 'playkit-cue-point-container';
 const CUE_POINT_PREVIEW_CONTAINER_CLASS: string = 'playkit-cue-point-preview-container';
 const CUE_POINT_CLASS: string = 'playkit-cue-point';
@@ -174,6 +176,13 @@ class CuePoint extends preact.Component {
     const cuePointContainerStyle = {left};
     if (edge !== 'none') {
       cuePointContainerStyle[`padding${edge}`] = 0;
+    }
+    if (Env.browser.name !== 'IE') {
+      Utils.Object.mergeDeep(cuePointContainerStyle, {
+        '--white': style.white,
+        '--progress-bar-height': style.progressBarHeight,
+        '--progress-bar-border-radius': style.progressBarBorderRadius
+      });
     }
 
     const markerStyle = {backgroundColor: marker.color, width: marker.width};
