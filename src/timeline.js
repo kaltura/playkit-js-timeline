@@ -2,6 +2,8 @@
 import {BasePlugin, ui, core} from 'kaltura-player-js';
 import {TimelineManager} from './timeline-manager';
 
+declare var cssVars;
+
 const {style} = ui;
 const {Env, Utils} = core;
 
@@ -46,17 +48,19 @@ class Timeline extends BasePlugin {
   get ready(): Promise<*> {
     if (Env.browser.name === 'IE' && !Timeline._cssVarsLibRequested) {
       Timeline._cssVarsLibRequested = true;
-      return Utils.Dom.loadScriptAsync(CSS_VARS_CDN_URL).then(() => {
-        cssVars({
-          variables: {
-            white: style.white,
-            'progress-bar-height': style.progressBarHeight,
-            'progress-bar-border-radius': style.progressBarBorderRadius
-          }
+      return Utils.Dom.loadScriptAsync(CSS_VARS_CDN_URL)
+        .then(() => {
+          cssVars({
+            variables: {
+              white: style.white,
+              'progress-bar-height': style.progressBarHeight,
+              'progress-bar-border-radius': style.progressBarBorderRadius
+            }
+          });
+        })
+        .catch(() => {
+          this.logger.warn(`Failed to load css-vars-ponyfill lib from ${CSS_VARS_CDN_URL}`);
         });
-      }).catch(() => {
-        this.logger.warn(`Failed to load css-vars-ponyfill lib from ${CSS_VARS_CDN_URL}`);
-      });
     }
     return Promise.resolve();
   }
