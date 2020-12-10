@@ -6,32 +6,50 @@ The configuration uses the following structure:
 ****
 ```js
 {
-  adBreakCuePoint?: CuePointOptionsObject  
+  showAdBreakCuePoint?: boolean,
+  adBreakCuePointStyle?: CuePointOptionsObject  
 }
 ```
 
 ##
 
-> ### adBreakCuePoint
+> ### showAdBreakCuePoint
+>
+> ##### Type: boolean
+>
+> ##### Default: `false` - No cue points displayed for the ad breaks.
+>
+> ##### Description: Whether to show the ad breaks cue points.  
+>
+> ##
+>
+> ### adBreakCuePointStyle
 >
 > ##### Type: [`CuePointOptionsObject`](./types.md#cuepointoptionsobject)
 >
-> ##### Default: `null` - No cue points displayed for the ad breaks.
+> ##### Default: `null` - Use the default cue point style.
 >
-> ##### Description: Options for the ad breaks cue points.  
+> ##### Description: Style options for the ad breaks cue points.  
 > 
 > ##### Examples:
 >
+> Don't show The cue point for the ad breaks:  
+> ```js
+> {
+>   showAdBreakCuePoint: false
+> }
+> ```
 > Show The default cue point for the ad breaks:  
 > ```js
 > {
->   adBreakCuePoint: {}
+>   showAdBreakCuePoint: true
 > }
 > ```
 > Show a custom cue point for the ad breaks:  
 > ```js
 > {
->   adBreakCuePoint: {
+>   showAdBreakCuePoint: true,
+>   adBreakCuePointStyle: {
 >     marker: {
 >       width: 10,
 >       color: 'rgb(255, 0, 0)' 

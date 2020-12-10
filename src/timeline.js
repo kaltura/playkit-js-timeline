@@ -1,14 +1,15 @@
 // @flow
 import {BasePlugin, ui, core} from 'kaltura-player-js';
 import {TimelineManager} from './timeline-manager';
+import {cssVarsSupported} from 'css-vars-support';
 
 declare var cssVars;
 
 const {style} = ui;
-const {Env, Utils} = core;
+const {Utils} = core;
 
 const CSS_VARS_CDN_URL = 'https://cdn.jsdelivr.net/npm/css-vars-ponyfill';
-let cssVarsLibRequested: boolean = false;
+let cssVarsLibLoaded: ?Promise = null;
 
 /**
  * Timeline class.
@@ -21,7 +22,8 @@ class Timeline extends BasePlugin {
    * @static
    */
   static defaultConfig: Object = {
-    adBreakCuePoint: null
+    showAdBreakCuePoint: false,
+    adBreakCuePointStyle: null
   };
 
   /**
@@ -46,32 +48,34 @@ class Timeline extends BasePlugin {
   }
 
   get ready(): Promise<*> {
-    if (Env.browser.name === 'IE' && !cssVarsLibRequested) {
-      cssVarsLibRequested = true;
-      return Utils.Dom.loadScriptAsync(CSS_VARS_CDN_URL)
-        .then(() => {
-          cssVars({
-            variables: {
-              white: style.white,
-              'progress-bar-height': style.progressBarHeight,
-              'progress-bar-border-radius': style.progressBarBorderRadius
-            }
+    if (!cssVarsSupported()) {
+      if (!cssVarsLibLoaded) {
+        cssVarsLibLoaded = Utils.Dom.loadScriptAsync(CSS_VARS_CDN_URL)
+          .then(() => {
+            cssVars({
+              variables: {
+                white: style.white,
+                'progress-bar-height': style.progressBarHeight,
+                'progress-bar-border-radius': style.progressBarBorderRadius
+              }
+            });
+          })
+          .catch(() => {
+            this.logger.warn(`Failed to load css-vars-ponyfill lib from ${CSS_VARS_CDN_URL}`);
           });
-        })
-        .catch(() => {
-          this.logger.warn(`Failed to load css-vars-ponyfill lib from ${CSS_VARS_CDN_URL}`);
-        });
+      }
+      return cssVarsLibLoaded;
     }
     return Promise.resolve();
   }
 
   _onAdManifestLoaded(e: any): void {
     const adBreaksPosition = e.payload.adBreaksPosition;
-    if (this.config.adBreakCuePoint && adBreaksPosition) {
+    if (this.config.showAdBreakCuePoint && adBreaksPosition) {
       adBreaksPosition.forEach(position => {
         this.player.ui.getManager('timeline').addCuePoint({
           time: position !== -1 ? position : Infinity,
-          ...this.config.adBreakCuePoint
+          ...this.config.adBreakCuePointStyle
         });
       });
     }

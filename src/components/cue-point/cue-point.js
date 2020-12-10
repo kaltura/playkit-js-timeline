@@ -1,9 +1,10 @@
 //@flow
 import * as KalturaPlayer from 'kaltura-player-js';
 import './cue-point.css';
+import {cssVarsSupported} from 'css-vars-support';
 
 const {preact, redux, reducers, utils, style} = KalturaPlayer.ui;
-const {Env, Utils} = KalturaPlayer.core;
+const {Utils} = KalturaPlayer.core;
 
 const CUE_POINT_CONTAINER_CLASS: string = 'playkit-cue-point-container';
 const CUE_POINT_PREVIEW_CONTAINER_CLASS: string = 'playkit-cue-point-preview-container';
@@ -177,7 +178,7 @@ class CuePoint extends preact.Component {
     if (edge !== 'none') {
       cuePointContainerStyle[`padding${edge}`] = 0;
     }
-    if (Env.browser.name !== 'IE') {
+    if (cssVarsSupported()) {
       Utils.Object.mergeDeep(cuePointContainerStyle, {
         '--white': style.white,
         '--progress-bar-height': style.progressBarHeight,
