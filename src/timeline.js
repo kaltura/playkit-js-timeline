@@ -8,8 +8,8 @@ declare var cssVars;
 const {style} = ui;
 const {Utils} = core;
 
-const CSS_VARS_CDN_URL = 'https://cdn.jsdelivr.net/npm/css-vars-ponyfill';
-let cssVarsLibLoaded: ?Promise = null;
+const CSS_VARS_POLYFILL_CDN_URL = 'https://cdn.jsdelivr.net/npm/css-vars-ponyfill';
+let cssVarsPolyfillLibLoaded: ?Promise = null;
 
 /**
  * Timeline class.
@@ -49,8 +49,8 @@ class Timeline extends BasePlugin {
 
   get ready(): Promise<*> {
     if (!cssVarsSupported()) {
-      if (!cssVarsLibLoaded) {
-        cssVarsLibLoaded = Utils.Dom.loadScriptAsync(CSS_VARS_CDN_URL)
+      if (!cssVarsPolyfillLibLoaded) {
+        cssVarsPolyfillLibLoaded = Utils.Dom.loadScriptAsync(CSS_VARS_POLYFILL_CDN_URL)
           .then(() => {
             cssVars({
               variables: {
@@ -61,10 +61,10 @@ class Timeline extends BasePlugin {
             });
           })
           .catch(() => {
-            this.logger.warn(`Failed to load css-vars-ponyfill lib from ${CSS_VARS_CDN_URL}`);
+            this.logger.warn(`Failed to load css-vars-ponyfill lib from ${CSS_VARS_POLYFILL_CDN_URL}`);
           });
       }
-      return cssVarsLibLoaded;
+      return cssVarsPolyfillLibLoaded;
     }
     return Promise.resolve();
   }
