@@ -17,16 +17,6 @@ let cssVarsPolyfillLibLoaded: ?Promise = null;
  */
 class Timeline extends BasePlugin {
   /**
-   * The default configuration of the plugin.
-   * @type {Object}
-   * @static
-   */
-  static defaultConfig: Object = {
-    showAdBreakCuePoint: false,
-    adBreakCuePointStyle: null
-  };
-
-  /**
    * @static
    * @public
    * @returns {boolean} - Whether the plugin is valid.
@@ -44,7 +34,6 @@ class Timeline extends BasePlugin {
   constructor(name: string, player: Player, config: Object) {
     super(name, player, config);
     this.player.ui.registerManager('timeline', new TimelineManager(this.player, this.logger));
-    this.eventManager.listen(this.player, this.player.Event.AD_MANIFEST_LOADED, e => this._onAdManifestLoaded(e));
   }
 
   get ready(): Promise<*> {
@@ -67,18 +56,6 @@ class Timeline extends BasePlugin {
       return cssVarsPolyfillLibLoaded;
     }
     return Promise.resolve();
-  }
-
-  _onAdManifestLoaded(e: any): void {
-    const adBreaksPosition = e.payload.adBreaksPosition;
-    if (this.config.showAdBreakCuePoint && adBreaksPosition) {
-      adBreaksPosition.forEach(position => {
-        this.player.ui.getManager('timeline').addCuePoint({
-          time: position !== -1 ? position : Infinity,
-          ...this.config.adBreakCuePointStyle
-        });
-      });
-    }
   }
 }
 
