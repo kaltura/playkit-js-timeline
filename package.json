@@ -1,0 +1,114 @@
+{
+  "name": "@playkit-js/playkit-js-timeline",
+  "version": "",
+  "keywords": [
+    "kaltura",
+    "player",
+    "playkit-js",
+    "html5 player",
+    "plugin"
+  ],
+  "homepage": "https://github.com/kaltura/playkit-js-timeline#readme",
+  "bugs": {
+    "url": "https://github.com/kaltura/playkit-js-timeline/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kaltura/playkit-js-timeline.git"
+  },
+  "license": "AGPL-3.0",
+  "main": "dist/playkit-timeline.js",
+  "scripts": {
+    "prebuild": "npm run clean",
+    "build": "webpack --mode production",
+    "clean": "rm -rf ./dist",
+    "commit:dist": "git add --force --all dist && (git commit -m 'chore: update dist' || exit 0)",
+    "dev": "webpack-dev-server --mode development",
+    "eslint": "eslint . --color",
+    "flow": "flow check",
+    "precommit": "lint-staged",
+    "prettier:fix": "prettier --write .",
+    "pushTaggedRelease": "git push --follow-tags --no-verify origin master",
+    "release": "standard-version",
+    "test": "NODE_ENV=test karma start --color --mode development",
+    "watch": "webpack --progress --colors --watch --mode development"
+  },
+  "lint-staged": {
+    "*.{js,jsx}": [
+      "eslint --fix",
+      "git add"
+    ],
+    "*.{json,md,scss}": [
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.10.5",
+    "@babel/core": "^7.10.5",
+    "@babel/plugin-proposal-class-properties": "^7.10.4",
+    "@babel/plugin-proposal-object-rest-spread": "^7.10.4",
+    "@babel/plugin-syntax-dynamic-import": "^7.8.3",
+    "@babel/plugin-transform-classes": "^7.10.4",
+    "@babel/plugin-proposal-decorators": "^7.10.5",
+    "@babel/plugin-transform-flow-strip-types": "^7.10.4",
+    "@babel/plugin-transform-property-mutators": "^7.10.4",
+    "@babel/plugin-transform-react-jsx": "^7.10.4",
+    "@babel/preset-env": "^7.10.4",
+    "@babel/preset-flow": "^7.10.4",
+    "@babel/register": "^7.10.5",
+    "@playkit-js/playkit-js-ui": "^0.60.1",
+    "babel-eslint": "^10.1.0",
+    "babel-loader": "^8.1.0",
+    "babel-plugin-istanbul": "^6.0.0",
+    "chai": "^4.2.0",
+    "conventional-github-releaser": "3.1.3",
+    "copy-webpack-plugin": "^6.0.3",
+    "cross-env": "^7.0.2",
+    "css-loader": "^3.6.0",
+    "eslint": "^7.4.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-loader": "^4.0.2",
+    "eslint-plugin-flowtype": "^5.2.0",
+    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-mocha-no-only": "^1.1.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "flow-bin": "^0.129.0",
+    "husky": "^4.2.5",
+    "istanbul": "^0.4.5",
+    "kaltura-player-js": "https://github.com/kaltura/kaltura-player-js.git#master",
+    "karma": "^5.1.0",
+    "karma-chai": "^0.1.0",
+    "karma-chrome-launcher": "^3.1.0",
+    "karma-cli": "^2.0.0",
+    "karma-coverage": "^2.0.2",
+    "karma-firefox-launcher": "^1.3.0",
+    "karma-ie-launcher": "^1.0.0",
+    "karma-mocha": "^2.0.1",
+    "karma-mocha-reporter": "^2.2.5",
+    "karma-safari-launcher": "^1.0.0",
+    "karma-sourcemap-loader": "^0.3.7",
+    "karma-webpack": "^4.0.2",
+    "lint-staged": "^10.2.11",
+    "mocha": "^8.0.1",
+    "mocha-cli": "^1.0.1",
+    "prettier": "^2.0.5",
+    "sinon": "^9.0.2",
+    "sinon-chai": "^3.5.0",
+    "standard-version": "^6.0.1",
+    "style-loader": "^1.2.1",
+    "uglifyjs-webpack-plugin": "^2.2.0",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.12",
+    "webpack-dev-server": "^3.11.0"
+  },
+  "peerDependencies": {
+    "kaltura-player-js": "https://github.com/kaltura/kaltura-player-js.git#master"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "kcc": {
+    "name": "playkit-timeline"
+  }
+}
