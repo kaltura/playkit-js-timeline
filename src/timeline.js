@@ -9,7 +9,7 @@ const {style} = ui;
 const {Utils} = core;
 
 const CSS_VARS_POLYFILL_CDN_URL = 'https://cdn.jsdelivr.net/npm/css-vars-ponyfill';
-let cssVarsPolyfillLibLoaded: ?Promise = null;
+let cssVarsPolyfillLibLoaded: ?Promise<*> = null;
 
 /**
  * Timeline class.
