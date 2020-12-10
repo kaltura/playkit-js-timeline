@@ -8,13 +8,13 @@ const {style} = ui;
 const {Env, Utils} = core;
 
 const CSS_VARS_CDN_URL = 'https://cdn.jsdelivr.net/npm/css-vars-ponyfill';
+let cssVarsLibRequested: boolean = false;
 
 /**
  * Timeline class.
  * @classdesc
  */
 class Timeline extends BasePlugin {
-  static _cssVarsLibRequested: boolean = false;
   /**
    * The default configuration of the plugin.
    * @type {Object}
@@ -46,8 +46,8 @@ class Timeline extends BasePlugin {
   }
 
   get ready(): Promise<*> {
-    if (Env.browser.name === 'IE' && !Timeline._cssVarsLibRequested) {
-      Timeline._cssVarsLibRequested = true;
+    if (Env.browser.name === 'IE' && !cssVarsLibRequested) {
+      cssVarsLibRequested = true;
       return Utils.Dom.loadScriptAsync(CSS_VARS_CDN_URL)
         .then(() => {
           cssVars({
