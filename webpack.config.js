@@ -19,7 +19,7 @@ module.exports = {
   output: {
     path: __dirname + '/dist',
     filename: '[name].js',
-    library: ['KalturaPlayer', 'plugins', 'Timeline'],
+    library: ['KalturaPlayer', 'plugins', 'timeline'],
     devtoolModuleFilenameTemplate: './timeline/[resource-path]'
   },
   devtool: 'source-map',
