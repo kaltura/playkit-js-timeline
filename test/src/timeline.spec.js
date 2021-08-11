@@ -38,7 +38,7 @@ describe('Timeline Manager', function () {
   beforeEach(function () {
     sandbox = sinon.createSandbox();
     player = setup(config);
-    player.ui.registerManager('timeline', new TimelineManager(player, console));
+    player.registerService('timeline', new TimelineManager(player, console));
   });
 
   afterEach(function () {
@@ -53,7 +53,7 @@ describe('Timeline Manager', function () {
 
   describe('addCuePoint', function () {
     it('Should add a default cue point with no preview', function (done) {
-      const cuePoint = player.ui.getManager('timeline').addCuePoint({
+      const cuePoint = player.getService('timeline').addCuePoint({
         time: 50
       });
       try {
@@ -72,7 +72,7 @@ describe('Timeline Manager', function () {
     });
 
     it('Should add custom cue point with custom marker', function (done) {
-      const cuePoint = player.ui.getManager('timeline').addCuePoint({
+      const cuePoint = player.getService('timeline').addCuePoint({
         time: 50,
         marker: {
           get: customMarker,
@@ -102,7 +102,7 @@ describe('Timeline Manager', function () {
     });
 
     it('Should add custom cue point with custom preview', function (done) {
-      const cuePoint = player.ui.getManager('timeline').addCuePoint({
+      const cuePoint = player.getService('timeline').addCuePoint({
         time: 50,
         marker: {
           color: 'red',
@@ -145,8 +145,8 @@ describe('Timeline Manager', function () {
     });
 
     it('Should not add and return null when time is missing', function (done) {
-      const cuePoint1 = player.ui.getManager('timeline').addCuePoint();
-      const cuePoint2 = player.ui.getManager('timeline').addCuePoint({});
+      const cuePoint1 = player.getService('timeline').addCuePoint();
+      const cuePoint2 = player.getService('timeline').addCuePoint({});
       try {
         (cuePoint1 === null).should.be.true;
         (cuePoint2 === null).should.be.true;
@@ -167,7 +167,7 @@ describe('Timeline Manager', function () {
         state.engine.isDvr = true;
         return state;
       });
-      const cuePoint = player.ui.getManager('timeline').addCuePoint({
+      const cuePoint = player.getService('timeline').addCuePoint({
         time: 50
       });
       try {
@@ -185,14 +185,14 @@ describe('Timeline Manager', function () {
 
   describe('removeCuePoint', function () {
     it('Should remove the added cue point', function (done) {
-      const cuePoint = player.ui.getManager('timeline').addCuePoint({
+      const cuePoint = player.getService('timeline').addCuePoint({
         time: 50
       });
       try {
         setTimeout(() => {
           const progressBar = document.querySelector('.playkit-progress-bar');
           progressBar.lastElementChild.className.should.equals('playkit-cue-point-container');
-          player.ui.getManager('timeline').removeCuePoint(cuePoint);
+          player.getService('timeline').removeCuePoint(cuePoint);
           setTimeout(() => {
             progressBar.lastElementChild.className.should.not.equals('playkit-cue-point-container');
             done();
@@ -206,7 +206,7 @@ describe('Timeline Manager', function () {
 
   describe('setSeekbarPreview', function () {
     it('Should override the seekbar preview with a simple div element', function (done) {
-      player.ui.getManager('timeline').setSeekbarPreview({
+      player.getService('timeline').setSeekbarPreview({
         get: 'div',
         props: {
           key3: 'value3'
@@ -234,7 +234,7 @@ describe('Timeline Manager', function () {
     });
 
     it('Should override the seekbar preview with preact component', function (done) {
-      player.ui.getManager('timeline').setSeekbarPreview({
+      player.getService('timeline').setSeekbarPreview({
         get: customSeekbarPreview,
         props: {
           key3: 'value3'
@@ -264,7 +264,7 @@ describe('Timeline Manager', function () {
     });
 
     it('Should restore the default seekbar preview', function (done) {
-      const restoreFunc = player.ui.getManager('timeline').setSeekbarPreview({
+      const restoreFunc = player.getService('timeline').setSeekbarPreview({
         get: 'div',
         className: 'custom-preview',
         sticky: false
