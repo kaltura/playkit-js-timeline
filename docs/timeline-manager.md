@@ -1,20 +1,20 @@
 ## Timeline Manager
 
-The Timeline Manager exposes simple API's to manage custom components on the player seekbar element.  
+The Timeline Manager exposes simple API's to manage custom components on the player seekbar element.
 
-By the Timeline Manager the app can add cue points to indicate specific points on the seekbar (e.g. ads). 
+By the Timeline Manager the app can add cue points to indicate specific points on the seekbar (e.g. ads).
 As well as to custom the thumbnail preview shown on seekbar hovering.
 
 ## API
-[`addCuePoint`](#addcuepoint)  
-- [Examples](#examples)  
-  
-[`removeCuePoint`](#removecuepoint)  
-[`setSeekbarPreview`](#setseekbarpreview)  
+[`addCuePoint`](#addcuepoint)
+- [Examples](#examples)
+
+[`removeCuePoint`](#removecuepoint)
+[`setSeekbarPreview`](#setseekbarpreview)
 - [Examples](#examples-1)
 
 #### addCuePoint
-Enables to add cue point to a specific position on the timeline seekbar.  
+Enables to add cue point to a specific position on the timeline seekbar.
 Returns an object with the cue point id, to remove the cue point by `removeCuePoint`.
 
 > It's impossible to add cue points while LIVE playback. Returned `null`.
@@ -151,14 +151,14 @@ Returns an object with the cue point id, to remove the cue point by `removeCuePo
     </tbody>
 </table>
 
-###### Examples 
-  
+###### Examples
+
 1. Simple cue point without custom preview:
 
 ![simple cue point](./images/simple-cue-point.gif)
-  
+
 ```js
-kalturaPlayer.ui.getManager('timeline').addCuePoint({
+kalturaPlayer.getService('timeline').addCuePoint({
   time: 400
 });
 ```
@@ -167,7 +167,7 @@ kalturaPlayer.ui.getManager('timeline').addCuePoint({
 2. Custom cue point with sticky preview and show time:
 
 ![simple cue point](./images/custom-cue-point.gif)
-  
+
 ```js
 .marker {
   border-radius: 4px;
@@ -185,7 +185,7 @@ class preview extends kalturaPlayer.ui.preact.Component {
   }
 }
 
-kalturaPlayer.ui.getManager('timeline').addCuePoint({
+kalturaPlayer.getService('timeline').addCuePoint({
   time: 300,
   marker: {
     width: 8,
@@ -207,7 +207,7 @@ kalturaPlayer.ui.getManager('timeline').addCuePoint({
 3. Simple cue point with non-sticky preview and hide time:
 
 ![simple cue point](./images/non-sticky-cue-point.gif)
-  
+
 ```js
 .preview {
   background-color: white;
@@ -222,7 +222,7 @@ class preview extends kalturaPlayer.ui.preact.Component {
   }
 }
 
-kalturaPlayer.ui.getManager('timeline').addCuePoint({
+kalturaPlayer.getService('timeline').addCuePoint({
   time: 200,
   preview: {
     get: preview,
@@ -250,7 +250,7 @@ Enables to remove a cue point from the timeline seekbar by the cue point id retu
 
 
 #### setSeekbarPreview
-Enables to override the default seekbar preview thumbnail.  
+Enables to override the default seekbar preview thumbnail.
 Returns a function for restoring the default.
 
 > Seekbar preview does not shown while LIVE playback.
@@ -266,7 +266,7 @@ Returns a function for restoring the default.
 | `hideTime`  	| `boolean`          	| whether to hide the time bubble             	| `false`                     	|                                                                                                                                	|
 | `sticky`    	| `boolean`          	| whether the preview is accessible on hovering    	| `true`                      	|                                                                                                                                	|
 
-###### Examples 
+###### Examples
 
 1. Sticky preview and show time:
 
@@ -286,7 +286,7 @@ class preview extends kalturaPlayer.ui.preact.Component {
   }
 }
 
-kalturaPlayer.ui.getManager('timeline').setSeekbarPreview({
+kalturaPlayer.getService('timeline').setSeekbarPreview({
   get: preview,
   props: {
     style: {paddingTop: '15%'},
@@ -315,7 +315,7 @@ class preview extends kalturaPlayer.ui.preact.Component {
   }
 }
 
-kalturaPlayer.ui.getManager('timeline').setSeekbarPreview({
+kalturaPlayer.getService('timeline').setSeekbarPreview({
   get: preview,
   props: {
     style: {paddingTop: '15%'}
