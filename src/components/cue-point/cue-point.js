@@ -198,8 +198,8 @@ class CuePoint extends preact.Component {
     };
     markerProps = {...marker.props, ...markerProps};
 
-    const previewWidth = preview.width || style.framePreviewImgWidth;
-    const previewHeight = preview.height || style.framePreviewImgHeight;
+    const previewWidth = preview.width || marker.width;
+    const previewHeight = preview.height || marker.height;
     const previewStyle = {
       width: `${previewWidth}px`,
       height: `${previewHeight}px`
