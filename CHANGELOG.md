@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.1](https://github.com/kaltura/playkit-js-timeline/compare/v1.2.0...v1.2.1) (2022-09-18)
+
+
+### Bug Fixes
+
+* **FEV-1392:** use timeline marker width and height if doesn't exist on preview object ([#5](https://github.com/kaltura/playkit-js-timeline/issues/5)) ([4eb4040](https://github.com/kaltura/playkit-js-timeline/commit/4eb4040))
+
+
+### Build System
+
+* set prerelease false ([bf48b6b](https://github.com/kaltura/playkit-js-timeline/commit/bf48b6b))
+
+
+
 ## [1.2.0](https://github.com/kaltura/playkit-js-timeline/compare/v1.1.1...v1.2.0) (2021-08-26)
 
 
