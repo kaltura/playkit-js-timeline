@@ -109,5 +109,8 @@
     "name": "playkit-timeline"
   },
   "author": "",
-  "private": false
+  "private": false,
+  "kaltura": {
+    "name": "timeline"
+  }
 }
