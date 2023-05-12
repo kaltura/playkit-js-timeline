@@ -1,5 +1,5 @@
 // @flow
-import {BasePlugin, ui, core} from 'kaltura-player-js';
+import {BasePlugin, ui, core} from '@playkit-js/kaltura-player-js';
 import {TimelineManager} from './timeline-manager';
 import {cssVarsSupported} from 'css-vars-support';
 

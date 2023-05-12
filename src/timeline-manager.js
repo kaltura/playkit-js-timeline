@@ -1,5 +1,5 @@
 //@flow
-import * as KalturaPlayer from 'kaltura-player-js';
+import * as KalturaPlayer from '@playkit-js/kaltura-player-js';
 import {CuePoint} from './components/cue-point';
 
 const {preact, redux, reducers, style} = KalturaPlayer.ui;
