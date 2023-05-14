@@ -1,5 +1,5 @@
 //@flow
-import * as KalturaPlayer from 'kaltura-player-js';
+import * as KalturaPlayer from '@playkit-js/kaltura-player-js';
 import './cue-point.css';
 import {cssVarsSupported} from 'css-vars-support';
 
