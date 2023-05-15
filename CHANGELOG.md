@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.0.1](https://github.com/kaltura/playkit-js-timeline/compare/v3.0.0...v3.0.1) (2023-05-15)
+
+
+### Bug Fixes
+
+* **FEC-13123:** replace travis with github actions ([#9](https://github.com/kaltura/playkit-js-timeline/issues/9)) ([3fac352](https://github.com/kaltura/playkit-js-timeline/commit/3fac352))
+
+
+
 ### [1.2.2](https://github.com/kaltura/playkit-js-timeline/compare/v1.2.1...v1.2.2) (2022-09-20)
 
 
