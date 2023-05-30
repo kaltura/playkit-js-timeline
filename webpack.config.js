@@ -51,25 +51,45 @@ module.exports = {
         ]
       },
       {
-        test: /\.css$/,
+        test: /\.tsx?$/,
+        loader: 'ts-loader',
+        options: {
+          configFile: 'tsconfig.json'
+        },
+        exclude: /node_modules/
+      },
+      {
+        test: /\.scss$/,
         use: [
           {
             loader: 'style-loader'
           },
           {
-            loader: 'css-loader'
+            loader: 'css-loader',
+            options: {
+              modules: {
+                localIdentName: '[name]__[local]___[hash:base64:5]',
+                exportLocalsConvention: 'camelCase'
+              }
+            }
+          },
+          {
+            loader: 'sass-loader'
           }
         ]
       }
     ]
   },
   devServer: {
-    contentBase: __dirname + '/src'
+    static: __dirname + '/src'
+    // host: '192.168.68.107'
   },
   resolve: {
+    extensions: ['.tsx', '.ts', '.js'],
     modules: [path.resolve(__dirname, 'src'), 'node_modules']
   },
   externals: {
-    '@playkit-js/kaltura-player-js': ['KalturaPlayer']
+    '@playkit-js/kaltura-player-js': 'root KalturaPlayer',
+    preact: 'root KalturaPlayer.ui.preact'
   }
 };

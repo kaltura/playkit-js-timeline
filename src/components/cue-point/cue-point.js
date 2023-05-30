@@ -1,6 +1,6 @@
 //@flow
 import * as KalturaPlayer from '@playkit-js/kaltura-player-js';
-import './cue-point.css';
+import './cue-point.scss';
 import {cssVarsSupported} from 'css-vars-support';
 
 const {preact, redux, reducers, utils, style} = KalturaPlayer.ui;
