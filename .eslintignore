@@ -1,3 +1,5 @@
 /flow-typed/
 /coverage
 /dist
+*.ts
+*.tsx
