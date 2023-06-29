@@ -1,14 +1,10 @@
 //@flow
 import * as KalturaPlayer from '@playkit-js/kaltura-player-js';
-import './cue-point.scss';
+import styles from './cue-point.scss';
 import {cssVarsSupported} from 'css-vars-support';
 
 const {preact, redux, reducers, utils, style} = KalturaPlayer.ui;
 const {Utils} = KalturaPlayer.core;
-
-const CUE_POINT_CONTAINER_CLASS: string = 'playkit-cue-point-container';
-const CUE_POINT_PREVIEW_CONTAINER_CLASS: string = 'playkit-cue-point-preview-container';
-const CUE_POINT_CLASS: string = 'playkit-cue-point';
 
 /**
  * mapping state to props
@@ -188,7 +184,7 @@ class CuePoint extends preact.Component {
 
     const markerStyle = {backgroundColor: marker.color, width: marker.width};
     const cuePointClassName = [
-      CUE_POINT_CLASS,
+      styles.playkitCuePoint,
       this.state.hover ? style.hover : '',
       edge !== 'none' ? `playkit-${edge.toLowerCase()}-border-radius` : ''
     ];
@@ -224,7 +220,7 @@ class CuePoint extends preact.Component {
       <div
         onMouseOver={() => this.onMarkerMouseOver()}
         onMouseLeave={() => this.onMarkerMouseLeave()}
-        className={CUE_POINT_CONTAINER_CLASS}
+        className={styles.playkitCuePointContainer}
         style={cuePointContainerStyle}
         ref={this._setMarkerRef}>
         {marker.get ? preact.h(marker.get, markerProps) : <div style={markerStyle} className={[...cuePointClassName, marker.className].join(' ')} />}
@@ -232,7 +228,9 @@ class CuePoint extends preact.Component {
           <div
             onMouseOver={() => this.onPreviewMouseOver()}
             onMouseLeave={() => this.onPreviewMouseLeave()}
-            className={preview.sticky === false ? [CUE_POINT_PREVIEW_CONTAINER_CLASS, style.nonSticky].join(' ') : CUE_POINT_PREVIEW_CONTAINER_CLASS}
+            className={
+              preview.sticky === false ? [styles.playkitCuePointPreviewContainer, style.nonSticky].join(' ') : styles.playkitCuePointPreviewContainer
+            }
             style={{
               left: `${this._getPreviewPosition(previewWidth)}px`
             }}>

@@ -1,8 +1,6 @@
-// @flow
-
-declare type SeekbarPreviewOptionsObject = {
+export type SeekbarPreviewOptionsObject = {
   get?: Function | string,
-  props?: Object,
+  props?: any,
   presets?: Array<string>,
   width?: number,
   height?: number,
