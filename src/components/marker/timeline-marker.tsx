@@ -2,7 +2,7 @@ import {h} from 'preact';
 import {ui} from '@playkit-js/kaltura-player-js';
 import * as styles from './timeline-marker.scss';
 import type {TimelineMarkerProps} from '../../types/timelineTypes';
-import {A11yWrapper} from '@playkit-js/common';
+import {A11yWrapper} from '@playkit-js/common/dist/hoc/a11y-wrapper';
 import {useMemo} from 'preact/hooks';
 
 const {
@@ -34,9 +34,8 @@ export const TimelineMarker = (({isDisabled, onMarkerClick, getSeekBarNode, useQ
           ref={setMarkerRef}
           onFocus={handleFocus}
           onBlur={handleBlur}
-          title={''} // TODO: NEED TO CHANGE
           tabIndex={disabled ? -1 : 0}
-          data-testid="cuePointContainer"
+          data-testid="cuePointMarkerContainer"
           className={`${useQuizQuestionMarkerSize ? styles.quizQuestionMarkerSize : styles.smallMarker} ${hoverActive ? styles.hover : ''}`}>
           <div className={`${styles.marker}`} />
         </div>

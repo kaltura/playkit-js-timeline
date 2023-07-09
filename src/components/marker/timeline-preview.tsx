@@ -1,4 +1,4 @@
-import {h, Fragment, VNode, Component} from 'preact';
+import {Component, Fragment, h, VNode} from 'preact';
 import * as styles from './timeline-preview.scss';
 import {icons} from '../icons';
 import {ItemTypes, ThumbnailInfo} from "../../types/timelineTypes";
@@ -70,10 +70,18 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
 
   private _renderHeader() {
     // organize the header by cuePoint types
-    const hotspots = this.props.cuePointsData.filter(cuePoint => cuePoint.type === ItemTypes.Hotspot);
-    const quizQuestions = this.props.cuePointsData.filter(cuePoint => cuePoint.type === ItemTypes.QuizQuestion);
+    const initialData: any = { [ItemTypes.QuizQuestion]: [], [ItemTypes.Hotspot]: [], [ItemTypes.AnswerOnAir]: [] };
+    const data = this.props.cuePointsData.reduce((acc, cp) => {
+      return {
+        ...acc,
+        [cp.type]: [...acc[cp.type], cp]
+      }
+    }, initialData);
+
+    const hotspots: any[] = data[ItemTypes.Hotspot];
+    const quizQuestions: any[] = data[ItemTypes.QuizQuestion];
+    const answerOnAir: any[] = data[ItemTypes.AnswerOnAir];
     const chapters = this.props.chaptersData;
-    const answerOnAir = this.props.cuePointsData.filter(cuePoint => cuePoint.type === ItemTypes.AnswerOnAir);
 
     let quizQuestionTitle = {type: '', firstIndex: 1, lastIndex: ''};
     if (quizQuestions.length) {
@@ -104,10 +112,10 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
     const isNavigationPluginOpen = this.props.isNavigationPluginOpen();
     return (
       <Fragment>
-        <button className={[styles.markerLink, !isNavigationPluginOpen ? styles.disabled : ''].join(' ')} onClick={this._handleClick}>
+        <button className={[styles.markerLink, !isNavigationPluginOpen ? styles.disabled : ''].join(' ')} onClick={this._handleClick} data-testid="previewArrowButton">
           <Icon id={'timeline-marker-link-close'} height={18} width={18} viewBox={`0 0 ${24} ${24}`} path={icons.PREVIEW_HEADER_ARROW_BUTTON_CLOSE}/>
         </button>
-        <button className={[styles.markerLink, isNavigationPluginOpen ? styles.disabled : ''].join(' ')} onClick={this._handleClick}>
+        <button className={[styles.markerLink, isNavigationPluginOpen ? styles.disabled : ''].join(' ')} onClick={this._handleClick} data-testid="previewArrowButton">
           <Icon id={"timeline-marker-link-open"} height={18} width={18} viewBox={`0 0 ${24} ${24}`} path={icons.PREVIEW_HEADER_ARROW_BUTTON_OPEN}/>
         </button>
       </Fragment>
@@ -116,9 +124,9 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
 
   render() {
     return (
-      <div className={styles.container}>
-        <div className={styles.header}>
-          <div className={styles.itemsWrapper}>
+      <div className={styles.container} data-testid="cuePointPreviewContainer">
+        <div className={styles.header} data-testid="cuePointPreviewHeader">
+          <div className={styles.itemsWrapper} data-testid="cuePointPreviewHeaderItems">
             {this._renderHeader()}
           </div>
           {this.props.shouldRenderArrowButton() && this._renderArrowButton()}

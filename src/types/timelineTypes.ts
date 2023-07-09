@@ -17,7 +17,6 @@ export interface ThumbnailInfo {
 }
 
 export interface TimelineMarkerProps {
-  class: string;
   className: string;
   style: Record<string, any>;
   onMarkerClick: (e: Event) => void;

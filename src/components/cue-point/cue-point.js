@@ -222,7 +222,8 @@ class CuePoint extends preact.Component {
         onMouseLeave={() => this.onMarkerMouseLeave()}
         className={styles.playkitCuePointContainer}
         style={cuePointContainerStyle}
-        ref={this._setMarkerRef}>
+        ref={this._setMarkerRef}
+        data-testid="cuePointContainer">
         {marker.get ? preact.h(marker.get, markerProps) : <div style={markerStyle} className={[...cuePointClassName, marker.className].join(' ')} />}
         {this._markerRef && preview.get ? (
           <div
