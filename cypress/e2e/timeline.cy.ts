@@ -131,22 +131,6 @@ describe('Timeline plugin', () => {
     });
   });
 
-  describe('removeCuePoint', () => {
-    it('Should remove the added cue point', () => {
-      mockKalturaBe();
-      loadPlayer().then(player => {
-        const cuePoint = player.getService('timeline').addCuePoint({
-          time: 50
-        });
-        const markerEl = cy.get('[data-testid="cuePointContainer"]');
-        markerEl.should('exist').then(() => {
-          player.getService('timeline').removeCuePoint(cuePoint);
-          markerEl.should('not.exist');
-        });
-      });
-    });
-  });
-
   describe('setSeekbarPreview', () => {
     it('Should override the seekbar preview with a simple div element', () => {
       mockKalturaBe();
@@ -264,6 +248,25 @@ describe('Timeline plugin', () => {
         const timelineService = player.getService('timeline');
         timelineService.addKalturaCuePoint(10, 'Chapter', '2', 'Chapter 1');
         cy.get('[data-testid="cuePointMarkerContainer"]').should('not.exist');
+      });
+    });
+  });
+
+  describe('removeCuePoint', () => {
+    it('Should remove the added cue point', (done) => {
+      mockKalturaBe();
+      loadPlayer().then(player => {
+        const cuePoint = player.getService('timeline').addCuePoint({
+          time: 50
+        });
+        const markerEl = cy.get('[data-testid="cuePointContainer"]');
+        markerEl.should('exist').then(() => {
+          player.getService('timeline').removeCuePoint(cuePoint);
+          setTimeout(() => {
+            markerEl.should('not.exist');
+            done();
+          }, 500);
+        });
       });
     });
   });
