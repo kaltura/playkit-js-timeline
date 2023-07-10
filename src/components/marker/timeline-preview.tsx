@@ -1,10 +1,9 @@
 import {Component, Fragment, h, VNode} from 'preact';
 import * as styles from './timeline-preview.scss';
-import {icons} from '../icons';
 import {ItemTypes, ThumbnailInfo} from "../../types/timelineTypes";
 import {CuePointMarker} from "../../../flow-typed/types/cue-point-option";
+import {Icon, IconSize} from '@playkit-js/common/dist/icon';
 
-const {Icon} = KalturaPlayer.ui.components;
 const {withText, Text} = KalturaPlayer.ui.preacti18n;
 
 const translates = {
@@ -43,20 +42,17 @@ const getFramePreviewImgStyle = (thumbnailInfo: ThumbnailInfo) => {
 };
 
 interface TitleProps {
-  id: string,
-  iconPath: string,
-  children: VNode | string
+  children: VNode | string,
+  iconName: string
 }
 
-const Title = (({id, iconPath, children}: TitleProps) => {
+const Title = (({iconName, children}: TitleProps) => {
   return (
   <div className={styles.titleWrapper}>
     <Icon
-      id={id}
-      height={icons.SmallSize}
-      width={icons.SmallSize}
-      viewBox={`0 0 ${icons.SmallSize} ${icons.SmallSize}`}
-      path={iconPath}/>
+      size={IconSize.small}
+      name={iconName}
+    />
     <span className={styles.title}>{children}</span>
   </div>
   );
@@ -95,15 +91,13 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
 
     return (
       <Fragment>
-        {chapters.length > 0 &&
-          <Title id={'timeline-chapter-icon'} iconPath={icons.CHAPTER_ICON}>{chapters[0].title}</Title>}
-        {hotspots.length > 0 && <Title id={'timeline-hotspot-icon'} iconPath={icons.HOTSPOT_ICON}>{this.props.hotspotTranslate!}</Title>}
+        {chapters.length > 0 && <Title iconName={'chapter'}>{chapters[0].title}</Title>}
+        {hotspots.length > 0 && <Title iconName={'hotspot'}>{this.props.hotspotTranslate!}</Title>}
         {quizQuestions.length > 0 &&
-          <Title id={'timeline-quiz-question-icon'} iconPath={icons.QUIZ_ICON}>
+          <Title iconName={'quiz'}>
             <span>{`${quizQuestionTitle.type} ${quizQuestionTitle.firstIndex}${quizQuestionTitle.lastIndex}`}</span>
           </Title>}
-        {answerOnAir.length > 0 &&
-          <Title id={'timeline-aoa-icon'} iconPath={icons.AOA_ICON}>{this.props.aoaTranslate!}</Title>}
+        {answerOnAir.length > 0 && <Title iconName={'answerOnAir'}>{this.props.aoaTranslate!}</Title>}
       </Fragment>
     );
   }
@@ -113,10 +107,10 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
     return (
       <Fragment>
         <button className={[styles.markerLink, !isNavigationPluginOpen ? styles.disabled : ''].join(' ')} onClick={this._handleClick} data-testid="previewArrowButton">
-          <Icon id={'timeline-marker-link-close'} height={18} width={18} viewBox={`0 0 ${24} ${24}`} path={icons.PREVIEW_HEADER_ARROW_BUTTON_CLOSE}/>
+          <Icon size={IconSize.medium} name={'arrowClose'} />
         </button>
         <button className={[styles.markerLink, isNavigationPluginOpen ? styles.disabled : ''].join(' ')} onClick={this._handleClick} data-testid="previewArrowButton">
-          <Icon id={"timeline-marker-link-open"} height={18} width={18} viewBox={`0 0 ${24} ${24}`} path={icons.PREVIEW_HEADER_ARROW_BUTTON_OPEN}/>
+          <Icon size={IconSize.medium} name={'arrowOpen'} />
         </button>
       </Fragment>
     );

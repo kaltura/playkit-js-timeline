@@ -1100,10 +1100,10 @@
   dependencies:
     mkdirp "^1.0.4"
 
-"@playkit-js/common@^1.2.11":
-  version "1.2.11"
-  resolved "https://registry.yarnpkg.com/@playkit-js/common/-/common-1.2.11.tgz#23f40b5780a982aaf216c8b89b22b344434a2d0c"
-  integrity sha512-1ipYDn2rio2PW97+GY5R8YG91HjR4ln0cByNstwgJXEOb3z4rISFyCpDXGoy1cLApx9XczhFXXyxmEAWdYcuZw==
+"@playkit-js/common@^1.2.12":
+  version "1.2.12"
+  resolved "https://registry.yarnpkg.com/@playkit-js/common/-/common-1.2.12.tgz#ffb033ec46611d3ddd275bffa9e3446465721110"
+  integrity sha512-J0JNffhaVp3GJ84wAeUF/xPhUIW+SFWY66xo97fi5qmJC+0T5QsE1UgCv8KBHSeP9kEogKr8Ra8sSJdej5OwPQ==
   dependencies:
     "@playkit-js/playkit-js-ui" "^0.77.1"
     classnames "^2.3.2"
