@@ -7,15 +7,10 @@ import {useMemo} from 'preact/hooks';
 import {Chapter} from "../../../flow-typed/types/cue-point-option";
 
 const {
-  redux: {useSelector, useDispatch}
+  redux: {useSelector}
 } = KalturaPlayer.ui;
 
-const {reducers} = KalturaPlayer.ui;
-// @ts-ignore
-const {seekbar} = reducers;
-
 export const TimelineMarker = (({isDisabled, onMarkerClick, getSeekBarNode, useQuizQuestionMarkerSize, setMarkerRef = () => {}, markerStartTime}: TimelineMarkerProps) => {
-  const dispatch = useDispatch();
   const segment: Chapter = useSelector((state: any) => state.seekbar.segments.find((segment: Chapter) => markerStartTime >= segment.startTime && markerStartTime < segment.endTime));
   const hoverActive = useSelector((state: any) => {
     return segment ? segment.isHovered : state.seekbar.hoverActive;
@@ -39,16 +34,6 @@ export const TimelineMarker = (({isDisabled, onMarkerClick, getSeekBarNode, useQ
       }
     };
 
-    const onMouseOver = () => {
-      if (!segment) return;
-      dispatch(seekbar.actions.updateHoveredSegment(segment.id, true));
-    };
-
-    const onMouseOut = () => {
-      if (!segment) return;
-      dispatch(seekbar.actions.updateHoveredSegment(segment.id, false));
-    };
-
     const getTransformValue = (): number => {
       if (useQuizQuestionMarkerSize && isSeekbarSegmented && hoverActive) {
         return -4;
@@ -64,8 +49,6 @@ export const TimelineMarker = (({isDisabled, onMarkerClick, getSeekBarNode, useQ
           ref={setMarkerRef}
           onFocus={handleFocus}
           onBlur={handleBlur}
-          onMouseOver={onMouseOver}
-          onMouseOut={onMouseOut}
           tabIndex={disabled ? -1 : 0}
           data-testid="cuePointMarkerContainer"
           className={`${useQuizQuestionMarkerSize ? styles.quizQuestionMarkerSize : styles.smallMarker} ${hoverActive ? styles.hover : ''}`}

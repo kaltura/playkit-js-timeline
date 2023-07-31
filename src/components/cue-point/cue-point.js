@@ -2,6 +2,7 @@
 import * as KalturaPlayer from '@playkit-js/kaltura-player-js';
 import styles from './cue-point.scss';
 import {cssVarsSupported} from 'css-vars-support';
+import {Chapter} from '../../../flow-typed/types/cue-point-option';
 
 const {preact, redux, reducers, utils, style} = KalturaPlayer.ui;
 const {Utils} = KalturaPlayer.core;
@@ -33,6 +34,7 @@ const SEGMENT_GAP = 2;
 class CuePoint extends preact.Component {
   _markerRef: ?HTMLDivElement;
   _hideTimeBubble: boolean;
+  _relevantSegment: Chapter | undefined;
 
   /**
    * @returns {number} - the marker left position
@@ -111,6 +113,9 @@ class CuePoint extends preact.Component {
       this._hideTimeBubble = true;
       this.props.updateHideSeekbarTimeBubble(true);
     }
+    if (this._relevantSegment && !this._relevantSegment.isHovered) {
+      this.props.updateHoveredSegment(this._relevantSegment.id, true);
+    }
   }
 
   /**
@@ -123,6 +128,9 @@ class CuePoint extends preact.Component {
     if (this._hideTimeBubble) {
       this._hideTimeBubble = false;
       this.props.updateHideSeekbarTimeBubble(false);
+    }
+    if (this._relevantSegment && this._relevantSegment.isHovered) {
+      this.props.updateHoveredSegment(this._relevantSegment.id, false);
     }
   }
 
@@ -148,6 +156,9 @@ class CuePoint extends preact.Component {
    */
   componentDidMount(): void {
     this._hideTimeBubble = false;
+    this._relevantSegment = this.props.seekbarSegments.find(
+      (segment: Chapter) => this.props.time >= segment.startTime && this.props.time < segment.endTime
+    );
   }
 
   /**
