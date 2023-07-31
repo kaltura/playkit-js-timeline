@@ -24,6 +24,7 @@ export interface TimelineMarkerProps {
   getSeekBarNode: () => Element | null;
   useQuizQuestionMarkerSize: boolean;
   setMarkerRef: (node: HTMLDivElement | null) => void;
+  markerStartTime: number;
 }
 
 export interface TimeLineMarker {

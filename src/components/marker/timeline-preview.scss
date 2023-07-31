@@ -16,14 +16,27 @@
     min-height: 32px;
     color: #ffffff;
     font-size: 14px;
+    &.small-player {
+      position: absolute;
+      align-items: flex-start;
+      padding: 0;
+      height: auto;
+      width: 100%;
+    }
     .items-wrapper {
       display: flex;
       flex-direction: row;
       flex-wrap: wrap;
       flex-grow: 1;
+      &.small-player {
+        padding-top: 4px;
+      }
       .title-wrapper {
         display: flex;
         align-items: center;
+        &.small-player {
+          margin-right: 4px;
+        }
         i {
           width: 16px;
           height: 16px;
@@ -38,20 +51,26 @@
         }
       }
     }
-    .markerLink {
-      display: flex;
-      padding: 0;
-      background: transparent;
-      border: none;
-      cursor: pointer;
-      align-self: baseline;
-      i {
-        width: 24px;
-        height: 24px;
-      }
-      &.disabled {
-        display: none !important;
-      }
+  }
+  .title-wrapper &.small-player {
+    margin-right: 4px;
+  }
+  .markerLink {
+    display: flex;
+    padding: 0;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    align-self: baseline;
+    i {
+      width: 24px;
+      height: 24px;
+    }
+    &.small-player {
+      padding-right: 4px;
+    }
+    &.disabled {
+      display: none !important;
     }
   }
 }

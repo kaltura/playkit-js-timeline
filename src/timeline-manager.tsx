@@ -2,6 +2,8 @@ import {h, createRef} from 'preact';
 import * as KalturaPlayer from '@playkit-js/kaltura-player-js';
 // @ts-ignore
 import {CuePoint} from './components/cue-point';
+// @ts-ignore
+import {Preview} from './components/cue-point';
 import {TimelineMarker} from './components/marker/timeline-marker';
 import {
   Chapter,
@@ -12,8 +14,11 @@ import {
 import {SeekbarPreviewOptionsObject} from "../flow-typed/types/seekbar-preview-option";
 import {ThumbnailInfo, TimeLineMarker, TimelineMarkerProps} from "./types/timelineTypes";
 import {TimelinePreview} from "./components/marker/timeline-preview";
-
-const {preact, redux, reducers, style} = KalturaPlayer.ui;
+// @ts-ignore
+import {SegmentsWrapper} from './components/chapters';
+// @ts-ignore
+const {preact, redux, reducers, style, components} = KalturaPlayer.ui;
+const {PLAYER_SIZE} = components;
 // @ts-ignore
 const {actions} = reducers.seekbar;
 // @ts-ignore
@@ -47,22 +52,24 @@ class TimelineManager {
     this._cuePointsMap = new Map();
   }
 
+  get navigationPlugin() {
+    return this._player.getService('navigation') as any;
+  }
+
   private _isNavigationPluginOpen = () => {
-    const navigationPlugin: any = this._player.getService('navigation');
-    if (!navigationPlugin) {
+    if (!this.navigationPlugin) {
       this._logger.warn("navigationPlugin haven't registered");
       return false;
     }
-    return navigationPlugin.isPluginActive();
+    return this.navigationPlugin.isPluginActive();
   };
 
   private _isNavigationPluginVisible = () => {
-    const navigationPlugin: any = this._player.getService('navigation');
-    if (!navigationPlugin) {
+    if (!this.navigationPlugin) {
       this._logger.warn("navigationPlugin haven't registered");
       return false;
     }
-    return navigationPlugin.isVisible();
+    return this.navigationPlugin.isVisible();
   };
 
   private _seekTo = (time: number) => {
@@ -75,32 +82,59 @@ class TimelineManager {
       this._chapters[this._chapters.length - 1].endTime = chapter.startTime;
     }
     this._chapters.push(chapter);
-    this._cuePointsMap.forEach((timelineCuePoint, markerStartTime) => {
-      timelineCuePoint.chaptersData = [];
-      this._chapters.forEach(chapter => {
-        this._maybeAddChapterToMarker(timelineCuePoint, chapter, markerStartTime);
-      });
-    });
-  };
-
-  private _maybeAddChapterToMarker = (timelineCuePoint: TimelineMarkerDataObject, chapter: Chapter, markerStartTime: number) => {
-    if (markerStartTime >= chapter.startTime && markerStartTime <= chapter.endTime) {
-      timelineCuePoint.cuePoints.push(chapter.id);
-      timelineCuePoint.chaptersData!.push({id: chapter.id, type: chapterType, title: chapter.title});
-    }
+    this._addSegmentToSeekbar();
   };
 
   private _toggleNavigationPlugin = () => {
     this._dispatchTimelineEvent('TimelinePreviewArrowClicked');
   };
 
+  private _addSegmentToSeekbar() {
+    const progressBarEl = document.getElementsByClassName('playkit-progress-bar')[0];
+    if (!progressBarEl.classList.contains('playkit-chapters')) progressBarEl.classList.add('playkit-chapters');
+
+    this._store.dispatch(actions.updateSeekbarSegments(this._chapters));
+    this._player.ui.addComponent({
+      label: 'Segmented progress bar',
+      presets: [this._store.getState().shell.activePresetName],
+      area: 'SeekBar',
+      replaceComponent: 'ProgressBar',
+      get: () => (
+        <SegmentsWrapper
+          getThumbnailInfo={() => this._getThumbnailInfo}
+          isNavigationPluginOpen={() => this._isNavigationPluginOpen}
+          shouldRenderArrowButton={() => this._isNavigationPluginVisible}/>
+      )
+    });
+
+    // replace the default seekbar frame preview with timeline preview
+    this._player.ui.addComponent({
+      label: 'Chapter preview',
+      presets: [this._store.getState().shell.activePresetName],
+      area: 'SeekBar',
+      replaceComponent:'SeekBarPreview',
+      get: () => (
+          <TimelinePreview
+            onArrowClick={this._toggleNavigationPlugin}
+            cuePointsData={[]}
+            isNavigationPluginOpen={this._isNavigationPluginOpen}
+            shouldRenderArrowButton={this._isNavigationPluginVisible}
+            thumbnailInfo={this._getThumbnailInfo(this._store.getState().seekbar.virtualTime)}
+          />
+      )
+    });
+  }
+
   addKalturaCuePoint(startTime: number, type: string, cuePointId: string, title?: string, quizQuestionData?: QuizQuestionData) {
+    if (this._store.getState().shell.playerSize === PLAYER_SIZE.TINY) return;
     if (type === chapterType) {
-      const chapter = {
+      const chapter: Chapter = {
         id: cuePointId,
         startTime: startTime,
         title: title!,
-        endTime: this._player.sources.duration!
+        endTime: this._player.sources.duration!,
+        isHovered: false,
+        isDummy: false
       }
       this._handleChapter(chapter);
       return;
@@ -114,7 +148,6 @@ class TimelineManager {
         timelinePreviewRef: createRef(),
         timelineMarkerRef: createRef(),
         useQuizQuestionMarkerSize: type === quizQuestionType,
-        chaptersData: [],
         onMarkerClick: quizQuestionData?.onClick ?? this._seekTo,
         isMarkerDisabled: quizQuestionData?.isMarkerDisabled ?? false
       };
@@ -134,10 +167,6 @@ class TimelineManager {
   }
 
   private _createKalturaCuePoint = (timelineMarkerData: TimelineMarkerDataObject, markerStartTime: number) => {
-    // check if there is a matching chapter and add it to the marker's data
-    this._chapters.forEach(chapter => {
-      this._maybeAddChapterToMarker(timelineMarkerData, chapter, markerStartTime);
-    });
     const setMarkerRef = (node: HTMLDivElement | null) => {
       timelineMarkerData.timelineMarkerRef = node;
     }
@@ -156,6 +185,7 @@ class TimelineManager {
               useQuizQuestionMarkerSize={timelineMarkerData.useQuizQuestionMarkerSize}
               isDisabled={timelineMarkerData.isMarkerDisabled}
               setMarkerRef={setMarkerRef}
+              markerStartTime={markerStartTime}
             />
           );
         }
@@ -169,7 +199,6 @@ class TimelineManager {
               ref={timelineMarkerData.timelinePreviewRef}
               onArrowClick={this._toggleNavigationPlugin}
               cuePointsData={timelineMarkerData.cuePointsData}
-              chaptersData={timelineMarkerData.chaptersData}
               isNavigationPluginOpen={this._isNavigationPluginOpen}
               shouldRenderArrowButton={this._isNavigationPluginVisible}
               thumbnailInfo={this._getThumbnailInfo(markerStartTime)}

@@ -47,7 +47,6 @@ export type TimelineMarkerDataObject = MarkerOptionsObject & {
   timelinePreviewRef: any,
   timelineMarkerRef: any,
   cuePointsData: Array<CuePointMarker>,
-  chaptersData: any,
   useQuizQuestionMarkerSize: boolean,
   onMarkerClick: any,
   isMarkerDisabled: any
@@ -64,5 +63,7 @@ export type Chapter = {
   id: string,
   title: string,
   startTime: number,
-  endTime: number
+  endTime: number,
+  isDummy?: boolean,
+  isHovered: boolean
 };
