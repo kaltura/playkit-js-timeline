@@ -34,7 +34,6 @@ const SEGMENT_GAP = 2;
 class CuePoint extends preact.Component {
   _markerRef: ?HTMLDivElement;
   _hideTimeBubble: boolean;
-  _relevantSegment: Chapter | undefined;
 
   /**
    * @returns {number} - the marker left position
@@ -113,8 +112,9 @@ class CuePoint extends preact.Component {
       this._hideTimeBubble = true;
       this.props.updateHideSeekbarTimeBubble(true);
     }
-    if (this._relevantSegment && !this._relevantSegment.isHovered) {
-      this.props.updateHoveredSegment(this._relevantSegment.id, true);
+    const segment = this.props.seekbarSegments.find((segment: Chapter) => this.props.time >= segment.startTime && this.props.time < segment.endTime);
+    if (segment && !segment.isHovered) {
+      this.props.updateHoveredSegment(segment.id, true);
     }
   }
 
@@ -129,8 +129,9 @@ class CuePoint extends preact.Component {
       this._hideTimeBubble = false;
       this.props.updateHideSeekbarTimeBubble(false);
     }
-    if (this._relevantSegment && this._relevantSegment.isHovered) {
-      this.props.updateHoveredSegment(this._relevantSegment.id, false);
+    const segment = this.props.seekbarSegments.find((segment: Chapter) => this.props.time >= segment.startTime && this.props.time < segment.endTime);
+    if (segment && segment.isHovered) {
+      this.props.updateHoveredSegment(segment.id, false);
     }
   }
 
@@ -156,9 +157,6 @@ class CuePoint extends preact.Component {
    */
   componentDidMount(): void {
     this._hideTimeBubble = false;
-    this._relevantSegment = this.props.seekbarSegments.find(
-      (segment: Chapter) => this.props.time >= segment.startTime && this.props.time < segment.endTime
-    );
   }
 
   /**
