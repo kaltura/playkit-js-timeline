@@ -90,15 +90,15 @@ class TimelineManager {
   };
 
   private _addSegmentToSeekbar() {
-    const progressBarEl = document.getElementsByClassName('playkit-progress-bar')[0];
-    if (!progressBarEl.classList.contains('playkit-chapters')) progressBarEl.classList.add('playkit-chapters');
+    const progressBarEl = document.getElementsByClassName(style.progressBar)[0];
+    if (!progressBarEl.classList.contains(style.chapters)) progressBarEl.classList.add('playkit-chapters');
 
     this._store.dispatch(actions.updateSeekbarSegments(this._chapters));
     this._player.ui.addComponent({
       label: 'Segmented progress bar',
       presets: [this._store.getState().shell.activePresetName],
       area: 'SeekBar',
-      replaceComponent: 'ProgressBar',
+      replaceComponent: 'ProgressIndicator',
       get: () => (
         <SegmentsWrapper
           getThumbnailInfo={() => this._getThumbnailInfo}

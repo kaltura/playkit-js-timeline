@@ -116,7 +116,7 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
 
     const className = [styles.titleWrapper, isSmallPlayer ? styles.smallPlayer : ''].join(' ');
     return (
-      <div className={[styles.itemsWrapper, isSmallPlayer ? styles.smallPlayer : ''].join(' ')} data-testid="cuePointPreviewHeaderItems">
+      <Fragment>
         {relevantChapter && relevantChapter.title && <Title iconName={'chapter'} shouldDisplayTitle className={className}>{relevantChapter.title}</Title>}
         {hotspots.length > 0 && <Title iconName={'hotspot'} shouldDisplayTitle className={className}>{this.props.hotspotTranslate!}</Title>}
         {quizQuestions.length > 0 &&
@@ -124,7 +124,7 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
             <span>{`${quizQuestionTitle.type} ${quizQuestionTitle.firstIndex}${quizQuestionTitle.lastIndex}`}</span>
           </Title>}
         {answerOnAir.length > 0 && <Title iconName={'answerOnAir'} shouldDisplayTitle className={className}>{this.props.aoaTranslate!}</Title>}
-      </div>
+      </Fragment>
     );
   }
 

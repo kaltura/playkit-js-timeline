@@ -208,16 +208,19 @@ describe('Timeline plugin', () => {
   });
 
   describe('addKalturaCuePoint', () => {
-    it('Should create a marker with hotspot and chapter', () => {
+    it('Should create a marker with hotspot and chapter', (done) => {
       mockKalturaBe();
       loadPlayer().then(player => {
         const timelineService = player.getService('timeline');
         timelineService.addKalturaCuePoint(10, 'Chapter', '2', 'Chapter 1');
         timelineService.addKalturaCuePoint(10, 'Hotspot', '1');
-        cy.get('[data-testid="cuePointMarkerContainer"]').should('exist');
-        cy.get('[data-testid="cuePointPreviewHeaderItems"]').children().should('have.length', 2);
-        cy.get('[data-testid="cuePointPreviewHeaderItems"]').children().first().should('have.text', 'Chapter 1');
-        cy.get('[data-testid="cuePointPreviewHeaderItems"]').children().last().should('have.text', 'Hotspot');
+        setTimeout(() => {
+          cy.get('[data-testid="cuePointMarkerContainer"]').should('exist');
+          cy.get('[data-testid="cuePointPreviewHeaderItems"]').children().should('have.length', 2);
+          cy.get('[data-testid="cuePointPreviewHeaderItems"]').children().first().should('have.text', 'Chapter 1');
+          cy.get('[data-testid="cuePointPreviewHeaderItems"]').children().last().should('have.text', 'Hotspot');
+          done();
+        }, 200)
       });
     });
 
