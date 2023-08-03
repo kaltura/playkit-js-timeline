@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "skipLibCheck": true,
+    "target": "es2017",
+    "module": "commonjs",
+    "allowJs": false,
+    "jsx": "react",
+    "jsxFactory": "h",
+    "sourceMap": true,
+    "strict": true,
+    "moduleResolution": "Node",
+    "baseUrl": "..",
+    "preserveSymlinks": true,
+    "paths": {
+      "*": ["../node_modules/*", "./src", "cypress.config.ts"]
+    },
+    "types": ["cypress", "node"],
+    "lib": ["es2015", "dom"]
+  },
+  "include": ["cypress/e2e/*.ts", "src/**/*.tsx", "src/**/*.ts", "custom.d.ts", "node_modules/@playkit-js/kaltura-player-js/ts-typed"]
+}

@@ -1,0 +1,41 @@
+@import '../../theme.scss';
+
+.quizQuestionMarkerSize {
+  display: flex;
+  justify-content: center;
+  width: 12px;
+  height: 8px;
+  transform: translateY(calc($progress-bar-height / -2));
+  background-color: transparent;
+  outline-offset: 1px;
+  &.hover {
+    height: 12px;
+    transition: height 200ms ease, transform 200ms ease;
+  }
+  .marker {
+    width: 4px;
+    height: 100%;
+    border-radius: 2px;
+    background-color: #ffffff;
+  }
+}
+
+.smallMarker {
+  width: 2px;
+  height: 4px;
+  display: flex;
+  justify-content: center;
+  background-color: transparent;
+  outline-offset: 1px;
+  &.hover {
+    height: 8px;
+    transition: height 200ms ease, transform 200ms ease;
+    border-radius: 2px;
+  }
+  .marker {
+    width: 4px;
+    height: 100%;
+    background-color: #ffffff;
+    border-radius: 2px;
+  }
+}

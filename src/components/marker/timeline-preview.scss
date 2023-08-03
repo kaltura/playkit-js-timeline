@@ -1,0 +1,76 @@
+@import '../../theme.scss';
+
+.container {
+  background: rgba(0, 0, 0, 0.7);
+  background-clip: content-box;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: $roundness-1;
+  width: auto;
+  height: auto;
+  cursor: default;
+  .header {
+    display: flex;
+    align-items: center;
+    padding: 7px;
+    height: 100%;
+    min-height: 32px;
+    color: #ffffff;
+    font-size: 14px;
+    &.small-player {
+      position: absolute;
+      align-items: flex-start;
+      padding: 0;
+      height: auto;
+      width: 100%;
+    }
+    .items-wrapper {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      flex-grow: 1;
+      &.small-player {
+        padding-top: 4px;
+      }
+      .title-wrapper {
+        display: flex;
+        align-items: center;
+        &.small-player {
+          margin-right: 4px;
+        }
+        i {
+          width: 16px;
+          height: 16px;
+        }
+        .title {
+          flex-grow: 1;
+          margin: 0 8px 0 2px;
+          text-align: left;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+      }
+    }
+  }
+  .title-wrapper &.small-player {
+    margin-right: 4px;
+  }
+  .markerLink {
+    display: flex;
+    padding: 0;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    align-self: baseline;
+    i {
+      width: 24px;
+      height: 24px;
+    }
+    &.small-player {
+      padding-right: 4px;
+    }
+    &.disabled {
+      display: none !important;
+    }
+  }
+}

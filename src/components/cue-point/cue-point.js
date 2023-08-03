@@ -1,14 +1,11 @@
 //@flow
 import * as KalturaPlayer from '@playkit-js/kaltura-player-js';
-import './cue-point.css';
+import styles from './cue-point.scss';
 import {cssVarsSupported} from 'css-vars-support';
+import {Chapter} from '../../../flow-typed/types/cue-point-option';
 
 const {preact, redux, reducers, utils, style} = KalturaPlayer.ui;
 const {Utils} = KalturaPlayer.core;
-
-const CUE_POINT_CONTAINER_CLASS: string = 'playkit-cue-point-container';
-const CUE_POINT_PREVIEW_CONTAINER_CLASS: string = 'playkit-cue-point-preview-container';
-const CUE_POINT_CLASS: string = 'playkit-cue-point';
 
 /**
  * mapping state to props
@@ -20,10 +17,12 @@ const mapStateToProps = state => ({
   duration: state.engine.duration,
   seekbarClientRect: state.seekbar.clientRect,
   hideTimeBubble: state.seekbar.hideTimeBubble,
-  virtualTime: state.seekbar.virtualTime
+  virtualTime: state.seekbar.virtualTime,
+  seekbarSegments: state.seekbar.segments
 });
 
 const COMPONENT_NAME = 'CuePoint';
+const SEGMENT_GAP = 2;
 
 /**
  * CuePoint component
@@ -42,6 +41,7 @@ class CuePoint extends preact.Component {
    */
   _getMarkerPositionStyle(): {left: string, edge: string} {
     const styleObj = {left: '0', edge: 'Left'};
+    let left = 0;
     if (this._markerRef && this.props.duration) {
       const markerRect = this._markerRef.getBoundingClientRect();
       const seekbarRect = this.props.seekbarClientRect;
@@ -50,13 +50,23 @@ class CuePoint extends preact.Component {
       const markerPosition = (this.props.time < this.props.duration ? this.props.time / this.props.duration : 1) * seekbarWidth;
       if (markerPosition - markerWidth / 2 > 0) {
         if (markerPosition + markerWidth / 2 > seekbarWidth) {
-          styleObj.left = `${seekbarWidth - markerWidth}px`;
+          left = seekbarWidth - markerWidth;
           styleObj.edge = 'Right';
         } else {
-          styleObj.left = `${markerPosition - markerWidth / 2}px`;
+          left = markerPosition - markerWidth / 2;
           styleObj.edge = 'none';
         }
       }
+      // when the seekbar is segmented there are gaps of 2px each;
+      // hence, we need to move the marker according to the amount of segments before each marker
+      if (this.props.seekbarSegments.length) {
+        let segmentsBeforeMarker = 0;
+        this.props.seekbarSegments.forEach(segment => {
+          if (this.props.time >= segment.endTime) segmentsBeforeMarker++;
+        });
+        left += SEGMENT_GAP * segmentsBeforeMarker;
+      }
+      styleObj.left = `${left}px`;
     }
     return styleObj;
   }
@@ -102,6 +112,10 @@ class CuePoint extends preact.Component {
       this._hideTimeBubble = true;
       this.props.updateHideSeekbarTimeBubble(true);
     }
+    const segment = this.props.seekbarSegments.find((segment: Chapter) => this.props.time >= segment.startTime && this.props.time < segment.endTime);
+    if (segment && !segment.isHovered) {
+      this.props.updateHoveredSegment(segment.id, true);
+    }
   }
 
   /**
@@ -114,6 +128,10 @@ class CuePoint extends preact.Component {
     if (this._hideTimeBubble) {
       this._hideTimeBubble = false;
       this.props.updateHideSeekbarTimeBubble(false);
+    }
+    const segment = this.props.seekbarSegments.find((segment: Chapter) => this.props.time >= segment.startTime && this.props.time < segment.endTime);
+    if (segment && segment.isHovered) {
+      this.props.updateHoveredSegment(segment.id, false);
     }
   }
 
@@ -188,7 +206,7 @@ class CuePoint extends preact.Component {
 
     const markerStyle = {backgroundColor: marker.color, width: marker.width};
     const cuePointClassName = [
-      CUE_POINT_CLASS,
+      styles.playkitCuePoint,
       this.state.hover ? style.hover : '',
       edge !== 'none' ? `playkit-${edge.toLowerCase()}-border-radius` : ''
     ];
@@ -224,15 +242,18 @@ class CuePoint extends preact.Component {
       <div
         onMouseOver={() => this.onMarkerMouseOver()}
         onMouseLeave={() => this.onMarkerMouseLeave()}
-        className={CUE_POINT_CONTAINER_CLASS}
+        className={styles.playkitCuePointContainer}
         style={cuePointContainerStyle}
-        ref={this._setMarkerRef}>
+        ref={this._setMarkerRef}
+        data-testid="cuePointContainer">
         {marker.get ? preact.h(marker.get, markerProps) : <div style={markerStyle} className={[...cuePointClassName, marker.className].join(' ')} />}
         {this._markerRef && preview.get ? (
           <div
             onMouseOver={() => this.onPreviewMouseOver()}
             onMouseLeave={() => this.onPreviewMouseLeave()}
-            className={preview.sticky === false ? [CUE_POINT_PREVIEW_CONTAINER_CLASS, style.nonSticky].join(' ') : CUE_POINT_PREVIEW_CONTAINER_CLASS}
+            className={
+              preview.sticky === false ? [styles.playkitCuePointPreviewContainer, style.nonSticky].join(' ') : styles.playkitCuePointPreviewContainer
+            }
             style={{
               left: `${this._getPreviewPosition(previewWidth)}px`
             }}>
