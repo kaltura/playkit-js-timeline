@@ -186,7 +186,7 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
   };
 
   private _shouldRenderHeader(relevantChapter: Chapter | undefined): boolean {
-    return this.props.playerSize !== 'small' && (this.props.cuePointsData.length > 0 || !relevantChapter?.isDummy!);
+    return this.props.playerSize !== PLAYER_SIZE.SMALL && (this.props.cuePointsData.length > 0 || !relevantChapter?.isDummy!);
   }
 
   onMouseOver = (relevantChapter: Chapter | undefined) => {

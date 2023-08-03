@@ -51,15 +51,14 @@ class SeekBarSegment extends Component {
    * @private
    */
   _getSegmentWidth(): number {
-    let width = 0;
     if (this._segmentEl && this.props.duration) {
       const seekbarRect = this.props.seekbarClientRect;
       const seekbarWidth = seekbarRect.width;
       const segmentStartTimePosition = (this.props.startTime < this.props.duration ? this.props.startTime / this.props.duration : 1) * seekbarWidth;
       const segmentEndTimePosition = (this.props.endTime < this.props.duration ? this.props.endTime / this.props.duration : 1) * seekbarWidth;
-      width = segmentEndTimePosition - segmentStartTimePosition;
+      return segmentEndTimePosition - segmentStartTimePosition;
     }
-    return width;
+    return 0;
   }
 
   /**
