@@ -202,6 +202,7 @@ class TimelineManager {
               isNavigationPluginOpen={this._isNavigationPluginOpen}
               shouldRenderArrowButton={this._isNavigationPluginVisible}
               thumbnailInfo={this._getThumbnailInfo(markerStartTime)}
+              markerStartTime={markerStartTime}
             />
           );
         },
