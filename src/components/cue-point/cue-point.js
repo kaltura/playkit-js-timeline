@@ -18,7 +18,8 @@ const mapStateToProps = state => ({
   seekbarClientRect: state.seekbar.clientRect,
   hideTimeBubble: state.seekbar.hideTimeBubble,
   virtualTime: state.seekbar.virtualTime,
-  seekbarSegments: state.seekbar.segments
+  seekbarSegments: state.seekbar.segments,
+  hoverActive: state.seekbar.hoverActive
 });
 
 const COMPONENT_NAME = 'CuePoint';
@@ -189,7 +190,7 @@ class CuePoint extends preact.Component {
    * @returns {React$Element} - component element
    */
   render(props: any): React$Element<any> | void {
-    const {marker, preview, virtualTime, config} = props;
+    const {marker, preview, virtualTime, config, hoverActive} = props;
     const {edge, left} = this._getMarkerPositionStyle();
 
     const cuePointContainerStyle = {left};
@@ -251,9 +252,11 @@ class CuePoint extends preact.Component {
           <div
             onMouseOver={() => this.onPreviewMouseOver()}
             onMouseLeave={() => this.onPreviewMouseLeave()}
-            className={
-              preview.sticky === false ? [styles.playkitCuePointPreviewContainer, style.nonSticky].join(' ') : styles.playkitCuePointPreviewContainer
-            }
+            className={[
+              styles.playkitCuePointPreviewContainer,
+              hoverActive ? styles.hoverActive : '',
+              preview.sticky === false ? style.nonSticky : ''
+            ].join(' ')}
             style={{
               left: `${this._getPreviewPosition(previewWidth)}px`
             }}>
