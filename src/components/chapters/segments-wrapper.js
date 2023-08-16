@@ -75,7 +75,7 @@ class SegmentsWrapper extends Component {
 
   render(props: any): React$Element<any> {
     return (
-      <div className={styles.chaptersContainer}>
+      <div className={styles.chaptersContainer} data-testid={'segmentsWrapper'}>
         {props.segments.map((chapter: any) => {
           return (
             <SeekBarSegment
