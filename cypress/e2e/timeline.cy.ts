@@ -207,7 +207,7 @@ describe('Timeline plugin', () => {
     });
   });
 
-  describe('addKalturaCuePoint', () => {
+  describe('Advanced Timeline', () => {
     it('Should create a marker with hotspot and chapter', (done) => {
       mockKalturaBe();
       loadPlayer().then(player => {
@@ -245,12 +245,81 @@ describe('Timeline plugin', () => {
       });
     });
 
+    it('Should display the marker preview if focusing on the marker', () => {
+      mockKalturaBe();
+      loadPlayer().then(player => {
+        const timelineService = player.getService('timeline');
+        timelineService.addKalturaCuePoint(10, 'Hotspot', '1');
+        cy.get('[data-testid="cuePointContainer"]').should('exist');
+        cy.wait(1000);
+        cy.get('[data-testid="cuePointMarkerContainer"]').focus();
+        cy.get('[data-testid="cuePointPreviewContainer"]').parent().should('have.css', 'display', 'block');
+      });
+    });
+
     it('Should not create a marker if only chapter exists', () => {
       mockKalturaBe();
       loadPlayer().then(player => {
         const timelineService = player.getService('timeline');
         timelineService.addKalturaCuePoint(10, 'Chapter', '2', 'Chapter 1');
         cy.get('[data-testid="cuePointMarkerContainer"]').should('not.exist');
+      });
+    });
+
+    it('Should add segments to seekbar', () => {
+      mockKalturaBe();
+      loadPlayer().then(player => {
+        const timelineService = player.getService('timeline');
+        timelineService.addKalturaCuePoint(0, 'Chapter', '1', 'Chapter 1');
+        timelineService.addKalturaCuePoint(18, 'Chapter', '2', 'Chapter 2');
+        cy.get('[data-testid="segmentsWrapper"]').should('exist');
+        cy.get('[data-testid="segmentsWrapper"]').children().should('have.length', 2);
+      });
+    });
+
+    it('Should add a dummy segment', () => {
+      mockKalturaBe();
+      loadPlayer().then(player => {
+        const timelineService = player.getService('timeline');
+        timelineService.addKalturaCuePoint(10, 'Chapter', '1', 'Chapter 1');
+        timelineService.addKalturaCuePoint(18, 'Chapter', '2', 'Chapter 2');
+        cy.get('[data-testid="segmentsWrapper"]').should('exist');
+        cy.get('[data-testid="segmentsWrapper"]').children().should('have.length', 3);
+      });
+    });
+
+    it('Should test preview header for dummy segment', (done) => {
+      mockKalturaBe();
+      loadPlayer().then(player => {
+        const timelineService = player.getService('timeline');
+        timelineService.addKalturaCuePoint(10, 'Chapter', '1', 'Chapter 1');
+        timelineService.addKalturaCuePoint(18, 'Chapter', '2', 'Chapter 2');
+        cy.get('[data-testid="segmentsWrapper"]').should('exist');
+        cy.get('[data-testid="segmentsWrapper"]').children().should('have.length', 3);
+
+        // dummy chapter should not have preview header
+        cy.get('[data-testid="segmentsWrapper"]').children().first().trigger('mouseover', {force: true}).then(() => {
+          cy.get('[data-testid="cuePointPreviewHeader"]').should('not.exist');
+          cy.get('[data-testid="segmentsWrapper"]').children().first().trigger('mouseleave', {force: true}).then(() => done());
+        });
+      });
+    });
+
+    it('Should test preview header for a non-dummy segment', (done) => {
+      mockKalturaBe();
+      loadPlayer().then(player => {
+        const timelineService = player.getService('timeline');
+        timelineService.addKalturaCuePoint(0, 'Chapter', '1', 'Chapter 1');
+        timelineService.addKalturaCuePoint(18, 'Chapter', '2', 'Chapter 2');
+        cy.get('[data-testid="segmentsWrapper"]').should('exist');
+        cy.get('[data-testid="segmentsWrapper"]').children().should('have.length', 2);
+
+        // non-dummy chapter should have preview header with the chapter's title
+        cy.get('[data-testid="segmentsWrapper"]').children().first().trigger('mouseover', {force: true}).then(() => {
+          cy.get('[data-testid="cuePointPreviewHeader"]').should('exist');
+          cy.get('[data-testid="cuePointPreviewHeaderItems"]').should('exist').should('have.text', 'Chapter 1');
+          cy.get('[data-testid="segmentsWrapper"]').children().first().trigger('mouseleave', {force: true}).then(() => done());
+        });
       });
     });
   });
