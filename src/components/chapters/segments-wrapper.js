@@ -87,8 +87,6 @@ class SegmentsWrapper extends Component {
               isHovered={chapter.isHovered}
               isDummy={chapter.isDummy}
               getThumbnailInfo={props.getThumbnailInfo}
-              isNavigationPluginOpen={props.isNavigationPluginOpen}
-              shouldRenderArrowButton={props.shouldRenderArrowButton}
             />
           );
         })}

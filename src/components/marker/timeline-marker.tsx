@@ -3,7 +3,7 @@ import * as KalturaPlayer from '@playkit-js/kaltura-player-js';
 import * as styles from './timeline-marker.scss';
 import type {TimelineMarkerProps} from '../../types/timelineTypes';
 import {A11yWrapper} from '@playkit-js/common/dist/hoc/a11y-wrapper';
-import {useMemo} from 'preact/hooks';
+import {useMemo, useRef, useEffect} from 'preact/hooks';
 import {Chapter} from "../../../flow-typed/types/cue-point-option";
 
 const {
@@ -18,6 +18,8 @@ export const TimelineMarker = (({isDisabled, onMarkerClick, getSeekBarNode, useQ
   const isSeekbarSegmented = !!segment;
   useSelector((state: any) => state.seekbar); // trigger update of marker component
   const disabled = typeof isDisabled === 'boolean' ? isDisabled : isDisabled();
+  const markerRef = useRef<HTMLDivElement>(null);
+  useEffect(() => setMarkerRef(markerRef?.current), []);
   const renderMarker = useMemo(() => {
     const handleFocus = () => {
       const seekBarNode = getSeekBarNode();
@@ -43,12 +45,21 @@ export const TimelineMarker = (({isDisabled, onMarkerClick, getSeekBarNode, useQ
       return 0;
     };
 
+    const onMouseOver = () => {
+      if(markerRef?.current && !useQuizQuestionMarkerSize && isSeekbarSegmented) {
+        markerRef.current.style.width = '12px';
+        markerRef.current.style.height = '12px';
+        markerRef.current.style.transform = 'translateY(-4px)';
+      }
+    }
+
     return (
       <A11yWrapper onClick={onMarkerClick}>
         <div
-          ref={setMarkerRef}
+          ref={markerRef}
           onFocus={handleFocus}
           onBlur={handleBlur}
+          onMouseOver={onMouseOver}
           tabIndex={disabled ? -1 : 0}
           data-testid="cuePointMarkerContainer"
           className={`${useQuizQuestionMarkerSize ? styles.quizQuestionMarkerSize : styles.smallMarker} ${hoverActive ? styles.hover : ''}`}

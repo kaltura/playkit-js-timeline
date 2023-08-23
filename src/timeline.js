@@ -33,7 +33,10 @@ class Timeline extends BasePlugin {
    */
   constructor(name: string, player: Player, config: Object) {
     super(name, player, config);
-    this.player.registerService('timeline', new TimelineManager(this.player, this.logger, (event: string) => this.dispatchEvent(event)));
+    this.player.registerService(
+      'timeline',
+      new TimelineManager(this.player, this.logger, (event: string, payload: any) => this.dispatchEvent(event, payload))
+    );
   }
 
   get ready(): Promise<*> {
