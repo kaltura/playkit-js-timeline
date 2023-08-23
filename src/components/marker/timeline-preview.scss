@@ -31,21 +31,22 @@
       width: 100%;
       top: 40px;
       left: 4px;
+      .items-wrapper {
+        padding-top: 4px;
+        .title-wrapper {
+          margin-right: 4px;
+        }
+      }
+
     }
     .items-wrapper {
       display: flex;
       flex-direction: row;
       flex-wrap: nowrap;
       flex-grow: 1;
-      &.xs-player {
-        padding-top: 4px;
-      }
       .title-wrapper {
         display: flex;
         align-items: center;
-        &.xs-player {
-          margin-right: 4px;
-        }
         i {
           width: 16px;
           height: 16px;

@@ -81,7 +81,7 @@ class TimelineManager {
   private _toggleNavigationPlugin = (e: OnClickEvent, byKeyboard: boolean | undefined, cuePointType: string) => {
     if (this._isNavigationPluginVisible()) {
       // focus to tab in navigation according to the type
-      this._dispatchTimelineEvent('TimelinePreviewArrowClicked', {e: e, byKeyboard: byKeyboard, cuePointType: cuePointType});
+      this._dispatchTimelineEvent('TimelinePreviewArrowClicked', {e, byKeyboard, cuePointType});
     }
   };
 

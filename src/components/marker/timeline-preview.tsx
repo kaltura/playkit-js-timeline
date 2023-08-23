@@ -93,7 +93,7 @@ const mapStateToProps = (state: State, {markerStartTime}: TimelinePreviewProps) 
   const previewTime = markerStartTime !== undefined ? markerStartTime : state.seekbar.virtualTime!;
   const relevantChapter = state.seekbar.segments!.find(chapter => chapter.startTime <= previewTime && previewTime < chapter.endTime);
   return {
-    isExtraSmallPlayer: [PLAYER_SIZE.EXTRA_SMALL].includes(state.shell.playerSize),
+    isExtraSmallPlayer: state.shell.playerSize === PLAYER_SIZE.EXTRA_SMALL,
     hidePreview: state.shell.playerSize === PLAYER_SIZE.TINY,
     relevantChapter,
     virtualTime: state.seekbar.virtualTime,
@@ -107,14 +107,20 @@ const mapDispatchToProps = (dispatch: any) => {
   };
 };
 
+const DEFAULT_THUMB_WIDTH = 164;
+
 @withText(translates)
 @connect(mapStateToProps, mapDispatchToProps)
 export class TimelinePreview extends Component<TimelinePreviewProps> {
-  _previewHeaderElement: HTMLElement | undefined = undefined;
-  _thumbnailContainerElement: HTMLElement | undefined = undefined;
+  _previewHeaderElement: HTMLElement | null = null;
+  _thumbnailContainerElement: HTMLElement | null = null;
 
   componentDidUpdate() {
     // force update the header title style in case the text was changed
+    this.calculateLeftPosition()
+  }
+
+  public calculateLeftPosition() {
     const left = this._getPreviewHeaderLeft();
     if (left !== null && this._previewHeaderElement) {
       this._previewHeaderElement.style.left = `${this._getPreviewHeaderLeft()}px`;
@@ -136,17 +142,9 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
     }
 
     const className = [styles.titleWrapper, this.props.isExtraSmallPlayer ? styles.xsPlayer : ''].join(' ');
-    if (relevantChapter && this.props.cuePointsData.length === 0) {
+    if (!this.props.cuePointsData.length && relevantChapter?.title) {
       // not a marker - render only chapter
-      return (
-        <Fragment>
-          {relevantChapter.title && (
-            <Title iconName={'chapter'} shouldDisplayTitle className={className}>
-              {relevantChapter.title}
-            </Title>
-          )}
-        </Fragment>
-      );
+      return <Title iconName={'chapter'} shouldDisplayTitle className={className}>{relevantChapter.title}</Title>;
     }
     return (
       <Fragment>
@@ -187,31 +185,23 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
 
   private _renderSmallPlayerHeader(relevantChapter: Chapter | undefined, data: any) {
     const {quizQuestions, hotspots, answerOnAir} = data;
-    const titleClassName = [styles.titleWrapper, this.props.isExtraSmallPlayer ? styles.xsPlayer : ''].join(' ');
-    const itemsWrapperClassName = [styles.itemsWrapper, this.props.isExtraSmallPlayer ? styles.xsPlayer : ''].join(' ');
 
     const renderItems = () => {
       if (relevantChapter && this.props.cuePointsData.length === 0) {
-        return <Title iconName={'chapter'} shouldDisplayTitle={false} className={titleClassName} />;
-      } else {
-        return (
-          <Fragment>
-            {hotspots.length > 0 && <Title iconName={'hotspot'} shouldDisplayTitle={false} className={titleClassName} />}
-            {quizQuestions.length > 0 && <Title iconName={'quiz'} shouldDisplayTitle={false} className={titleClassName} />}
-            {answerOnAir.length > 0 && <Title iconName={'answerOnAir'} shouldDisplayTitle={false} className={titleClassName} />}
-          </Fragment>
-        );
+        return relevantChapter.isDummy ? null : <Title iconName={'chapter'} shouldDisplayTitle={false} className={styles.titleWrapper} />;
       }
+      return (
+        <Fragment>
+          {hotspots.length > 0 && <Title iconName={'hotspot'} shouldDisplayTitle={false} className={styles.titleWrapper} />}
+          {quizQuestions.length > 0 && <Title iconName={'quiz'} shouldDisplayTitle={false} className={styles.titleWrapper} />}
+          {answerOnAir.length > 0 && <Title iconName={'answerOnAir'} shouldDisplayTitle={false} className={styles.titleWrapper} />}
+        </Fragment>
+      );
     }
-
     return (
       <div className={[styles.header, styles.xsPlayer].join(' ')}>
-        <div className={itemsWrapperClassName} data-testid="cuePointPreviewHeaderItems">
+        <div className={styles.itemsWrapper} data-testid="cuePointPreviewHeaderItems">
           {renderItems()}
-          {/*{relevantChapter && <Title iconName={'chapter'} shouldDisplayTitle={false} className={titleClassName} />}*/}
-          {/*{hotspots.length > 0 && <Title iconName={'hotspot'} shouldDisplayTitle={false} className={titleClassName} />}*/}
-          {/*{quizQuestions.length > 0 && <Title iconName={'quiz'} shouldDisplayTitle={false} className={titleClassName} />}*/}
-          {/*{answerOnAir.length > 0 && <Title iconName={'answerOnAir'} shouldDisplayTitle={false} className={titleClassName} />}*/}
         </div>
       </div>
     );
@@ -260,7 +250,7 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
 
       if (!seekbarClientRects || !thumbClientRects || !headerClientRects) return null;
       const headerWidth = headerClientRects.width;
-      const thumbWidth = thumbClientRects.width || 164;
+      const thumbWidth = thumbClientRects.width || DEFAULT_THUMB_WIDTH;
       const thumbLeft = thumbClientRects.left;
       const thumbRight = thumbClientRects.right;
 
@@ -303,7 +293,7 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
         onMouseLeave={() => this.onMouseLeave(relevantChapter)}>
         {this._shouldRenderHeader(relevantChapter) ? (
           <A11yWrapper onClick={this.onPreviewHeaderClick}>
-            <div className={styles.header} ref={c => (c ? (this._previewHeaderElement = c) : undefined)} data-testid="cuePointPreviewHeader" style={previewHeaderStyle} tabIndex={0}>
+            <div className={styles.header} ref={node => this._previewHeaderElement = node} data-testid="cuePointPreviewHeader" style={previewHeaderStyle} tabIndex={0}>
               <div className={styles.itemsWrapper} data-testid="cuePointPreviewHeaderItems">
                 {this._renderHeader(relevantChapter, data)}
               </div>
@@ -314,7 +304,7 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
           className={styles.imageContainer}
           style={getFramePreviewImgContainerStyle(thumbnailInfo)}
           onMouseDown={this.onThumbnailClick}
-          ref={c => (c ? (this._thumbnailContainerElement = c) : undefined)}>
+          ref={node => this._thumbnailContainerElement = node}>
           {isExtraSmallPlayer ? this._renderSmallPlayerHeader(relevantChapter, data) : null}
           <div style={getFramePreviewImgStyle(thumbnailInfo)} />
         </div>
