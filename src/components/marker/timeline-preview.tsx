@@ -113,6 +113,14 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
   _previewHeaderElement: HTMLElement | undefined = undefined;
   _thumbnailContainerElement: HTMLElement | undefined = undefined;
 
+  componentDidUpdate() {
+    // force update the header title style in case the text was changed
+    const left = this._getPreviewHeaderLeft();
+    if (left !== null && this._previewHeaderElement) {
+      this._previewHeaderElement.style.left = `${this._getPreviewHeaderLeft()}px`;
+    }
+  }
+
   private _renderHeader(relevantChapter: Chapter | undefined, data: any) {
     const {quizQuestions, hotspots, answerOnAir} = data;
 
@@ -244,14 +252,14 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
     // this.props.toggleNavigationPlugin(this.props.cuePointsData[0].type);
   }
 
-  _getPreviewHeaderStyle(): string {
+  _getPreviewHeaderLeft(): number | null {
     const seekBarElement = this.props.getSeekBarNode();
     if (seekBarElement && this._previewHeaderElement) {
       const headerClientRects = this._previewHeaderElement.getClientRects()[0];
       const seekbarClientRects = seekBarElement.getClientRects()[0];
       const thumbClientRects = this._thumbnailContainerElement?.getClientRects()[0];
 
-      if (!seekbarClientRects || !thumbClientRects || !headerClientRects) return '';
+      if (!seekbarClientRects || !thumbClientRects || !headerClientRects) return null;
       const headerWidth = headerClientRects.width;
       const thumbWidth = thumbClientRects.width || 164;
       const thumbLeft = thumbClientRects.left;
@@ -259,23 +267,23 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
 
       // header title width is smaller than thumb width
       const left = (thumbWidth - headerWidth) / 2;
-      if (left >= 0) return `left: ${left}px;`;
+      if (left >= 0) return left;
 
       // the header text left position is smaller than the left edge of the seekbar
       const textLeft = thumbLeft + left;
       if (textLeft < seekbarClientRects.left) {
-        return `left: ${seekbarClientRects.left - thumbLeft}px;`;
+        return seekbarClientRects.left - thumbLeft;
       }
 
       // the header text right position is greater than the right edge of the seekbar
       const textRight = thumbRight - left;
       if (textRight > seekbarClientRects.right) {
-        return `left: ${thumbWidth - headerWidth + seekbarClientRects.right - thumbRight}px;`;
+        return thumbWidth - headerWidth + seekbarClientRects.right - thumbRight;
       }
 
-      return `left: ${left}px;`;
+      return left;
     }
-    return '';
+    return null;
   }
 
   render() {
@@ -285,6 +293,7 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
 
     const {thumbnailInfo, isExtraSmallPlayer, relevantChapter} = this.props;
     const data = this._getData();
+    const left = this._getPreviewHeaderLeft() !== null ? `${this._getPreviewHeaderLeft}px` : '';
     return (
       <div
         className={styles.container}
@@ -294,7 +303,7 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
         onMouseLeave={() => this.onMouseLeave(relevantChapter)}>
         {this._shouldRenderHeader(relevantChapter) ? (
           <A11yWrapper onClick={this.onPreviewHeaderClick}>
-            <div className={styles.header} ref={c => (c ? (this._previewHeaderElement = c) : undefined)} data-testid="cuePointPreviewHeader" style={this._getPreviewHeaderStyle()}>
+            <div className={styles.header} ref={c => (c ? (this._previewHeaderElement = c) : undefined)} data-testid="cuePointPreviewHeader" style={`${left}`}>
               <div className={styles.itemsWrapper} data-testid="cuePointPreviewHeaderItems">
                 {this._renderHeader(relevantChapter, data)}
               </div>
