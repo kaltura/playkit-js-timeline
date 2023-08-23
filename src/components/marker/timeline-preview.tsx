@@ -1,6 +1,6 @@
 import {Component, Fragment, h, VNode} from 'preact';
 import * as styles from './timeline-preview.scss';
-import {A11yWrapper} from '@playkit-js/common/dist/hoc/a11y-wrapper';
+import {A11yWrapper, OnClickEvent} from '@playkit-js/common/dist/hoc/a11y-wrapper';
 import {ItemTypes, ThumbnailInfo} from '../../types/timelineTypes';
 import {Chapter, CuePointMarker} from '../../../flow-typed/types/cue-point-option';
 import {Icon, IconSize} from '@playkit-js/common/dist/icon';
@@ -23,7 +23,7 @@ const translates = {
 };
 
 interface TimelinePreviewProps {
-  toggleNavigationPlugin: () => void;
+  toggleNavigationPlugin: (e: OnClickEvent, byKeyboard: boolean, cuePointType: string) => void;
   seekTo: (time: number) => void;
   cuePointsData: Array<CuePointMarker>;
   thumbnailInfo: any;
@@ -245,11 +245,10 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
     e.stopPropagation();
   }
 
-  onPreviewHeaderClick = () => {
+  onPreviewHeaderClick = (e: OnClickEvent, byKeyboard: boolean) => {
     const relevantQuizQuestion = this.props.cuePointsData.find(cp => cp.type === ItemTypes.QuizQuestion);
     relevantQuizQuestion ? relevantQuizQuestion.quizQuestionData?.onClick() : this.props.seekTo(this.props.virtualTime!);
-    // TODO: complete logic from navigation side - focus on filter tab according to the cue-point type
-    // this.props.toggleNavigationPlugin(this.props.cuePointsData[0].type);
+    this.props.toggleNavigationPlugin(e, byKeyboard, this.props.cuePointsData[0]?.type || ItemTypes.Chapter);
   }
 
   _getPreviewHeaderLeft(): number | null {
@@ -293,7 +292,8 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
 
     const {thumbnailInfo, isExtraSmallPlayer, relevantChapter} = this.props;
     const data = this._getData();
-    const left = this._getPreviewHeaderLeft() !== null ? `${this._getPreviewHeaderLeft}px` : '';
+    const previewHeaderStyle: any = this._getPreviewHeaderLeft() === null ? null : {left: `${this._getPreviewHeaderLeft}px`};
+
     return (
       <div
         className={styles.container}
@@ -303,7 +303,7 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
         onMouseLeave={() => this.onMouseLeave(relevantChapter)}>
         {this._shouldRenderHeader(relevantChapter) ? (
           <A11yWrapper onClick={this.onPreviewHeaderClick}>
-            <div className={styles.header} ref={c => (c ? (this._previewHeaderElement = c) : undefined)} data-testid="cuePointPreviewHeader" style={`${left}`}>
+            <div className={styles.header} ref={c => (c ? (this._previewHeaderElement = c) : undefined)} data-testid="cuePointPreviewHeader" style={previewHeaderStyle} tabIndex={0}>
               <div className={styles.itemsWrapper} data-testid="cuePointPreviewHeaderItems">
                 {this._renderHeader(relevantChapter, data)}
               </div>

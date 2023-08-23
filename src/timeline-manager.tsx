@@ -16,6 +16,7 @@ import {ThumbnailInfo, TimeLineMarker, TimelineMarkerProps} from "./types/timeli
 import {TimelinePreview} from "./components/marker/timeline-preview";
 // @ts-ignore
 import {SegmentsWrapper} from './components/chapters';
+import {OnClickEvent} from "@playkit-js/common/dist/hoc/a11y-wrapper";
 // @ts-ignore
 const {preact, redux, reducers, style, components} = KalturaPlayer.ui;
 const {PLAYER_SIZE} = components;
@@ -44,7 +45,7 @@ class TimelineManager {
    * @param _logger
    * @param _dispatchTimelineEvent
    */
-  constructor(private _player: KalturaPlayerTypes.Player, private _logger: any, private _dispatchTimelineEvent: (event: string) => void) {
+  constructor(private _player: KalturaPlayerTypes.Player, private _logger: any, private _dispatchTimelineEvent: (event: string, payload: any) => void) {
     this._uiManager = this._player.ui;
     this._store = redux.useStore();
     this._cuePointsRemoveMap = {};
@@ -77,10 +78,10 @@ class TimelineManager {
     this._addSegmentToSeekbar();
   };
 
-  private _toggleNavigationPlugin = () => {
+  private _toggleNavigationPlugin = (e: OnClickEvent, byKeyboard: boolean | undefined, cuePointType: string) => {
     if (this._isNavigationPluginVisible()) {
       // focus to tab in navigation according to the type
-      this._dispatchTimelineEvent('TimelinePreviewArrowClicked');
+      this._dispatchTimelineEvent('TimelinePreviewArrowClicked', {e: e, byKeyboard: byKeyboard, cuePointType: cuePointType});
     }
   };
 
