@@ -149,7 +149,8 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
         )}
         {quizQuestions.length > 0 && (
           <Title iconName={'quiz'} shouldDisplayTitle className={className}>
-            <span>{`${quizQuestionTitle.type} ${quizQuestionTitle.firstIndex}${quizQuestionTitle.lastIndex}`}</span>
+            {/*<span>{`${quizQuestionTitle.type} ${quizQuestionTitle.firstIndex}${quizQuestionTitle.lastIndex}`}</span>*/}
+            <span>Reflection Point 1234567</span>
           </Title>
         )}
         {answerOnAir.length > 0 && (
