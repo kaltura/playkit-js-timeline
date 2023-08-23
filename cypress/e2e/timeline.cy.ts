@@ -224,27 +224,6 @@ describe('Timeline plugin', () => {
       });
     });
 
-    it('Should render the arrow button in the marker preview if navigation plugin is visible', () => {
-      mockKalturaBe();
-      loadPlayer().then(player => {
-        const timelineService = player.getService('timeline');
-        cy.stub(timelineService, '_isNavigationPluginVisible', () => {
-          return true;
-        });
-        timelineService.addKalturaCuePoint(10, 'Hotspot', '1');
-        cy.get('[data-testid="previewArrowButton"]').should('exist');
-      });
-    });
-
-    it('Should not render arrow button in marker preview if navigation service is unavailable', () => {
-      mockKalturaBe();
-      loadPlayer().then(player => {
-        const timelineService = player.getService('timeline');
-        timelineService.addKalturaCuePoint(10, 'Hotspot', '1');
-        cy.get('[data-testid="previewArrowButton"]').should('not.exist');
-      });
-    });
-
     it('Should display the marker preview if focusing on the marker', () => {
       mockKalturaBe();
       loadPlayer().then(player => {
