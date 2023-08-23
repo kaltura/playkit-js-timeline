@@ -56,14 +56,6 @@ class TimelineManager {
     return this._player.getService('navigation') as any;
   }
 
-  private _isNavigationPluginOpen = () => {
-    if (!this.navigationPlugin) {
-      this._logger.warn("navigationPlugin haven't registered");
-      return false;
-    }
-    return this.navigationPlugin.isPluginActive();
-  };
-
   private _isNavigationPluginVisible = () => {
     if (!this.navigationPlugin) {
       this._logger.warn("navigationPlugin haven't registered");
@@ -86,7 +78,10 @@ class TimelineManager {
   };
 
   private _toggleNavigationPlugin = () => {
-    this._dispatchTimelineEvent('TimelinePreviewArrowClicked');
+    if (this._isNavigationPluginVisible()) {
+      // focus to tab in navigation according to the type
+      this._dispatchTimelineEvent('TimelinePreviewArrowClicked');
+    }
   };
 
   private _addSegmentToSeekbar() {
@@ -95,16 +90,11 @@ class TimelineManager {
 
     this._store.dispatch(actions.updateSeekbarSegments(this._chapters));
     this._player.ui.addComponent({
-      label: 'Segmented progress bar',
+      label: 'Seekbar segment',
       presets: [this._store.getState().shell.activePresetName],
       area: 'SeekBar',
       replaceComponent: 'ProgressIndicator',
-      get: () => (
-        <SegmentsWrapper
-          getThumbnailInfo={() => this._getThumbnailInfo}
-          isNavigationPluginOpen={() => this._isNavigationPluginOpen}
-          shouldRenderArrowButton={() => this._isNavigationPluginVisible}/>
-      )
+      get: () => <SegmentsWrapper getThumbnailInfo={() => this._getThumbnailInfo} />
     });
 
     // replace the default seekbar frame preview with timeline preview
@@ -115,11 +105,11 @@ class TimelineManager {
       replaceComponent:'SeekBarPreview',
       get: () => (
           <TimelinePreview
-            onArrowClick={this._toggleNavigationPlugin}
+            toggleNavigationPlugin={this._toggleNavigationPlugin}
+            seekTo={this._seekTo}
             cuePointsData={[]}
-            isNavigationPluginOpen={this._isNavigationPluginOpen}
-            shouldRenderArrowButton={this._isNavigationPluginVisible}
             thumbnailInfo={this._getThumbnailInfo(this._store.getState().seekbar.virtualTime)}
+            getSeekBarNode={this._getSeekBarNode}
           />
       )
     });
@@ -197,12 +187,12 @@ class TimelineManager {
           return (
             <TimelinePreview
               ref={timelineMarkerData.timelinePreviewRef}
-              onArrowClick={this._toggleNavigationPlugin}
+              seekTo={this._seekTo}
+              toggleNavigationPlugin={this._toggleNavigationPlugin}
               cuePointsData={timelineMarkerData.cuePointsData}
-              isNavigationPluginOpen={this._isNavigationPluginOpen}
-              shouldRenderArrowButton={this._isNavigationPluginVisible}
               thumbnailInfo={this._getThumbnailInfo(markerStartTime)}
               markerStartTime={markerStartTime}
+              getSeekBarNode={this._getSeekBarNode}
             />
           );
         },
