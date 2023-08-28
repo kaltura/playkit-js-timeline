@@ -275,6 +275,22 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
     return null;
   }
 
+  handleFocus = () => {
+    const seekBarNode = this.props.getSeekBarNode();
+    if (seekBarNode) {
+      // change slider role to prevent interrupts reading marker content by screen-readers
+      seekBarNode.setAttribute('role', 'none');
+    }
+  };
+
+  handleBlur = () => {
+    const seekBarNode = this.props.getSeekBarNode();
+    if (seekBarNode) {
+      // restore slider role
+      seekBarNode.setAttribute('role', 'slider');
+    }
+  };
+
   render() {
     if (this.props.hidePreview) {
       return null;
@@ -293,7 +309,14 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
         onMouseLeave={() => this.onMouseLeave(relevantChapter)}>
         {this._shouldRenderHeader(relevantChapter) ? (
           <A11yWrapper onClick={this.onPreviewHeaderClick}>
-            <div className={styles.header} ref={node => this._previewHeaderElement = node} data-testid="cuePointPreviewHeader" style={previewHeaderStyle} tabIndex={0}>
+            <div
+              className={styles.header}
+              ref={node => this._previewHeaderElement = node}
+              data-testid="cuePointPreviewHeader"
+              style={previewHeaderStyle}
+              tabIndex={0}
+              onFocus={this.handleFocus}
+              onBlur={this.handleBlur}>
               <div className={styles.itemsWrapper} data-testid="cuePointPreviewHeaderItems">
                 {this._renderHeader(relevantChapter, data)}
               </div>
