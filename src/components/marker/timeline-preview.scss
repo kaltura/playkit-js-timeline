@@ -3,42 +3,44 @@
 .container {
   display: flex;
   flex-direction: column;
-  cursor: default;
+  cursor: pointer;
   position: relative;
   padding-top: 40px;
+  &:not(.xs-player) {
+    .header:hover {
+      background: rgba(0, 0, 0, 0.6);
+      border-radius: $roundness-1;
+    }
+    .header .items-wrapper > div:first-child {
+      margin-left: 2px;
+    }
+  }
+  &.xs-player {
+    padding-top: 0;
+    .header {
+      top: 3px;
+      padding: 0;
+      position: absolute;
+      align-items: flex-start;
+      height: auto;
+      width: 100%;
+      margin-left: 2px;
+      .title-wrapper {
+        margin-right: 4px;
+      }
+    }
+  }
   .header {
     display: flex;
     align-items: center;
-    padding: 7px;
-    min-height: 32px;
+    padding: 4px;
     color: #ffffff;
     font-size: 14px;
-    text-shadow: 0 0 2px rgba(0, 0, 0, 0.25);
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
     margin-bottom: 2px;
     position: absolute;
-    top: 5px;
+    top: 10px;
     max-width: 320px;
-    &:hover:not(.xs-player) {
-      background: rgba(0, 0, 0, 0.6);
-      cursor: pointer;
-      border-radius: $roundness-1;
-    }
-    &.xs-player {
-      position: absolute;
-      align-items: flex-start;
-      padding: 0;
-      height: auto;
-      width: 100%;
-      top: 40px;
-      left: 4px;
-      .items-wrapper {
-        padding-top: 4px;
-        .title-wrapper {
-          margin-right: 4px;
-        }
-      }
-
-    }
     .items-wrapper {
       display: flex;
       flex-direction: row;
@@ -47,9 +49,8 @@
       .title-wrapper {
         display: flex;
         align-items: center;
-        i {
-          width: 16px;
-          height: 16px;
+        div {
+          filter: drop-shadow(0px 0px 2px rgba(0, 0, 0, 0.50));
         }
         .title {
           flex-grow: 1;
@@ -58,26 +59,9 @@
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
+          max-width: 320px;
         }
       }
-    }
-  }
-  .title-wrapper.xs-player {
-    margin-right: 4px;
-  }
-  .markerLink {
-    display: flex;
-    padding: 0;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    align-self: baseline;
-    i {
-      width: 24px;
-      height: 24px;
-    }
-    &.xs-player {
-      padding-right: 4px;
     }
   }
   .image-container {

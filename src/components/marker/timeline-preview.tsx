@@ -141,25 +141,24 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
       };
     }
 
-    const className = [styles.titleWrapper, this.props.isExtraSmallPlayer ? styles.xsPlayer : ''].join(' ');
     if (!this.props.cuePointsData.length && relevantChapter?.title) {
       // not a marker - render only chapter
-      return <Title iconName={'chapter'} shouldDisplayTitle className={className}>{relevantChapter.title}</Title>;
+      return <Title iconName={'chapter'} shouldDisplayTitle className={styles.titleWrapper}>{relevantChapter.title}</Title>;
     }
     return (
       <Fragment>
         {hotspots.length > 0 && (
-          <Title iconName={'hotspot'} shouldDisplayTitle className={className}>
+          <Title iconName={'hotspot'} shouldDisplayTitle className={styles.titleWrapper}>
             {this.props.hotspotTranslate!}
           </Title>
         )}
         {quizQuestions.length > 0 && (
-          <Title iconName={'quiz'} shouldDisplayTitle className={className}>
+          <Title iconName={'quiz'} shouldDisplayTitle className={styles.titleWrapper}>
             <span>{`${quizQuestionTitle.type} ${quizQuestionTitle.firstIndex}${quizQuestionTitle.lastIndex}`}</span>
           </Title>
         )}
         {answerOnAir.length > 0 && (
-          <Title iconName={'answerOnAir'} shouldDisplayTitle className={className}>
+          <Title iconName={'answerOnAir'} shouldDisplayTitle className={styles.titleWrapper}>
             {this.props.aoaTranslate!}
           </Title>
         )}
@@ -199,7 +198,7 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
       );
     }
     return (
-      <div className={[styles.header, styles.xsPlayer].join(' ')}>
+      <div className={styles.header}>
         <div className={styles.itemsWrapper} data-testid="cuePointPreviewHeaderItems">
           {renderItems()}
         </div>
@@ -299,10 +298,11 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
     const {thumbnailInfo, isExtraSmallPlayer, relevantChapter} = this.props;
     const data = this._getData();
     const previewHeaderStyle: any = this._getPreviewHeaderLeft() === null ? null : {left: `${this._getPreviewHeaderLeft}px`};
+    const className = [styles.container, this.props.isExtraSmallPlayer ? styles.xsPlayer : ''].join(' ');
 
     return (
       <div
-        className={styles.container}
+        className={className}
         data-testid="cuePointPreviewContainer"
         onMouseMove={this.onMouseMove}
         onMouseOver={() => this.onMouseOver(relevantChapter)}
