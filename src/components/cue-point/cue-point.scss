@@ -2,8 +2,8 @@
   position: absolute;
   height: inherit;
   padding: 12px 2px 16px 2px;
-  padding: 12px 2px calc(12px + var(--progress-bar-height)) 2px;
-  margin: -12px 0;
+  padding: 18px 2px calc(12px + var(--progress-bar-height)) 2px;
+  margin: -18px 0;
   &:focus-within .playkit-cue-point-preview-container:not(.hoverActive) {
     display: block;
   }
@@ -40,7 +40,7 @@
   display: none;
   position: absolute;
   bottom: 28px;
-  bottom: calc(24px + var(--progress-bar-height));
+  bottom: calc(28px + var(--progress-bar-height));
 }
 
 .playkit-seek-bar.playkit-resizing .playkit-cue-point-container {
