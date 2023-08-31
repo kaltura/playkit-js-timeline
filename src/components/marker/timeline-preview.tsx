@@ -49,7 +49,9 @@ const getFramePreviewImgContainerStyle = (thumbnailInfo: ThumbnailInfo) => {
         height: `${thumbnailInfo.height}px`,
         width: `${thumbnailInfo.width}px`
       }
-    : {};
+    : {
+        borderColor: 'transparent'
+      };
 };
 const getFramePreviewImgStyle = (thumbnailInfo: ThumbnailInfo) => {
   if (thumbnailInfo) {
@@ -290,6 +292,16 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
     }
   };
 
+  _getPreviewHeaderStyle(): any {
+    const top = !this.props.thumbnailInfo ? '-20px' : null;
+    const left = this._getPreviewHeaderLeft() === null ? null : `${this._getPreviewHeaderLeft}px`;
+    if (top === null && left === null) return null;
+    const style: any = {};
+    if (top) style.top = top;
+    if (left) style.left = left;
+    return style;
+  }
+
   render() {
     if (this.props.hidePreview) {
       return null;
@@ -297,7 +309,6 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
 
     const {thumbnailInfo, isExtraSmallPlayer, relevantChapter} = this.props;
     const data = this._getData();
-    const previewHeaderStyle: any = this._getPreviewHeaderLeft() === null ? null : {left: `${this._getPreviewHeaderLeft}px`};
     const className = [styles.container, this.props.isExtraSmallPlayer ? styles.xsPlayer : ''].join(' ');
 
     return (
@@ -313,7 +324,7 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
               className={styles.header}
               ref={node => this._previewHeaderElement = node}
               data-testid="cuePointPreviewHeader"
-              style={previewHeaderStyle}
+              style={this._getPreviewHeaderStyle()}
               tabIndex={0}
               onFocus={this.handleFocus}
               onBlur={this.handleBlur}>
