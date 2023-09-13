@@ -2,21 +2,14 @@ import {h, createRef} from 'preact';
 import * as KalturaPlayer from '@playkit-js/kaltura-player-js';
 // @ts-ignore
 import {CuePoint} from './components/cue-point';
-// @ts-ignore
-import {Preview} from './components/cue-point';
 import {TimelineMarker} from './components/marker/timeline-marker';
-import {
-  Chapter,
-  QuizQuestionData,
-  TimedCuePointOptionsObject,
-  TimelineMarkerDataObject
-} from "../flow-typed/types/cue-point-option";
-import {SeekbarPreviewOptionsObject} from "../flow-typed/types/seekbar-preview-option";
-import {ThumbnailInfo, TimeLineMarker, TimelineMarkerProps} from "./types/timelineTypes";
-import {TimelinePreview} from "./components/marker/timeline-preview";
+import {Chapter, QuizQuestionData, TimedCuePointOptionsObject, TimelineMarkerDataObject} from '../flow-typed/types/cue-point-option';
+import {SeekbarPreviewOptionsObject} from '../flow-typed/types/seekbar-preview-option';
+import {ThumbnailInfo, TimeLineMarker, TimelineMarkerProps} from './types/timelineTypes';
+import {TimelinePreview} from './components/marker/timeline-preview';
 // @ts-ignore
 import {SegmentsWrapper} from './components/chapters';
-import {OnClickEvent} from "@playkit-js/common/dist/hoc/a11y-wrapper";
+import {OnClickEvent} from '@playkit-js/common/dist/hoc/a11y-wrapper';
 // @ts-ignore
 const {preact, redux, reducers, style, components} = KalturaPlayer.ui;
 const {PLAYER_SIZE} = components;
@@ -45,16 +38,29 @@ class TimelineManager {
    * @param _logger
    * @param _dispatchTimelineEvent
    */
-  constructor(private _player: KalturaPlayerTypes.Player, private _logger: any, private _dispatchTimelineEvent: (event: string, payload: any) => void) {
+  constructor(
+    private _player: KalturaPlayerTypes.Player,
+    private _logger: any,
+    private _dispatchTimelineEvent: (event: string, payload: any) => void
+  ) {
     this._uiManager = this._player.ui;
     this._store = redux.useStore();
     this._cuePointsRemoveMap = {};
     this._counter = 0;
     this._cuePointsMap = new Map();
+    this._player.ready().then(() => {
+      if (this.dualScreenPlugin) {
+        this._addSeekBarPreview();
+      }
+    });
   }
 
   get navigationPlugin() {
     return this._player.getService('navigation') as any;
+  }
+
+  get dualScreenPlugin() {
+    return this._player.getService('dualScreen') as any;
   }
 
   private _isNavigationPluginVisible = () => {
@@ -95,29 +101,34 @@ class TimelineManager {
       presets: [this._store.getState().shell.activePresetName],
       area: 'SeekBar',
       replaceComponent: 'ProgressIndicator',
-      get: () => <SegmentsWrapper getThumbnailInfo={() => this._getThumbnailInfo} />
+      get: SegmentsWrapper
     });
+    this._addSeekBarPreview();
+  }
 
+  private _addSeekBarPreview = () => {
     // replace the default seekbar frame preview with timeline preview
     this._player.ui.addComponent({
       label: 'Chapter preview',
       presets: [this._store.getState().shell.activePresetName],
       area: 'SeekBar',
-      replaceComponent:'SeekBarPreview',
+      replaceComponent: 'SeekBarPreview',
       get: () => (
-          <TimelinePreview
-            toggleNavigationPlugin={this._toggleNavigationPlugin}
-            seekTo={this._seekTo}
-            cuePointsData={[]}
-            thumbnailInfo={this._getThumbnailInfo(this._store.getState().seekbar.virtualTime)}
-            getSeekBarNode={this._getSeekBarNode}
-          />
+        <TimelinePreview
+          toggleNavigationPlugin={this._toggleNavigationPlugin}
+          seekTo={this._seekTo}
+          cuePointsData={[]}
+          thumbnailInfo={() => this._getThumbnailInfo(this._store.getState().seekbar.virtualTime)}
+          getSeekBarNode={this._getSeekBarNode}
+        />
       )
     });
-  }
+  };
 
   addKalturaCuePoint(startTime: number, type: string, cuePointId: string, title?: string, quizQuestionData?: QuizQuestionData) {
-    if (this._store.getState().shell.playerSize === PLAYER_SIZE.TINY) return;
+    if (this._store.getState().shell.playerSize === PLAYER_SIZE.TINY) {
+      return;
+    }
     if (type === chapterType) {
       const chapter: Chapter = {
         id: cuePointId,
@@ -126,7 +137,7 @@ class TimelineManager {
         endTime: this._player.sources.duration!,
         isHovered: false,
         isDummy: false
-      }
+      };
       this._handleChapter(chapter);
       return;
     }
@@ -160,7 +171,7 @@ class TimelineManager {
   private _createKalturaCuePoint = (timelineMarkerData: TimelineMarkerDataObject, markerStartTime: number) => {
     const setMarkerRef = (node: HTMLDivElement | null) => {
       timelineMarkerData.timelineMarkerRef = node;
-    }
+    };
     // create the timeline marker comp
     const timeLineMarker: TimeLineMarker = {
       time: markerStartTime,
@@ -191,7 +202,7 @@ class TimelineManager {
               seekTo={this._seekTo}
               toggleNavigationPlugin={this._toggleNavigationPlugin}
               cuePointsData={timelineMarkerData.cuePointsData}
-              thumbnailInfo={this._getThumbnailInfo(markerStartTime)}
+              thumbnailInfo={() => this._getThumbnailInfo(markerStartTime)}
               markerStartTime={markerStartTime}
               getSeekBarNode={this._getSeekBarNode}
             />
@@ -321,7 +332,10 @@ class TimelineManager {
     Object.values(this._cuePointsRemoveMap).forEach((func: Function) => func());
   }
 
-  private _getThumbnailInfo(virtualTime: number): ThumbnailInfo {
+  private _getThumbnailInfo(virtualTime: number): ThumbnailInfo | Array<ThumbnailInfo> {
+    if (this.dualScreenPlugin) {
+      return this.dualScreenPlugin.getDualScreenThumbs(virtualTime);
+    }
     return this._player.getThumbnail(virtualTime);
   }
 }

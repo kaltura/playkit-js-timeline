@@ -34,6 +34,7 @@ const SEGMENT_GAP = 2;
 @redux.connect(mapStateToProps, utils.bindActions(reducers.seekbar.actions))
 class CuePoint extends preact.Component {
   _markerRef: ?HTMLDivElement;
+  _previewRef: ?HTMLDivElement;
   _hideTimeBubble: boolean;
 
   /**
@@ -80,16 +81,17 @@ class CuePoint extends preact.Component {
   _getPreviewPosition(previewWidth: number): number {
     let left = 0;
     if (this._markerRef) {
+      const previewWrapperWidth = this._previewRef?.getBoundingClientRect()?.width ?? previewWidth;
       const markerRect = this._markerRef.getBoundingClientRect();
       const seekbarRect = this.props.seekbarClientRect;
       const markerLeft = markerRect.left - seekbarRect.left;
       const markerWidth = markerRect.width;
       const markerRight = markerLeft + markerWidth;
       const seekbarWidth = seekbarRect.width;
-      const previewOffset = (previewWidth - markerWidth) / 2;
+      const previewOffset = (previewWrapperWidth - markerWidth) / 2;
       if (markerLeft - previewOffset > 0) {
         if (markerRight + previewOffset > seekbarWidth) {
-          left = -(previewWidth - (seekbarWidth - markerLeft));
+          left = -(previewWrapperWidth - (seekbarWidth - markerLeft));
         } else {
           left = -previewOffset;
         }
@@ -173,6 +175,15 @@ class CuePoint extends preact.Component {
 
   /**
    *
+   * @returns {void}
+   * @private
+   */
+  _update = () => {
+    this.setState(prevState => ({render: !prevState.render}));
+  };
+
+  /**
+   *
    * @param {HTMLDivElement} ref - ref
    * @returns {void}
    * @private
@@ -180,7 +191,20 @@ class CuePoint extends preact.Component {
   _setMarkerRef = (ref: HTMLDivElement | null) => {
     if (ref) {
       this._markerRef = ref;
-      this.setState(prevState => ({render: !prevState.render}));
+      this._update();
+    }
+  };
+
+  /**
+   *
+   * @param {HTMLDivElement} ref - ref
+   * @returns {void}
+   * @private
+   */
+  _setPreviewRef = (ref: HTMLDivElement | null) => {
+    if (ref) {
+      this._previewRef = ref;
+      this._update();
     }
   };
 
@@ -193,7 +217,9 @@ class CuePoint extends preact.Component {
     const {marker, preview, virtualTime, config, hoverActive} = props;
     const {edge, left} = this._getMarkerPositionStyle();
 
-    const cuePointContainerStyle = {left};
+    const cuePointContainerStyle = {
+      left
+    };
     if (edge !== 'none') {
       cuePointContainerStyle[`padding${edge}`] = 0;
     }
@@ -259,7 +285,8 @@ class CuePoint extends preact.Component {
             ].join(' ')}
             style={{
               left: `${this._getPreviewPosition(previewWidth)}px`
-            }}>
+            }}
+            ref={this._setPreviewRef}>
             {preact.h(preview.get, previewProps)}
           </div>
         ) : undefined}

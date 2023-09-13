@@ -26,7 +26,7 @@ interface TimelinePreviewProps {
   toggleNavigationPlugin: (e: OnClickEvent, byKeyboard: boolean, cuePointType: string) => void;
   seekTo: (time: number) => void;
   cuePointsData: Array<CuePointMarker>;
-  thumbnailInfo: any;
+  thumbnailInfo: () => ThumbnailInfo | ThumbnailInfo[];
   questionTranslate?: string;
   reflectionPointTranslate?: string;
   hotspotTranslate?: string;
@@ -43,21 +43,46 @@ interface TimelinePreviewProps {
   getSeekBarNode: () => Element | null;
 }
 
-const getFramePreviewImgContainerStyle = (thumbnailInfo: ThumbnailInfo) => {
-  return thumbnailInfo
-    ? {
-        height: `${thumbnailInfo.height}px`,
-        width: `${thumbnailInfo.width}px`
+const getFramePreviewImgContainerStyle = (thumbnailInfo: ThumbnailInfo | ThumbnailInfo[]) => {
+  if (!thumbnailInfo) {
+    return {
+      borderColor: 'transparent'
+    };
+  }
+  if (Array.isArray(thumbnailInfo)) {
+    const leftThumbInfo = thumbnailInfo[0];
+    const rightThumbInfo = thumbnailInfo[1];
+    let minHeight = leftThumbInfo.slide ? rightThumbInfo.height : leftThumbInfo.height;
+    let minWidth = leftThumbInfo.slide ? rightThumbInfo.width : leftThumbInfo.width;
+    if ([leftThumbInfo, rightThumbInfo].every(e => !e.slide)) {
+      // use min height and width of media thumbs
+      if (minHeight > rightThumbInfo.height) {
+        minHeight = rightThumbInfo.height;
       }
-    : {
-        borderColor: 'transparent'
-      };
+      if (minWidth > rightThumbInfo.width) {
+        minWidth = rightThumbInfo.width;
+      }
+    }
+    return {
+      height: `${minHeight}px`,
+      width: `${minWidth * 2}px`
+    };
+  }
+  return {
+    height: `${thumbnailInfo.slide ? DEFAULT_THUMB_HEIGHT : thumbnailInfo.height}px`,
+    width: `${thumbnailInfo.slide ? DEFAULT_THUMB_WIDTH : thumbnailInfo.width}px`
+  };
 };
 const getFramePreviewImgStyle = (thumbnailInfo: ThumbnailInfo) => {
   if (thumbnailInfo) {
-    let framePreviewImgStyle = `height: 100%; width: 100%; background: url(${thumbnailInfo.url});`;
-    framePreviewImgStyle += `background-position: -${thumbnailInfo.x}px -${thumbnailInfo.y}px;`;
-    return framePreviewImgStyle;
+    return {
+      height: '100%',
+      width: '100%',
+      backgroundImage: `url(${thumbnailInfo.url})`,
+      backgroundPosition: thumbnailInfo.slide ? 'center' : `-${thumbnailInfo.x}px -${thumbnailInfo.y}px`,
+      backgroundRepeat: 'no-repeat',
+      ...(thumbnailInfo.slide && {backgroundSize: 'cover'})
+    };
   }
   return '';
 };
@@ -88,7 +113,7 @@ interface State {
   };
   engine: {
     duration: number;
-  }
+  };
 }
 
 const mapStateToProps = (state: State, {markerStartTime}: TimelinePreviewProps) => {
@@ -110,6 +135,7 @@ const mapDispatchToProps = (dispatch: any) => {
 };
 
 const DEFAULT_THUMB_WIDTH = 164;
+const DEFAULT_THUMB_HEIGHT = 92;
 
 @withText(translates)
 @connect(mapStateToProps, mapDispatchToProps)
@@ -119,10 +145,10 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
 
   componentDidUpdate() {
     // force update the header title style in case the text was changed
-    this.calculateLeftPosition()
+    this._calculateLeftPosition();
   }
 
-  public calculateLeftPosition() {
+  private _calculateLeftPosition() {
     const left = this._getPreviewHeaderLeft();
     if (left !== null && this._previewHeaderElement) {
       this._previewHeaderElement.style.left = `${this._getPreviewHeaderLeft()}px`;
@@ -145,7 +171,11 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
 
     if (!this.props.cuePointsData.length && relevantChapter?.title) {
       // not a marker - render only chapter
-      return <Title iconName={'chapter'} shouldDisplayTitle className={styles.titleWrapper}>{relevantChapter.title}</Title>;
+      return (
+        <Title iconName={'chapter'} shouldDisplayTitle className={styles.titleWrapper}>
+          {relevantChapter.title}
+        </Title>
+      );
     }
     return (
       <Fragment>
@@ -198,7 +228,7 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
           {answerOnAir.length > 0 && <Title iconName={'answerOnAir'} shouldDisplayTitle={false} className={styles.titleWrapper} />}
         </Fragment>
       );
-    }
+    };
     return (
       <div className={styles.header}>
         <div className={styles.itemsWrapper} data-testid="cuePointPreviewHeaderItems">
@@ -234,13 +264,13 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
     // prevent onMouseDown event on seekbar node
     e.preventDefault();
     e.stopPropagation();
-  }
+  };
 
   onPreviewHeaderClick = (e: OnClickEvent, byKeyboard: boolean) => {
     const relevantQuizQuestion = this.props.cuePointsData.find(cp => cp.type === ItemTypes.QuizQuestion);
     relevantQuizQuestion ? relevantQuizQuestion.quizQuestionData?.onClick() : this.props.seekTo(this.props.virtualTime!);
     this.props.toggleNavigationPlugin(e, byKeyboard, this.props.cuePointsData[0]?.type || ItemTypes.Chapter);
-  }
+  };
 
   _getPreviewHeaderLeft(): number | null {
     const seekBarElement = this.props.getSeekBarNode();
@@ -249,7 +279,9 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
       const seekbarClientRects = seekBarElement.getClientRects()[0];
       const thumbClientRects = this._thumbnailContainerElement?.getClientRects()[0];
 
-      if (!seekbarClientRects || !thumbClientRects || !headerClientRects) return null;
+      if (!seekbarClientRects || !thumbClientRects || !headerClientRects) {
+        return null;
+      }
       const headerWidth = headerClientRects.width;
       const thumbWidth = thumbClientRects.width || DEFAULT_THUMB_WIDTH;
       const thumbLeft = thumbClientRects.left;
@@ -257,7 +289,9 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
 
       // header title width is smaller than thumb width
       const left = (thumbWidth - headerWidth) / 2;
-      if (left >= 0) return left;
+      if (left >= 0) {
+        return left;
+      }
 
       // the header text left position is smaller than the left edge of the seekbar
       const textLeft = thumbLeft + left;
@@ -302,6 +336,13 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
     return style;
   }
 
+  private _renderThumbnail = (thumbnailInfo: ThumbnailInfo | Array<ThumbnailInfo>) => {
+    if (Array.isArray(thumbnailInfo)) {
+      return thumbnailInfo.map(info => <div style={getFramePreviewImgStyle(info)} />);
+    }
+    return <div style={getFramePreviewImgStyle(thumbnailInfo)} />;
+  };
+
   render() {
     if (this.props.hidePreview) {
       return null;
@@ -322,7 +363,7 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
           <A11yWrapper onClick={this.onPreviewHeaderClick}>
             <div
               className={styles.header}
-              ref={node => this._previewHeaderElement = node}
+              ref={node => (this._previewHeaderElement = node)}
               data-testid="cuePointPreviewHeader"
               style={this._getPreviewHeaderStyle()}
               tabIndex={0}
@@ -336,11 +377,11 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
         ) : null}
         <div
           className={styles.imageContainer}
-          style={getFramePreviewImgContainerStyle(thumbnailInfo)}
+          style={getFramePreviewImgContainerStyle(thumbnailInfo())}
           onMouseDown={this.onThumbnailClick}
-          ref={node => this._thumbnailContainerElement = node}>
+          ref={node => (this._thumbnailContainerElement = node)}>
           {isExtraSmallPlayer ? this._renderSmallPlayerHeader(relevantChapter, data) : null}
-          <div style={getFramePreviewImgStyle(thumbnailInfo)} />
+          {this._renderThumbnail(thumbnailInfo())}
         </div>
       </div>
     );
