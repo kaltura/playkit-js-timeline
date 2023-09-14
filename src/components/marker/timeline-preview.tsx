@@ -377,6 +377,7 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
         ) : null}
         <div
           className={styles.imageContainer}
+          data-testid="cuePointPreviewImageContainer"
           style={getFramePreviewImgContainerStyle(thumbnailInfo())}
           onMouseDown={this.onThumbnailClick}
           ref={node => (this._thumbnailContainerElement = node)}>
