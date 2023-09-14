@@ -14,6 +14,7 @@ export interface ThumbnailInfo {
   width: number;
   x: number;
   y: number;
+  slide?: boolean;
 }
 
 export interface TimelineMarkerProps {

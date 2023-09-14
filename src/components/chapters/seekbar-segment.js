@@ -159,7 +159,7 @@ class SeekBarSegment extends Component {
    * @memberof SeekBarSegment
    */
   render(props: any): React$Element<any> {
-    const {virtualTime, currentTime, isDraggingActive, isHovered, isDummy} = props;
+    const {virtualTime, currentTime, isDraggingActive, isHovered} = props;
     this._wasDragging = isDraggingActive !== this._prevDraggingState;
     this._prevDraggingState = isDraggingActive;
     const progressWidth = `${this._getProgressWidth(isDraggingActive || this._wasDragging ? virtualTime : currentTime)}%`;
@@ -169,7 +169,9 @@ class SeekBarSegment extends Component {
     const segmentBufferedWidth = Math.round(this._getSegmentBufferedWidth(segmentWidth, totalBufferedWidth));
 
     const segmentStyleClass = [styles.seekBarSegment];
-    if (isHovered) segmentStyleClass.push(styles.hover);
+    if (isHovered) {
+      segmentStyleClass.push(styles.hovered);
+    }
 
     return (
       <div
@@ -178,7 +180,6 @@ class SeekBarSegment extends Component {
         className={segmentStyleClass.join(' ')}
         style={`width: ${segmentWidth}px;`}
         ref={node => (this._segmentEl = node)}>
-        <div className={[styles.segmentPadding, isDummy ? styles.dummy : ''].join(' ')} />
         <div className={styles.buffered} style={{width: `${segmentBufferedWidth}%`}} />
         {props.dataLoaded ? <div className={styles.segmentProgress} style={{width: progressWidth}} /> : undefined}
       </div>
