@@ -28,7 +28,7 @@ const chaptersClassName = 'playkit-chapters';
 class TimelineManager {
   _uiManager: any;
   _store: any;
-  _cuePointsRemoveMap: {[id: string]: Function};
+  _cuePointsRemoveMap: Map<string, Function>;
   _cuePointsMap: Map<number, TimelineMarkerDataObject>;
   _chapters: Chapter[] = [];
 
@@ -45,7 +45,7 @@ class TimelineManager {
   ) {
     this._uiManager = this._player.ui;
     this._store = redux.useStore();
-    this._cuePointsRemoveMap = {};
+    this._cuePointsRemoveMap = new Map();
     this._cuePointsMap = new Map();
     this._player.ready().then(() => {
       if (this.dualScreenPlugin) {
@@ -262,18 +262,21 @@ class TimelineManager {
       this._logger.warn('Cue point time is missing');
       return null;
     }
-    const id = Object.keys(this._cuePointsRemoveMap).length.toString();
-    this._cuePointsRemoveMap[id] = this._uiManager.addComponent({
-      label: `Cue Point - ${id}`,
-      presets: newCuePoint.presets || [this._store.getState().shell.activePresetName],
-      area: 'SeekBar',
-      get: CuePoint,
-      props: {
-        time: newCuePoint.time,
-        marker: newCuePoint.marker || {},
-        preview: newCuePoint.preview || {}
-      }
-    });
+    const id = this._cuePointsRemoveMap.size.toString();
+    this._cuePointsRemoveMap.set(
+      id,
+      this._uiManager.addComponent({
+        label: `Cue Point - ${id}`,
+        presets: newCuePoint.presets || [this._store.getState().shell.activePresetName],
+        area: 'SeekBar',
+        get: CuePoint,
+        props: {
+          time: newCuePoint.time,
+          marker: newCuePoint.marker || {},
+          preview: newCuePoint.preview || {}
+        }
+      })
+    );
     return {id};
   }
 
@@ -283,8 +286,9 @@ class TimelineManager {
    */
   removeCuePoint(cuePoint: {id: string}): void {
     const {id} = cuePoint;
-    if (typeof this._cuePointsRemoveMap[id] === 'function') {
-      this._cuePointsRemoveMap[id]();
+    const fn = this._cuePointsRemoveMap.get(id);
+    if (typeof fn === 'function') {
+      fn();
     }
   }
 
@@ -354,15 +358,17 @@ class TimelineManager {
    * @returns {void}
    */
   destroy() {
-    this._removeAllCuePoints();
+    this.reset();
   }
 
   /**
    * @returns {void}
    */
   _removeAllCuePoints() {
-    Object.values(this._cuePointsRemoveMap).forEach((func: Function) => func());
-    this._cuePointsRemoveMap = {};
+    this._cuePointsRemoveMap.forEach((fn, key) => {
+      fn();
+      this._cuePointsRemoveMap.delete(key);
+    });
   }
 
   private _getThumbnailInfo(virtualTime: number): ThumbnailInfo | Array<ThumbnailInfo> {
