@@ -20,6 +20,7 @@ const {core} = KalturaPlayer;
 const KalturaPlayerSeekBarSelector = '.playkit-seek-bar';
 const quizQuestionType = 'QuizQuestion';
 const chapterType = 'Chapter';
+const chaptersClassName = 'playkit-chapters';
 
 /**
  * @class TimelineManager
@@ -27,8 +28,7 @@ const chapterType = 'Chapter';
 class TimelineManager {
   _uiManager: any;
   _store: any;
-  _cuePointsRemoveMap: {[id: string]: Function};
-  _counter: number;
+  _cuePointsRemoveMap: Map<string, Function>;
   _cuePointsMap: Map<number, TimelineMarkerDataObject>;
   _chapters: Chapter[] = [];
 
@@ -45,8 +45,7 @@ class TimelineManager {
   ) {
     this._uiManager = this._player.ui;
     this._store = redux.useStore();
-    this._cuePointsRemoveMap = {};
-    this._counter = 0;
+    this._cuePointsRemoveMap = new Map();
     this._cuePointsMap = new Map();
     this._player.ready().then(() => {
       if (this.dualScreenPlugin) {
@@ -93,7 +92,9 @@ class TimelineManager {
 
   private _addSegmentToSeekbar() {
     const progressBarEl = document.getElementsByClassName(style.progressBar)[0];
-    if (progressBarEl && !progressBarEl.classList.contains(style.chapters)) progressBarEl.classList.add('playkit-chapters');
+    if (progressBarEl && !progressBarEl.classList.contains(style.chapters)) {
+      progressBarEl.classList.add(chaptersClassName);
+    }
 
     this._store.dispatch(actions.updateSeekbarSegments(this._chapters));
     this._player.ui.addComponent({
@@ -104,6 +105,20 @@ class TimelineManager {
       get: SegmentsWrapper
     });
     this._addSeekBarPreview();
+  }
+
+  private _restoreProgressIndicator() {
+    const progressBarEl = document.getElementsByClassName(style.progressBar)[0];
+    if (progressBarEl.classList.contains(style.chapters)) {
+      progressBarEl.classList.remove(chaptersClassName);
+    }
+    this._player.ui.addComponent({
+      label: 'ProgressIndicator',
+      presets: [this._store.getState().shell.activePresetName],
+      area: 'SeekBar',
+      replaceComponent: 'ProgressIndicator',
+      get: components.ProgressIndicator
+    });
   }
 
   private _addSeekBarPreview = () => {
@@ -122,6 +137,16 @@ class TimelineManager {
           getSeekBarNode={this._getSeekBarNode}
         />
       )
+    });
+  };
+
+  private _restoreSeekBarPreview = () => {
+    this._player.ui.addComponent({
+      label: 'SeekBarPreview',
+      presets: [this._store.getState().shell.activePresetName],
+      area: 'SeekBar',
+      replaceComponent: 'SeekBarPreview',
+      get: components.SeekBarPreview
     });
   };
 
@@ -237,18 +262,21 @@ class TimelineManager {
       this._logger.warn('Cue point time is missing');
       return null;
     }
-    const id = (this._counter++).toString();
-    this._cuePointsRemoveMap[id] = this._uiManager.addComponent({
-      label: `Cue Point - ${id}`,
-      presets: newCuePoint.presets || [this._store.getState().shell.activePresetName],
-      area: 'SeekBar',
-      get: CuePoint,
-      props: {
-        time: newCuePoint.time,
-        marker: newCuePoint.marker || {},
-        preview: newCuePoint.preview || {}
-      }
-    });
+    const id = this._cuePointsRemoveMap.size.toString();
+    this._cuePointsRemoveMap.set(
+      id,
+      this._uiManager.addComponent({
+        label: `Cue Point - ${id}`,
+        presets: newCuePoint.presets || [this._store.getState().shell.activePresetName],
+        area: 'SeekBar',
+        get: CuePoint,
+        props: {
+          time: newCuePoint.time,
+          marker: newCuePoint.marker || {},
+          preview: newCuePoint.preview || {}
+        }
+      })
+    );
     return {id};
   }
 
@@ -258,8 +286,9 @@ class TimelineManager {
    */
   removeCuePoint(cuePoint: {id: string}): void {
     const {id} = cuePoint;
-    if (typeof this._cuePointsRemoveMap[id] === 'function') {
-      this._cuePointsRemoveMap[id]();
+    const fn = this._cuePointsRemoveMap.get(id);
+    if (typeof fn === 'function') {
+      fn();
     }
   }
 
@@ -316,20 +345,30 @@ class TimelineManager {
    */
   reset() {
     this._removeAllCuePoints();
+    this._restoreProgressIndicator();
+    this._restoreSeekBarPreview();
+    this._cuePointsMap = new Map();
+    if (this._chapters.length) {
+      this._store.dispatch(actions.updateSeekbarSegments([]));
+      this._chapters = [];
+    }
   }
 
   /**
    * @returns {void}
    */
   destroy() {
-    this._removeAllCuePoints();
+    this.reset();
   }
 
   /**
    * @returns {void}
    */
   _removeAllCuePoints() {
-    Object.values(this._cuePointsRemoveMap).forEach((func: Function) => func());
+    this._cuePointsRemoveMap.forEach((fn, key) => {
+      fn();
+      this._cuePointsRemoveMap.delete(key);
+    });
   }
 
   private _getThumbnailInfo(virtualTime: number): ThumbnailInfo | Array<ThumbnailInfo> {
