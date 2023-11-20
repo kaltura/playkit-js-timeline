@@ -92,7 +92,7 @@ class TimelineManager {
 
   private _addSegmentToSeekbar() {
     const progressBarEl = document.getElementsByClassName(style.progressBar)[0];
-    if (!progressBarEl.classList.contains(style.chapters)) {
+    if (progressBarEl && !progressBarEl.classList.contains(style.chapters)) {
       progressBarEl.classList.add(chaptersClassName);
     }
 
