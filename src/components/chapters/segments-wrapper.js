@@ -55,7 +55,7 @@ class SegmentsWrapper extends Component {
   componentWillUpdate(): void {
     if (!this._lastSegmentUpdated) {
       const potentialLastSegment = this.props.segments[this.props.segments.length - 1];
-      if (potentialLastSegment.endTime - this.props.duration < 1) {
+      if (potentialLastSegment.endTime <= this.props.duration && this.props.duration - potentialLastSegment.endTime < 1) {
         this.props.updateSegmentEndTime(potentialLastSegment.id, this.props.duration);
         this._lastSegmentUpdated = true;
       }
