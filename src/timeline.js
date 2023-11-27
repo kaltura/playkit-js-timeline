@@ -11,6 +11,8 @@ const {Utils} = core;
 const CSS_VARS_POLYFILL_CDN_URL = 'https://cdn.jsdelivr.net/npm/css-vars-ponyfill';
 let cssVarsPolyfillLibLoaded: ?Promise<*> = null;
 
+const TIMELINE_SERVICE = 'timeline';
+
 /**
  * Timeline class.
  * @classdesc
@@ -34,9 +36,13 @@ class Timeline extends BasePlugin {
   constructor(name: string, player: Player, config: Object) {
     super(name, player, config);
     this.player.registerService(
-      'timeline',
-      new TimelineManager(this.player, this.logger, (event: string, payload: any) => this.dispatchEvent(event, payload))
+      TIMELINE_SERVICE,
+      new TimelineManager(this.player, this.logger, (event: string, payload: any) => this.dispatchEvent(event, payload), this.eventManager)
     );
+  }
+
+  loadMedia() {
+    this.player.getService(TIMELINE_SERVICE).loadMedia();
   }
 
   get ready(): Promise<*> {
