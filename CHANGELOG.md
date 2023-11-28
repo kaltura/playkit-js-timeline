@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 3.0.8 (2023-11-28)
+
+
+### Bug Fixes
+
+* **SUP-39795:** Bumper causing chapters to not show ([#27](https://github.com/kaltura/playkit-js-timeline/issues/27)) ([f8c0c01](https://github.com/kaltura/playkit-js-timeline/commit/f8c0c01))
+
+
+
 ### 3.0.7 (2023-11-12)
 
 
