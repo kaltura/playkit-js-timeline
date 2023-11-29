@@ -31,17 +31,21 @@ class TimelineManager {
   _cuePointsRemoveMap: Map<string, Function>;
   _cuePointsMap: Map<number, TimelineMarkerDataObject>;
   _chapters: Chapter[] = [];
+  _resolveTimelineDurationPromise = () => {};
+  _timelineDurationPromise: Promise<void>;
 
   /**
    * @constructor
    * @param _player
    * @param _logger
    * @param _dispatchTimelineEvent
+   * @param _eventManager
    */
   constructor(
     private _player: KalturaPlayerTypes.Player,
     private _logger: any,
-    private _dispatchTimelineEvent: (event: string, payload: any) => void
+    private _dispatchTimelineEvent: (event: string, payload: any) => void,
+    private _eventManager: any
   ) {
     this._uiManager = this._player.ui;
     this._store = redux.useStore();
@@ -52,7 +56,22 @@ class TimelineManager {
         this._addSeekBarPreview();
       }
     });
+    this._timelineDurationPromise = this._makeTimelineDurationPromise();
   }
+
+  get _state(): any {
+    return this._store.getState();
+  }
+
+  public loadMedia = () => {
+    this._listenerDuration();
+  };
+
+  private _makeTimelineDurationPromise = () => {
+    return new Promise<void>(res => {
+      this._resolveTimelineDurationPromise = res;
+    });
+  };
 
   get navigationPlugin() {
     return this._player.getService('navigation') as any;
@@ -83,6 +102,20 @@ class TimelineManager {
     this._addSegmentToSeekbar();
   };
 
+  private _isDurationCorrect = () => {
+    return Math.floor(this._state.engine.duration) === this._player.sources.duration;
+  };
+
+  private _listenerDuration = () => {
+    this._eventManager.listenOnce(this._player, this._player.Event.DURATION_CHANGE, () => {
+      if (this._isDurationCorrect()) {
+        this._resolveTimelineDurationPromise();
+      } else {
+        this._listenerDuration();
+      }
+    });
+  }
+
   private _toggleNavigationPlugin = (e: OnClickEvent, byKeyboard: boolean | undefined, cuePointType: string) => {
     if (this._isNavigationPluginVisible()) {
       // focus to tab in navigation according to the type
@@ -99,7 +132,7 @@ class TimelineManager {
     this._store.dispatch(actions.updateSeekbarSegments(this._chapters));
     this._player.ui.addComponent({
       label: 'Seekbar segment',
-      presets: [this._store.getState().shell.activePresetName],
+      presets: [this._state.shell.activePresetName],
       area: 'SeekBar',
       replaceComponent: 'ProgressIndicator',
       get: SegmentsWrapper
@@ -114,7 +147,7 @@ class TimelineManager {
     }
     this._player.ui.addComponent({
       label: 'ProgressIndicator',
-      presets: [this._store.getState().shell.activePresetName],
+      presets: [this._state.shell.activePresetName],
       area: 'SeekBar',
       replaceComponent: 'ProgressIndicator',
       get: components.ProgressIndicator
@@ -125,7 +158,7 @@ class TimelineManager {
     // replace the default seekbar frame preview with timeline preview
     this._player.ui.addComponent({
       label: 'Chapter preview',
-      presets: [this._store.getState().shell.activePresetName],
+      presets: [this._state.shell.activePresetName],
       area: 'SeekBar',
       replaceComponent: 'SeekBarPreview',
       get: () => (
@@ -133,7 +166,7 @@ class TimelineManager {
           toggleNavigationPlugin={this._toggleNavigationPlugin}
           seekTo={this._seekTo}
           cuePointsData={[]}
-          thumbnailInfo={() => this._getThumbnailInfo(this._store.getState().seekbar.virtualTime)}
+          thumbnailInfo={() => this._getThumbnailInfo(this._state.seekbar.virtualTime)}
           getSeekBarNode={this._getSeekBarNode}
         />
       )
@@ -143,7 +176,7 @@ class TimelineManager {
   private _restoreSeekBarPreview = () => {
     this._player.ui.addComponent({
       label: 'SeekBarPreview',
-      presets: [this._store.getState().shell.activePresetName],
+      presets: [this._state.shell.activePresetName],
       area: 'SeekBar',
       replaceComponent: 'SeekBarPreview',
       get: components.SeekBarPreview
@@ -151,46 +184,49 @@ class TimelineManager {
   };
 
   addKalturaCuePoint(startTime: number, type: string, cuePointId: string, title?: string, quizQuestionData?: QuizQuestionData) {
-    if (this._store.getState().shell.playerSize === PLAYER_SIZE.TINY) {
+    if (this._state.shell.playerSize === PLAYER_SIZE.TINY) {
       return;
     }
-    if (type === chapterType) {
-      const chapter: Chapter = {
-        id: cuePointId,
-        startTime: startTime,
-        title: title!,
-        endTime: this._player.sources.duration!,
-        isHovered: false,
-        isDummy: false
-      };
-      this._handleChapter(chapter);
-      return;
-    }
-    const timelineCuePoint = this._cuePointsMap.get(startTime);
-    if (!timelineCuePoint) {
-      // create the timeline marker data
-      const timelineMarkerData: TimelineMarkerDataObject = {
-        cuePoints: [cuePointId],
-        cuePointsData: [{id: cuePointId, type: type, title: title || '', quizQuestionData: quizQuestionData ?? null}],
-        timelinePreviewRef: createRef(),
-        timelineMarkerRef: createRef(),
-        useQuizQuestionMarkerSize: type === quizQuestionType,
-        onMarkerClick: quizQuestionData?.onClick ?? this._seekTo,
-        isMarkerDisabled: quizQuestionData?.isMarkerDisabled ?? false
-      };
-      this._createKalturaCuePoint(timelineMarkerData, startTime);
-      this._cuePointsMap.set(startTime, timelineMarkerData);
-    } else {
-      // update data and components
-      timelineCuePoint.cuePoints.push(cuePointId);
-      timelineCuePoint.cuePointsData.push({id: cuePointId, type: type, title: title || '', quizQuestionData: quizQuestionData ?? null});
-      timelineCuePoint.useQuizQuestionMarkerSize = type === quizQuestionType;
-      if (type === quizQuestionType) {
-        timelineCuePoint.onMarkerClick = quizQuestionData!.onClick;
+    // wait for the duration to be correct and stable
+    this._timelineDurationPromise.then(() => {
+      if (type === chapterType) {
+        const chapter: Chapter = {
+          id: cuePointId,
+          startTime: startTime,
+          title: title!,
+          endTime: this._state.engine.duration,
+          isHovered: false,
+          isDummy: false
+        };
+        this._handleChapter(chapter);
+        return;
       }
-      timelineCuePoint.timelinePreviewRef?.current?.forceUpdate();
-      timelineCuePoint.timelineMarkerRef?.current?.forceUpdate();
-    }
+      const timelineCuePoint = this._cuePointsMap.get(startTime);
+      if (!timelineCuePoint) {
+        // create the timeline marker data
+        const timelineMarkerData: TimelineMarkerDataObject = {
+          cuePoints: [cuePointId],
+          cuePointsData: [{id: cuePointId, type: type, title: title || '', quizQuestionData: quizQuestionData ?? null}],
+          timelinePreviewRef: createRef(),
+          timelineMarkerRef: createRef(),
+          useQuizQuestionMarkerSize: type === quizQuestionType,
+          onMarkerClick: quizQuestionData?.onClick ?? this._seekTo,
+          isMarkerDisabled: quizQuestionData?.isMarkerDisabled ?? false
+        };
+        this._createKalturaCuePoint(timelineMarkerData, startTime);
+        this._cuePointsMap.set(startTime, timelineMarkerData);
+      } else {
+        // update data and components
+        timelineCuePoint.cuePoints.push(cuePointId);
+        timelineCuePoint.cuePointsData.push({id: cuePointId, type: type, title: title || '', quizQuestionData: quizQuestionData ?? null});
+        timelineCuePoint.useQuizQuestionMarkerSize = type === quizQuestionType;
+        if (type === quizQuestionType) {
+          timelineCuePoint.onMarkerClick = quizQuestionData!.onClick;
+        }
+        timelineCuePoint.timelinePreviewRef?.current?.forceUpdate();
+        timelineCuePoint.timelineMarkerRef?.current?.forceUpdate();
+      }
+    });
   }
 
   private _createKalturaCuePoint = (timelineMarkerData: TimelineMarkerDataObject, markerStartTime: number) => {
@@ -254,7 +290,7 @@ class TimelineManager {
    * @return {null|{id: string}} - An object contains the cue point id
    */
   addCuePoint(newCuePoint: TimedCuePointOptionsObject): {id: string} | null {
-    if (this._store.getState().engine.isLive) {
+    if (this._state.engine.isLive) {
       this._logger.warn('Impossible to add cue points while LIVE playback');
       return null;
     }
@@ -267,7 +303,7 @@ class TimelineManager {
       id,
       this._uiManager.addComponent({
         label: `Cue Point - ${id}`,
-        presets: newCuePoint.presets || [this._store.getState().shell.activePresetName],
+        presets: newCuePoint.presets || [this._state.shell.activePresetName],
         area: 'SeekBar',
         get: CuePoint,
         props: {
@@ -297,7 +333,7 @@ class TimelineManager {
    * @return {Function} - Removal function
    */
   setSeekbarPreview(preview: SeekbarPreviewOptionsObject = {}): Function {
-    const presets = preview.presets || [this._store.getState().shell.activePresetName];
+    const presets = preview.presets || [this._state.shell.activePresetName];
     const previewStyle = {
       width: `${preview.width || style.framePreviewImgWidth}px`,
       height: `${preview.height || style.framePreviewImgHeight}px`
@@ -352,6 +388,8 @@ class TimelineManager {
       this._store.dispatch(actions.updateSeekbarSegments([]));
       this._chapters = [];
     }
+    this._eventManager.removeAll();
+    this._timelineDurationPromise = this._makeTimelineDurationPromise();
   }
 
   /**

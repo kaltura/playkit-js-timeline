@@ -227,6 +227,7 @@ describe('Timeline plugin', () => {
       mockKalturaBe();
       loadPlayer().then(player => {
         const timelineService = player.getService('timeline');
+        cy.stub(timelineService, '_isDurationCorrect', () => true);
         timelineService.addKalturaCuePoint(10, 'Hotspot', '1');
         cy.get('[data-testid="cuePointContainer"]').should('exist');
         cy.wait(1000);
@@ -248,6 +249,7 @@ describe('Timeline plugin', () => {
       mockKalturaBe();
       loadPlayer().then(player => {
         const timelineService = player.getService('timeline');
+        cy.stub(timelineService, '_isDurationCorrect', () => true);
         timelineService.addKalturaCuePoint(0, 'Chapter', '1', 'Chapter 1');
         timelineService.addKalturaCuePoint(18, 'Chapter', '2', 'Chapter 2');
         cy.get('[data-testid="segmentsWrapper"]').should('exist');
@@ -259,6 +261,7 @@ describe('Timeline plugin', () => {
       mockKalturaBe();
       loadPlayer().then(player => {
         const timelineService = player.getService('timeline');
+        cy.stub(timelineService, '_isDurationCorrect', () => true);
         timelineService.addKalturaCuePoint(10, 'Chapter', '1', 'Chapter 1');
         timelineService.addKalturaCuePoint(18, 'Chapter', '2', 'Chapter 2');
         cy.get('[data-testid="segmentsWrapper"]').should('exist');
@@ -270,6 +273,7 @@ describe('Timeline plugin', () => {
       mockKalturaBe();
       loadPlayer().then(player => {
         const timelineService = player.getService('timeline');
+        cy.stub(timelineService, '_isDurationCorrect', () => true);
         timelineService.addKalturaCuePoint(10, 'Chapter', '1', 'Chapter 1');
         timelineService.addKalturaCuePoint(18, 'Chapter', '2', 'Chapter 2');
         cy.get('[data-testid="segmentsWrapper"]').should('exist');
@@ -295,6 +299,7 @@ describe('Timeline plugin', () => {
       mockKalturaBe();
       loadPlayer().then(player => {
         const timelineService = player.getService('timeline');
+        cy.stub(timelineService, '_isDurationCorrect', () => true);
         timelineService.addKalturaCuePoint(0, 'Chapter', '1', 'Chapter 1');
         timelineService.addKalturaCuePoint(18, 'Chapter', '2', 'Chapter 2');
         cy.get('[data-testid="segmentsWrapper"]').should('exist');
@@ -346,6 +351,7 @@ describe('Timeline plugin', () => {
         };
         player.registerService('dualScreen', fakeDualScreenPlugin);
         const timelineService = player.getService('timeline');
+        cy.stub(timelineService, '_isDurationCorrect', () => true);
         timelineService.addKalturaCuePoint(10, 'Chapter', '1', 'Chapter 1');
         cy.get('[data-testid="cuePointPreviewImageContainer"]').children().should('have.length', 1);
       });
@@ -358,6 +364,7 @@ describe('Timeline plugin', () => {
         };
         player.registerService('dualScreen', fakeDualScreenPlugin);
         const timelineService = player.getService('timeline');
+        cy.stub(timelineService, '_isDurationCorrect', () => true);
         timelineService.addKalturaCuePoint(10, 'Chapter', '1', 'Chapter 1');
         cy.get('[data-testid="cuePointPreviewImageContainer"]').children().should('have.length', 2);
       });

@@ -1,6 +1,6 @@
 //@flow
 // eslint-disable-next-line no-unused-vars
-import {Fragment, Component} from 'preact';
+import {Component} from 'preact';
 import styles from './segments-wrapper.scss';
 // eslint-disable-next-line no-unused-vars
 import {SeekBarSegment} from './seekbar-segment';
@@ -37,29 +37,12 @@ const mapDispatchToProps = (dispatch: any) => {
  */
 @redux.connect(mapStateToProps, mapDispatchToProps)
 class SegmentsWrapper extends Component {
-  _lastSegmentUpdated = false;
-
   /**
    * componentWillMount
    * @returns {void}
    */
   componentWillMount(): void {
     this._maybeAddDummySegment();
-  }
-
-  /**
-   * componentWillUpdate
-   * update the endTime of the last segment to match the duration from the engine
-   * @returns {void}
-   */
-  componentWillUpdate(): void {
-    if (!this._lastSegmentUpdated) {
-      const potentialLastSegment = this.props.segments[this.props.segments.length - 1];
-      if (potentialLastSegment.endTime - this.props.duration < 1) {
-        this.props.updateSegmentEndTime(potentialLastSegment.id, this.props.duration);
-        this._lastSegmentUpdated = true;
-      }
-    }
   }
 
   _maybeAddDummySegment = () => {
