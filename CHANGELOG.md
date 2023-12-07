@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 3.0.9 (2023-12-07)
+
+
+### Bug Fixes
+
+* **FEC-13424:** timeline segments issue with playlist ([#29](https://github.com/kaltura/playkit-js-timeline/issues/29)) ([1023e84](https://github.com/kaltura/playkit-js-timeline/commit/1023e84))
+
+
+
 ### 3.0.8 (2023-11-28)
 
 
