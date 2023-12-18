@@ -103,7 +103,15 @@ class TimelineManager {
   };
 
   private _isDurationCorrect = () => {
-    return Math.floor(this._state.engine.duration) === this._player.sources.duration;
+    // @ts-ignore
+    const {clipTo, seekFrom} = this._player.sources;
+    let duration = this._player.sources.duration;
+    if (clipTo && seekFrom) {
+      duration = clipTo - seekFrom;
+    } else if (!clipTo && seekFrom && duration) {
+      duration = duration - seekFrom;
+    }
+    return Math.floor(this._state.engine.duration) === duration;
   };
 
   private _listenerDuration = () => {
@@ -114,7 +122,7 @@ class TimelineManager {
         this._listenerDuration();
       }
     });
-  }
+  };
 
   private _toggleNavigationPlugin = (e: OnClickEvent, byKeyboard: boolean | undefined, cuePointType: string) => {
     if (this._isNavigationPluginVisible()) {
