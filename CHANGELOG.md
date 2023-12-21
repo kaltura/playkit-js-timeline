@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 3.0.10 (2023-12-21)
+
+
+### Bug Fixes
+
+* **FEC-13532:** handle clipTo and seekFrom settings ([#30](https://github.com/kaltura/playkit-js-timeline/issues/30)) ([93b2f3b](https://github.com/kaltura/playkit-js-timeline/commit/93b2f3b))
+
+
+
 ### 3.0.9 (2023-12-07)
 
 
