@@ -111,7 +111,7 @@ class TimelineManager {
     } else if (!clipTo && seekFrom && duration) {
       duration = duration - seekFrom;
     }
-    return Math.floor(this._state.engine.duration) === duration;
+    return Math.round(this._state.engine.duration) === duration;
   };
 
   private _listenerDuration = () => {
