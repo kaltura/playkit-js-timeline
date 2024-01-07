@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 3.0.11 (2024-01-07)
+
+
+### Bug Fixes
+
+* **SUP-40702:** Video quiz is not showing quePoints ([#31](https://github.com/kaltura/playkit-js-timeline/issues/31)) ([468f9e9](https://github.com/kaltura/playkit-js-timeline/commit/468f9e9))
+
+
+
 ### 3.0.10 (2023-12-21)
 
 
