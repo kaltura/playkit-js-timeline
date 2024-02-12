@@ -106,7 +106,7 @@ class TimelineManager {
     // @ts-ignore
     const {clipTo, seekFrom} = this._player.sources;
     let duration = this._player.sources.duration;
-    if (clipTo && seekFrom) {
+    if (clipTo && typeof seekFrom === 'number') {
       duration = clipTo - seekFrom;
     } else if (!clipTo && seekFrom && duration) {
       duration = duration - seekFrom;
