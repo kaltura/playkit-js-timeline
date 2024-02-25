@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 3.0.12 (2024-02-25)
+
+
+### Bug Fixes
+
+* **FEC-13628:** markers not shown on timeline for clipped video ([#32](https://github.com/kaltura/playkit-js-timeline/issues/32)) ([5cd4798](https://github.com/kaltura/playkit-js-timeline/commit/5cd4798))
+
+
+
 ### 3.0.11 (2024-01-07)
 
 
