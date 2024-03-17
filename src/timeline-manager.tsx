@@ -64,10 +64,12 @@ class TimelineManager {
     return this._store.getState();
   }
 
+  public setIsPreventSeekActive = (isPreventSeekActive: boolean): void => {
+    this._isPreventSeekActive = isPreventSeekActive;
+  };
+
   public loadMedia = () => {
     this._listenerDuration();
-    // @ts-ignore
-    this._player.ready().then(() => this._isPreventSeekActive = this._player.preventSeekOptions.isActive)
   };
 
   private _makeTimelineDurationPromise = () => {
