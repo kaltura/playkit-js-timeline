@@ -33,7 +33,6 @@ class TimelineManager {
   _chapters: Chapter[] = [];
   _resolveTimelineDurationPromise = () => {};
   _timelineDurationPromise: Promise<void>;
-  _isPreventSeekActive: boolean = false;
 
   /**
    * @constructor
@@ -63,10 +62,6 @@ class TimelineManager {
   get _state(): any {
     return this._store.getState();
   }
-
-  public setIsPreventSeekActive = (isPreventSeekActive: boolean): void => {
-    this._isPreventSeekActive = isPreventSeekActive;
-  };
 
   public loadMedia = () => {
     this._listenerDuration();
@@ -197,7 +192,7 @@ class TimelineManager {
   };
 
   addKalturaCuePoint(startTime: number, type: string, cuePointId: string, title?: string, quizQuestionData?: QuizQuestionData) {
-    if (this._state.shell.playerSize === PLAYER_SIZE.TINY || this._isPreventSeekActive) {
+    if (this._state.shell.playerSize === PLAYER_SIZE.TINY || this._player.ui.store.getState().seekbar.isPreventSeek) {
       return;
     }
     // wait for the duration to be correct and stable
@@ -403,7 +398,6 @@ class TimelineManager {
     }
     this._eventManager.removeAll();
     this._timelineDurationPromise = this._makeTimelineDurationPromise();
-    this._isPreventSeekActive = false;
   }
 
   /**
