@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 3.0.13 (2024-03-31)
+
+
+### Bug Fixes
+
+* **FEC-13781:** use new redux state isPreventSeek ([#34](https://github.com/kaltura/playkit-js-timeline/issues/34)) ([43e1f5c](https://github.com/kaltura/playkit-js-timeline/commit/43e1f5c))
+
+
+
 ### 3.0.12 (2024-02-25)
 
 
