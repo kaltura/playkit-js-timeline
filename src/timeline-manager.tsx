@@ -145,7 +145,7 @@ class TimelineManager {
       replaceComponent: 'ProgressIndicator',
       get: SegmentsWrapper
     });
-    this._addSeekBarPreview();
+    this._addSeekBarPreview(false);
   }
 
   private _restoreProgressIndicator() {
@@ -162,7 +162,7 @@ class TimelineManager {
     });
   }
 
-  private _addSeekBarPreview = () => {
+  private _addSeekBarPreview = (moveOnHover: boolean = true) => {
     // replace the default seekbar frame preview with timeline preview
     this._player.ui.addComponent({
       label: 'Chapter preview',
@@ -171,6 +171,7 @@ class TimelineManager {
       replaceComponent: 'SeekBarPreview',
       get: () => (
         <TimelinePreview
+          moveOnHover={moveOnHover}
           toggleNavigationPlugin={this._toggleNavigationPlugin}
           seekTo={this._seekTo}
           cuePointsData={[]}
