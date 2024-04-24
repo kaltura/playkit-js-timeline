@@ -41,6 +41,7 @@ interface TimelinePreviewProps {
   virtualTime?: number;
   duration?: number;
   getSeekBarNode: () => Element | null;
+  moveOnHover?: boolean;
 }
 
 const getFramePreviewImgContainerStyle = (thumbnailInfo: ThumbnailInfo | ThumbnailInfo[]) => {
@@ -155,6 +156,10 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
     }
   }
 
+  shouldComponentUpdate(nextProps: Readonly<TimelinePreviewProps>, nextState: Readonly<{}>, nextContext: any): boolean {
+    return this.props.duration !== nextProps.duration || this.props.virtualTime !== nextProps.virtualTime;
+  }
+
   private _renderHeader(relevantChapter: Chapter | undefined, data: any) {
     const {quizQuestions, hotspots, answerOnAir} = data;
 
@@ -240,7 +245,9 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
 
   onMouseMove = (e: MouseEvent) => {
     // prevent the preview from moving with the mouse
-    e.stopPropagation();
+    if (!this.props.moveOnHover) {
+      e.stopPropagation();
+    }
   };
 
   private _shouldRenderHeader(relevantChapter: Chapter | undefined): boolean {
