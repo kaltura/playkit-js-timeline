@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 3.0.14 (2024-05-02)
+
+
+### Bug Fixes
+
+* **FEC-13779:** Thumbnails display when hovering over timeline is choppy ([bf94380](https://github.com/kaltura/playkit-js-timeline/commit/bf94380))
+
+
+
 ### 3.0.13 (2024-03-31)
 
 
