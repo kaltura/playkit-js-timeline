@@ -131,8 +131,12 @@ class TimelineManager {
     }
   };
 
+  private _getProgressBarEl() {
+    return document.getElementsByClassName(style.progressBar)[0];
+  }
+
   private _addSegmentToSeekbar() {
-    const progressBarEl = document.getElementsByClassName(style.progressBar)[0];
+    const progressBarEl = this._getProgressBarEl();
     if (progressBarEl && !progressBarEl.classList.contains(style.chapters)) {
       progressBarEl.classList.add(chaptersClassName);
     }
@@ -149,8 +153,8 @@ class TimelineManager {
   }
 
   private _restoreProgressIndicator() {
-    const progressBarEl = document.getElementsByClassName(style.progressBar)[0];
-    if (progressBarEl.classList.contains(style.chapters)) {
+    const progressBarEl = this._getProgressBarEl();
+    if (progressBarEl?.classList.contains(style.chapters)) {
       progressBarEl.classList.remove(chaptersClassName);
     }
     this._player.ui.addComponent({
