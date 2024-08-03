@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 3.0.15 (2024-08-03)
+
+
+### Bug Fixes
+
+* **FEC-14065:** add validation to progressBarEl ([#36](https://github.com/kaltura/playkit-js-timeline/issues/36)) ([ba1e408](https://github.com/kaltura/playkit-js-timeline/commit/ba1e408))
+
+
+
 ### 3.0.14 (2024-05-02)
 
 
