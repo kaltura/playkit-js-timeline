@@ -11,9 +11,9 @@
     .header{
       background: rgba(0, 0, 0, 0.6);
       border-radius: $roundness-1;
-    }
-    .header:hover {
-      background: rgba(0, 0, 0, 0.7);
+      &:hover{
+        background: rgba(0, 0, 0, 0.7);
+      }
     }
     .header .items-wrapper > div:first-child {
       margin-left: 2px;
