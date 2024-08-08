@@ -8,9 +8,12 @@
   padding-top: 40px;
   z-index: 1;
   &:not(.xs-player) {
-    .header:hover {
+    .header{
       background: rgba(0, 0, 0, 0.6);
       border-radius: $roundness-1;
+      &:hover{
+        background: rgba(0, 0, 0, 0.7);
+      }
     }
     .header .items-wrapper > div:first-child {
       margin-left: 2px;
