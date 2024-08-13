@@ -246,6 +246,9 @@ class TimelineManager {
     const setMarkerRef = (node: HTMLDivElement | null) => {
       timelineMarkerData.timelineMarkerRef = node;
     };
+    const getTimelineMarkerType = () => {
+      return timelineMarkerData?.cuePointsData?.[0]?.type;
+    };
     // create the timeline marker comp
     const timeLineMarker: TimeLineMarker = {
       time: markerStartTime,
@@ -262,6 +265,7 @@ class TimelineManager {
               isDisabled={timelineMarkerData.isMarkerDisabled}
               setMarkerRef={setMarkerRef}
               markerStartTime={markerStartTime}
+              type={getTimelineMarkerType()}
             />
           );
         }

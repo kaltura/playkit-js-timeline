@@ -26,6 +26,7 @@ export interface TimelineMarkerProps {
   useQuizQuestionMarkerSize: boolean;
   setMarkerRef: (node: HTMLDivElement | null) => void;
   markerStartTime: number;
+  type: string;
 }
 
 export interface TimeLineMarker {

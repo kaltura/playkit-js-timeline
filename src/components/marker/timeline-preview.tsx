@@ -44,7 +44,7 @@ interface TimelinePreviewProps {
   moveOnHover?: boolean;
 }
 
-const getFramePreviewImgContainerStyle = (thumbnailInfo: ThumbnailInfo | ThumbnailInfo[]) => {
+const getFramePreviewImgContainerStyle = (thumbnailInfo: ThumbnailInfo | ThumbnailInfo[]): Record<string, string> => {
   if (!thumbnailInfo) {
     return {
       borderColor: 'transparent'
