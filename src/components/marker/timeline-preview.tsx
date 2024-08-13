@@ -44,7 +44,7 @@ interface TimelinePreviewProps {
   moveOnHover?: boolean;
 }
 
-const getFramePreviewImgContainerStyle = (thumbnailInfo: ThumbnailInfo | ThumbnailInfo[]) => {
+const getFramePreviewImgContainerStyle = (thumbnailInfo: ThumbnailInfo | ThumbnailInfo[]): Record<string, string> => {
   if (!thumbnailInfo) {
     return {
       borderColor: 'transparent'
@@ -385,7 +385,6 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
         <div
           className={styles.imageContainer}
           data-testid="cuePointPreviewImageContainer"
-          // @ts-expect-error Type 'undefined' is not assignable to type 'string | number'
           style={getFramePreviewImgContainerStyle(thumbnailInfo())}
           onMouseDown={this.onThumbnailClick}
           ref={node => (this._thumbnailContainerElement = node)}>
