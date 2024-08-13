@@ -4,14 +4,24 @@ import * as styles from './timeline-marker.scss';
 import type {TimelineMarkerProps} from '../../types/timelineTypes';
 import {A11yWrapper} from '@playkit-js/common/dist/hoc/a11y-wrapper';
 import {useMemo, useRef, useEffect} from 'preact/hooks';
-import {Chapter} from "../../../flow-typed/types/cue-point-option";
+import {Chapter} from '../../../flow-typed/types/cue-point-option';
 
 const {
   redux: {useSelector}
 } = KalturaPlayer.ui;
 
-export const TimelineMarker = (({isDisabled, onMarkerClick, getSeekBarNode, useQuizQuestionMarkerSize, setMarkerRef = () => {}, markerStartTime}: TimelineMarkerProps) => {
-  const segment: Chapter = useSelector((state: any) => state.seekbar.segments.find((segment: Chapter) => markerStartTime >= segment.startTime && markerStartTime < segment.endTime));
+export const TimelineMarker = ({
+  isDisabled,
+  onMarkerClick,
+  getSeekBarNode,
+  useQuizQuestionMarkerSize,
+  setMarkerRef = () => {},
+  markerStartTime,
+  type
+}: TimelineMarkerProps) => {
+  const segment: Chapter = useSelector((state: any) =>
+    state.seekbar.segments.find((segment: Chapter) => markerStartTime >= segment.startTime && markerStartTime < segment.endTime)
+  );
   const hoverActive = useSelector((state: any) => {
     return segment ? segment.isHovered : state.seekbar.hoverActive;
   });
@@ -46,12 +56,12 @@ export const TimelineMarker = (({isDisabled, onMarkerClick, getSeekBarNode, useQ
     };
 
     const onMouseOver = () => {
-      if(markerRef?.current && !useQuizQuestionMarkerSize && isSeekbarSegmented) {
+      if (markerRef?.current && !useQuizQuestionMarkerSize && isSeekbarSegmented) {
         markerRef.current.style.width = '12px';
         markerRef.current.style.height = '12px';
         markerRef.current.style.transform = 'translateY(-4px)';
       }
-    }
+    };
 
     return (
       <A11yWrapper onClick={onMarkerClick}>
@@ -62,6 +72,7 @@ export const TimelineMarker = (({isDisabled, onMarkerClick, getSeekBarNode, useQ
           onMouseOver={onMouseOver}
           tabIndex={disabled ? -1 : 0}
           data-testid="cuePointMarkerContainer"
+          aria-label={type}
           className={`${useQuizQuestionMarkerSize ? styles.quizQuestionMarkerSize : styles.smallMarker} ${hoverActive ? styles.hover : ''}`}
           style={`transform: translateY(${getTransformValue()}px)`}>
           <div className={`${styles.marker}`} />
@@ -71,4 +82,4 @@ export const TimelineMarker = (({isDisabled, onMarkerClick, getSeekBarNode, useQ
   }, [disabled, hoverActive, useQuizQuestionMarkerSize, isSeekbarSegmented]);
 
   return renderMarker;
-});
+};
