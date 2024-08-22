@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 3.0.16 (2024-08-22)
+
+
+### Bug Fixes
+
+* **A11Y-58:** add aria-label to timeline marker ([#39](https://github.com/kaltura/playkit-js-timeline/issues/39)) ([63b7b63](https://github.com/kaltura/playkit-js-timeline/commit/63b7b63))
+
+
+
 ### 3.0.15 (2024-08-03)
 
 
