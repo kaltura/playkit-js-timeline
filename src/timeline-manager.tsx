@@ -7,6 +7,7 @@ import {Chapter, QuizQuestionData, TimedCuePointOptionsObject, TimelineMarkerDat
 import {SeekbarPreviewOptionsObject} from '../flow-typed/types/seekbar-preview-option';
 import {ThumbnailInfo, TimeLineMarker, TimelineMarkerProps} from './types/timelineTypes';
 import {TimelinePreview} from './components/marker/timeline-preview';
+// import {EngineType} from '../engines/engine-type';
 // @ts-ignore
 import {SegmentsWrapper} from './components/chapters';
 import {OnClickEvent} from '@playkit-js/common/dist/hoc/a11y-wrapper';
@@ -21,6 +22,7 @@ const KalturaPlayerSeekBarSelector = '.playkit-seek-bar';
 const quizQuestionType = 'QuizQuestion';
 const chapterType = 'Chapter';
 const chaptersClassName = 'playkit-chapters';
+const {EngineType} = core;
 
 /**
  * @class TimelineManager
@@ -110,6 +112,9 @@ class TimelineManager {
       duration = clipTo - seekFrom;
     } else if (!clipTo && seekFrom && duration) {
       duration = duration - seekFrom;
+    }
+    if (this._player.engineType === EngineType.YOUTUBE){
+      return Math.ceil(this._state.engine.duration) === duration;
     }
     return Math.round(this._state.engine.duration) === duration;
   };
