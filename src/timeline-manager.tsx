@@ -7,7 +7,6 @@ import {Chapter, QuizQuestionData, TimedCuePointOptionsObject, TimelineMarkerDat
 import {SeekbarPreviewOptionsObject} from '../flow-typed/types/seekbar-preview-option';
 import {ThumbnailInfo, TimeLineMarker, TimelineMarkerProps} from './types/timelineTypes';
 import {TimelinePreview} from './components/marker/timeline-preview';
-// import {EngineType} from '../engines/engine-type';
 // @ts-ignore
 import {SegmentsWrapper} from './components/chapters';
 import {OnClickEvent} from '@playkit-js/common/dist/hoc/a11y-wrapper';
