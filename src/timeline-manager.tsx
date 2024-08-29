@@ -21,6 +21,7 @@ const KalturaPlayerSeekBarSelector = '.playkit-seek-bar';
 const quizQuestionType = 'QuizQuestion';
 const chapterType = 'Chapter';
 const chaptersClassName = 'playkit-chapters';
+const {EngineType} = core;
 
 /**
  * @class TimelineManager
@@ -110,6 +111,9 @@ class TimelineManager {
       duration = clipTo - seekFrom;
     } else if (!clipTo && seekFrom && duration) {
       duration = duration - seekFrom;
+    }
+    if (this._player.engineType === EngineType.YOUTUBE){
+      return Math.ceil(this._state.engine.duration) === duration;
     }
     return Math.round(this._state.engine.duration) === duration;
   };
