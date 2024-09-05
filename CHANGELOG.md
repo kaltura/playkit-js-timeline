@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 3.0.17 (2024-09-05)
+
+
+### Bug Fixes
+
+* **SUP-43592:** [PSU] Cue Points not showing in some YT Ingested Video Quiz ([#40](https://github.com/kaltura/playkit-js-timeline/issues/40)) ([36f4ce4](https://github.com/kaltura/playkit-js-timeline/commit/36f4ce4))
+
+
+
 ### 3.0.16 (2024-08-22)
 
 
