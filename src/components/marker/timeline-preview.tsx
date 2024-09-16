@@ -94,18 +94,17 @@ interface TitleProps {
   children?: VNode | string;
   iconName: string;
   shouldDisplayTitle: boolean;
-  className: string;
   ariaLabel?: string;
 }
 
-const Title = ({iconName, children, shouldDisplayTitle = true, className, ariaLabel = ''}: TitleProps) => {
-  let additionalProps: any = {};
+const Title = ({iconName, children, shouldDisplayTitle = true, ariaLabel = ''}: TitleProps) => {
+  let titleWrapperProps: any = { className: styles.titleWrapper };
   if (ariaLabel) {
-    additionalProps.ariaLabel = ariaLabel;
+    titleWrapperProps.ariaLabel = ariaLabel;
   }
 
   return (
-    <div className={className} {...additionalProps}>
+    <div {...titleWrapperProps}>
       <Icon size={IconSize.small} name={iconName} />
       {shouldDisplayTitle && <span className={styles.title}>{children}</span>}
     </div>
@@ -185,7 +184,7 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
     if (!this.props.cuePointsData.length && relevantChapter?.title) {
       // not a marker - render only chapter
       return (
-        <Title iconName={'chapter'} shouldDisplayTitle className={styles.titleWrapper}>
+        <Title iconName={'chapter'} shouldDisplayTitle >
           {relevantChapter.title}
         </Title>
       );
@@ -193,17 +192,17 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
     return (
       <Fragment>
         {hotspots.length > 0 && (
-          <Title iconName={'hotspot'} shouldDisplayTitle className={styles.titleWrapper} ariaLabel={this.props.hotspotTitleAriaLabelTranslate!}>
+          <Title iconName={'hotspot'} shouldDisplayTitle ariaLabel={this.props.hotspotTitleAriaLabelTranslate!}>
             {this.props.hotspotTranslate!}
           </Title>
         )}
         {quizQuestions.length > 0 && (
-          <Title iconName={'quiz'} shouldDisplayTitle className={styles.titleWrapper}>
+          <Title iconName={'quiz'} shouldDisplayTitle >
             {(<span>{`${quizQuestionTitle.type} ${quizQuestionTitle.firstIndex}${quizQuestionTitle.lastIndex}`}</span>) as VNode}
           </Title>
         )}
         {answerOnAir.length > 0 && (
-          <Title iconName={'answerOnAir'} shouldDisplayTitle className={styles.titleWrapper}>
+          <Title iconName={'answerOnAir'} shouldDisplayTitle >
             {this.props.aoaTranslate!}
           </Title>
         )}
@@ -232,13 +231,13 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
 
     const renderItems = () => {
       if (relevantChapter && this.props.cuePointsData.length === 0) {
-        return relevantChapter.isDummy ? null : <Title iconName={'chapter'} shouldDisplayTitle={false} className={styles.titleWrapper} />;
+        return relevantChapter.isDummy ? null : <Title iconName={'chapter'} shouldDisplayTitle={false} />;
       }
       return (
         <Fragment>
-          {hotspots.length > 0 && <Title iconName={'hotspot'} shouldDisplayTitle={false} className={styles.titleWrapper} />}
-          {quizQuestions.length > 0 && <Title iconName={'quiz'} shouldDisplayTitle={false} className={styles.titleWrapper} />}
-          {answerOnAir.length > 0 && <Title iconName={'answerOnAir'} shouldDisplayTitle={false} className={styles.titleWrapper} />}
+          {hotspots.length > 0 && <Title iconName={'hotspot'} shouldDisplayTitle={false} />}
+          {quizQuestions.length > 0 && <Title iconName={'quiz'} shouldDisplayTitle={false} />}
+          {answerOnAir.length > 0 && <Title iconName={'answerOnAir'} shouldDisplayTitle={false} />}
         </Fragment>
       );
     };
