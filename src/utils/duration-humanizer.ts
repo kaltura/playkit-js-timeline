@@ -1,13 +1,15 @@
 import * as humanizeDuration from 'humanize-duration';
 
-const getTimeInText = (position: number, uiConfig: any) => {
+// TODO: export to playkit-js-common repo and use from there (currently the same is used also in playkit-js-related).
+
+const getTimeInText = (seconds: number, uiConfig: any) => {
   try {
     const durationHumanizer = getDurationHumanizer(uiConfig);
     if (durationHumanizer) {
       try {
-        return position ? durationHumanizer(position * 1000) : '';
+        return seconds ? durationHumanizer(seconds * 1000) : '';
       } catch (e: any) {
-        return `${position}`;
+        return `${seconds}`;
       }
     }
   } catch (e: any) {
