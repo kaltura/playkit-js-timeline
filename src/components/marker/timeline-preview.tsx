@@ -17,6 +17,7 @@ const translates = {
   questionTranslate: <Text id="timeline.question_title">Question</Text>,
   reflectionPointTranslate: <Text id="timeline.reflection_point_title">Reflection Point</Text>,
   hotspotTranslate: <Text id="timeline.hotspot_title">Hotspot</Text>,
+  hotspotTitleAriaLabelTranslate: <Text id="timeline.hotspot_title_aria_label">Click to jump to hotspot video position</Text>,
   aoaTranslate: <Text id="timeline.audience_asked_title">Audience Asked</Text>,
   showNavigationTranslate: <Text id="navigation.show_plugin">Show Navigation</Text>,
   hideNavigationTranslate: <Text id="navigation.hide_plugin">Hide Navigation</Text>
@@ -30,6 +31,7 @@ interface TimelinePreviewProps {
   questionTranslate?: string;
   reflectionPointTranslate?: string;
   hotspotTranslate?: string;
+  hotspotTitleAriaLabelTranslate?: string;
   aoaTranslate?: string;
   updateHoveredSegment?: (id: string, isHovered: boolean) => {};
   isExtraSmallPlayer?: boolean;
@@ -93,11 +95,17 @@ interface TitleProps {
   iconName: string;
   shouldDisplayTitle: boolean;
   className: string;
+  ariaLabel?: string;
 }
 
-const Title = ({iconName, children, shouldDisplayTitle = true, className}: TitleProps) => {
+const Title = ({iconName, children, shouldDisplayTitle = true, className, ariaLabel = ''}: TitleProps) => {
+  let additionalProps: any = {};
+  if (ariaLabel) {
+    additionalProps.ariaLabel = ariaLabel;
+  }
+
   return (
-    <div className={className}>
+    <div className={className} {...additionalProps}>
       <Icon size={IconSize.small} name={iconName} />
       {shouldDisplayTitle && <span className={styles.title}>{children}</span>}
     </div>
@@ -185,13 +193,13 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
     return (
       <Fragment>
         {hotspots.length > 0 && (
-          <Title iconName={'hotspot'} shouldDisplayTitle className={styles.titleWrapper}>
+          <Title iconName={'hotspot'} shouldDisplayTitle className={styles.titleWrapper} ariaLabel={this.props.hotspotTitleAriaLabelTranslate!}>
             {this.props.hotspotTranslate!}
           </Title>
         )}
         {quizQuestions.length > 0 && (
           <Title iconName={'quiz'} shouldDisplayTitle className={styles.titleWrapper}>
-            <span>{`${quizQuestionTitle.type} ${quizQuestionTitle.firstIndex}${quizQuestionTitle.lastIndex}`}</span>
+            {(<span>{`${quizQuestionTitle.type} ${quizQuestionTitle.firstIndex}${quizQuestionTitle.lastIndex}`}</span>) as VNode}
           </Title>
         )}
         {answerOnAir.length > 0 && (
