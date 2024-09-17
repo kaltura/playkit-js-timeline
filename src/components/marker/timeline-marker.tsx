@@ -7,7 +7,8 @@ import {useMemo, useRef, useEffect} from 'preact/hooks';
 import {Chapter} from '../../../flow-typed/types/cue-point-option';
 
 const {
-  redux: {useSelector}
+  redux: {useSelector, useDispatch},
+  reducers
 } = KalturaPlayer.ui;
 
 const {withText, Text} = KalturaPlayer.ui.preacti18n;
@@ -27,6 +28,7 @@ export const TimelineMarker = withText(translates)(({
   markerStartTime,
   markerAriaLabel
 }: TimelineMarkerProps) => {
+  const dispatch = useDispatch();
   const segment: Chapter = useSelector((state: any) =>
     state.seekbar.segments.find((segment: Chapter) => markerStartTime >= segment.startTime && markerStartTime < segment.endTime)
   );
@@ -40,6 +42,7 @@ export const TimelineMarker = withText(translates)(({
   useEffect(() => setMarkerRef(markerRef?.current), []);
   const renderMarker = useMemo(() => {
     const handleFocus = () => {
+      dispatch(reducers.seekbar.actions.updateVirtualTime(markerStartTime));
       const seekBarNode = getSeekBarNode();
       if (seekBarNode) {
         // change slider role to prevent interrupts reading marker content by screen-readers
