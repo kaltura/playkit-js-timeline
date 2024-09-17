@@ -10,14 +10,22 @@ const {
   redux: {useSelector}
 } = KalturaPlayer.ui;
 
-export const TimelineMarker = ({
+const {withText, Text} = KalturaPlayer.ui.preacti18n;
+
+const translates = ({type, startTimeInText}: TimelineMarkerProps) => {
+  return {
+    markerAriaLabel: <Text id={"timeline.marker_aria_label"} fields={{ type, position: startTimeInText}} />
+  };
+};
+
+export const TimelineMarker = withText(translates)(({
   isDisabled,
   onMarkerClick,
   getSeekBarNode,
   useQuizQuestionMarkerSize,
   setMarkerRef = () => {},
   markerStartTime,
-  type
+  markerAriaLabel
 }: TimelineMarkerProps) => {
   const segment: Chapter = useSelector((state: any) =>
     state.seekbar.segments.find((segment: Chapter) => markerStartTime >= segment.startTime && markerStartTime < segment.endTime)
@@ -72,7 +80,7 @@ export const TimelineMarker = ({
           onMouseOver={onMouseOver}
           tabIndex={disabled ? -1 : 0}
           data-testid="cuePointMarkerContainer"
-          aria-label={type}
+          aria-label={markerAriaLabel}
           className={`${useQuizQuestionMarkerSize ? styles.quizQuestionMarkerSize : styles.smallMarker} ${hoverActive ? styles.hover : ''}`}
           style={`transform: translateY(${getTransformValue()}px)`}>
           <div className={`${styles.marker}`} />
@@ -82,4 +90,4 @@ export const TimelineMarker = ({
   }, [disabled, hoverActive, useQuizQuestionMarkerSize, isSeekbarSegmented]);
 
   return renderMarker;
-};
+});

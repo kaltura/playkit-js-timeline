@@ -1,4 +1,4 @@
-import {h, createRef} from 'preact';
+import {h, createRef, VNode} from 'preact';
 import * as KalturaPlayer from '@playkit-js/kaltura-player-js';
 // @ts-ignore
 import {CuePoint} from './components/cue-point';
@@ -10,6 +10,7 @@ import {TimelinePreview} from './components/marker/timeline-preview';
 // @ts-ignore
 import {SegmentsWrapper} from './components/chapters';
 import {OnClickEvent} from '@playkit-js/common/dist/hoc/a11y-wrapper';
+import {getTimeInText} from './utils';
 // @ts-ignore
 const {preact, redux, reducers, style, components} = KalturaPlayer.ui;
 const {PLAYER_SIZE} = components;
@@ -259,7 +260,7 @@ class TimelineManager {
       marker: {
         width: 124,
         height: 32,
-        get: (props: TimelineMarkerProps) => {
+        get: (props: TimelineMarkerProps): VNode => {
           return (
             <TimelineMarker
               {...props}
@@ -270,14 +271,15 @@ class TimelineManager {
               setMarkerRef={setMarkerRef}
               markerStartTime={markerStartTime}
               type={getTimelineMarkerType()}
+              startTimeInText={getTimeInText(markerStartTime, this._player?.config?.ui)}
             />
-          );
+          ) as VNode;
         }
       }
     };
     if (this._player.sources?.type !== core.MediaType.AUDIO) {
       timeLineMarker.preview = {
-        get: () => {
+        get: (): VNode => {
           return (
             <TimelinePreview
               ref={timelineMarkerData.timelinePreviewRef}
@@ -288,7 +290,7 @@ class TimelineManager {
               markerStartTime={markerStartTime}
               getSeekBarNode={this._getSeekBarNode}
             />
-          );
+          ) as VNode;
         },
         props: {
           style: {paddingTop: '33%'}

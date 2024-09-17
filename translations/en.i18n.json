@@ -2,9 +2,11 @@
   "en": {
     "timeline": {
       "hotspot_title": "Hotspot",
+      "hotspot_title_aria_label": "Click to jump to hotspot video position",
       "question_title": "Question",
       "reflection_point_title": "Reflection Point",
-      "audience_asked_title": "Audience Asked"
+      "audience_asked_title": "Audience Asked",
+      "marker_aria_label": "{{type}} at {{position}}"
     }
   }
 }

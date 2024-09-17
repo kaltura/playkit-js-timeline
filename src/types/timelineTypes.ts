@@ -27,6 +27,8 @@ export interface TimelineMarkerProps {
   setMarkerRef: (node: HTMLDivElement | null) => void;
   markerStartTime: number;
   type: string;
+  startTimeInText: string;
+  markerAriaLabel?: string;
 }
 
 export interface TimeLineMarker {
