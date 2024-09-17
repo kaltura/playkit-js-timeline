@@ -358,7 +358,7 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
     const {quizQuestions, hotspots, answerOnAir} = data;
 
     let ariaLabel = '';
-    if (hotspots.length > 0) {
+    if (hotspots.length > 0 && quizQuestions.length === 0 && answerOnAir.length === 0) {
       ariaLabel = this.props.hotspotTitleAriaLabelTranslate!;
     }
 

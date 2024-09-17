@@ -15,7 +15,7 @@ const {withText, Text} = KalturaPlayer.ui.preacti18n;
 
 const translates = ({type, startTimeInText}: TimelineMarkerProps) => {
   return {
-    markerAriaLabel: <Text id={"timeline.marker_aria_label"} fields={{ type, position: startTimeInText}} />
+    markerAriaLabel: <Text id={"timeline.marker_aria_label"} fields={{ type, position: startTimeInText}}>{`"${type}} at ${startTimeInText}}"`}</Text>
   };
 };
 
