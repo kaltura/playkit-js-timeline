@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 3.0.18 (2024-09-19)
+
+
+### Bug Fixes
+
+* **ADA-1697:** fix aria label for hotspot marker and title ([#41](https://github.com/kaltura/playkit-js-timeline/issues/41)) ([26e043c](https://github.com/kaltura/playkit-js-timeline/commit/26e043c))
+
+
+
 ### 3.0.17 (2024-09-05)
 
 
