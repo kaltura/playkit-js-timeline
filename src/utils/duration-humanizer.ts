@@ -7,7 +7,7 @@ const getTimeInText = (seconds: number, uiConfig: any) => {
     const durationHumanizer = getDurationHumanizer(uiConfig);
     if (durationHumanizer) {
       try {
-        return seconds ? durationHumanizer(seconds * 1000) : '';
+        return seconds ? durationHumanizer(seconds * 1000) : '0';
       } catch (e: any) {
         return `${seconds}`;
       }

@@ -5,9 +5,8 @@ import {ItemTypes, ThumbnailInfo} from '../../types/timelineTypes';
 import {Chapter, CuePointMarker} from '../../../flow-typed/types/cue-point-option';
 import {Icon, IconSize} from '@playkit-js/common/dist/icon';
 
-const {withText, Text} = KalturaPlayer.ui.preacti18n;
-
 const {
+  preacti18n: {withText, Text},
   redux: {connect},
   reducers: {seekbar},
   components: {PLAYER_SIZE}
@@ -25,9 +24,9 @@ const translates = {
 
 interface TimelinePreviewProps {
   toggleNavigationPlugin: (e: OnClickEvent, byKeyboard: boolean, cuePointType: string) => void;
-  seekTo: (time: number) => void;
+  seekTo: () => void;
   cuePointsData: Array<CuePointMarker>;
-  thumbnailInfo: () => ThumbnailInfo | ThumbnailInfo[];
+  getThumbnailInfo: () => ThumbnailInfo | ThumbnailInfo[];
   questionTranslate?: string;
   reflectionPointTranslate?: string;
   hotspotTranslate?: string;
@@ -40,7 +39,6 @@ interface TimelinePreviewProps {
   showNavigationTranslate?: string;
   hideNavigationTranslate?: string;
   relevantChapter?: Chapter;
-  virtualTime?: number;
   duration?: number;
   getSeekBarNode: () => Element | null;
   moveOnHover?: boolean;
@@ -94,17 +92,11 @@ interface TitleProps {
   children?: VNode | string;
   iconName: string;
   shouldDisplayTitle: boolean;
-  ariaLabel?: string;
 }
 
-const Title = ({iconName, children, shouldDisplayTitle = true, ariaLabel = ''}: TitleProps) => {
-  let titleWrapperProps: any = { className: styles.titleWrapper };
-  if (ariaLabel) {
-    titleWrapperProps.ariaLabel = ariaLabel;
-  }
-
+const Title = ({iconName, children, shouldDisplayTitle = true}: TitleProps) => {
   return (
-    <div {...titleWrapperProps}>
+    <div className={styles.titleWrapper}>
       <Icon size={IconSize.small} name={iconName} />
       {shouldDisplayTitle && <span className={styles.title}>{children}</span>}
     </div>
@@ -131,7 +123,6 @@ const mapStateToProps = (state: State, {markerStartTime}: TimelinePreviewProps) 
     isExtraSmallPlayer: state.shell.playerSize === PLAYER_SIZE.EXTRA_SMALL,
     hidePreview: state.shell.playerSize === PLAYER_SIZE.TINY,
     relevantChapter,
-    virtualTime: state.seekbar.virtualTime,
     duration: state.engine.duration
   };
 };
@@ -164,7 +155,7 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
   }
 
   shouldComponentUpdate(nextProps: Readonly<TimelinePreviewProps>, nextState: Readonly<{}>, nextContext: any): boolean {
-    return this.props.duration !== nextProps.duration || this.props.virtualTime !== nextProps.virtualTime;
+    return this.props.duration !== nextProps.duration || this.props.relevantChapter !== nextProps.relevantChapter;
   }
 
   private _renderHeader(relevantChapter: Chapter | undefined, data: any) {
@@ -184,7 +175,7 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
     if (!this.props.cuePointsData.length && relevantChapter?.title) {
       // not a marker - render only chapter
       return (
-        <Title iconName={'chapter'} shouldDisplayTitle >
+        <Title iconName={'chapter'} shouldDisplayTitle>
           {relevantChapter.title}
         </Title>
       );
@@ -192,17 +183,17 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
     return (
       <Fragment>
         {hotspots.length > 0 && (
-          <Title iconName={'hotspot'} shouldDisplayTitle ariaLabel={this.props.hotspotTitleAriaLabelTranslate!}>
+          <Title iconName={'hotspot'} shouldDisplayTitle>
             {this.props.hotspotTranslate!}
           </Title>
         )}
         {quizQuestions.length > 0 && (
-          <Title iconName={'quiz'} shouldDisplayTitle >
+          <Title iconName={'quiz'} shouldDisplayTitle>
             {(<span>{`${quizQuestionTitle.type} ${quizQuestionTitle.firstIndex}${quizQuestionTitle.lastIndex}`}</span>) as VNode}
           </Title>
         )}
         {answerOnAir.length > 0 && (
-          <Title iconName={'answerOnAir'} shouldDisplayTitle >
+          <Title iconName={'answerOnAir'} shouldDisplayTitle>
             {this.props.aoaTranslate!}
           </Title>
         )}
@@ -274,7 +265,7 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
   };
 
   onThumbnailClick = (e: MouseEvent) => {
-    this.props.seekTo(this.props.virtualTime!);
+    this.props.seekTo();
     // prevent onMouseDown event on seekbar node
     e.preventDefault();
     e.stopPropagation();
@@ -282,7 +273,7 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
 
   onPreviewHeaderClick = (e: OnClickEvent, byKeyboard: boolean) => {
     const relevantQuizQuestion = this.props.cuePointsData.find(cp => cp.type === ItemTypes.QuizQuestion);
-    relevantQuizQuestion ? relevantQuizQuestion.quizQuestionData?.onClick() : this.props.seekTo(this.props.virtualTime!);
+    relevantQuizQuestion ? relevantQuizQuestion.quizQuestionData?.onClick() : this.props.seekTo();
     this.props.toggleNavigationPlugin(e, byKeyboard, this.props.cuePointsData[0]?.type || ItemTypes.Chapter);
   };
 
@@ -341,12 +332,18 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
   };
 
   _getPreviewHeaderStyle(): any {
-    const top = !this.props.thumbnailInfo ? '-20px' : null;
+    const top = !this.props.getThumbnailInfo ? '-20px' : null;
     const left = this._getPreviewHeaderLeft() === null ? null : `${this._getPreviewHeaderLeft}px`;
-    if (top === null && left === null) return null;
+    if (top === null && left === null) {
+      return null;
+    }
     const style: any = {};
-    if (top) style.top = top;
-    if (left) style.left = left;
+    if (top) {
+      style.top = top;
+    }
+    if (left) {
+      style.left = left;
+    }
     return style;
   }
 
@@ -357,13 +354,34 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
     return <div style={getFramePreviewImgStyle(thumbnailInfo)} />;
   };
 
+  private _getCuePointPreviewHeaderProps = (data: any) => {
+    const {quizQuestions, hotspots, answerOnAir} = data;
+
+    let ariaLabel = '';
+    if (hotspots.length > 0 && quizQuestions.length === 0 && answerOnAir.length === 0) {
+      ariaLabel = this.props.hotspotTitleAriaLabelTranslate!;
+    }
+
+    const cuePointPreviewHeaderProps = {
+      className: styles.header,
+      'data-testid': 'cuePointPreviewHeader',
+      style: this._getPreviewHeaderStyle(),
+      tabIndex: 0,
+      onFocus: this.handleFocus,
+      onBlur: this.handleBlur,
+      ...(ariaLabel ? {['aria-label']: ariaLabel} : {})
+    };
+    return cuePointPreviewHeaderProps;
+  };
+
   render() {
     if (this.props.hidePreview) {
       return null;
     }
 
-    const {thumbnailInfo, isExtraSmallPlayer, relevantChapter} = this.props;
+    const {getThumbnailInfo, isExtraSmallPlayer, relevantChapter} = this.props;
     const data = this._getData();
+    const thumbnailInfo = getThumbnailInfo();
     const className = [styles.container, this.props.isExtraSmallPlayer ? styles.xsPlayer : ''].join(' ');
 
     return (
@@ -375,14 +393,7 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
         onMouseLeave={() => this.onMouseLeave(relevantChapter)}>
         {this._shouldRenderHeader(relevantChapter) ? (
           <A11yWrapper onClick={this.onPreviewHeaderClick}>
-            <div
-              className={styles.header}
-              ref={node => (this._previewHeaderElement = node)}
-              data-testid="cuePointPreviewHeader"
-              style={this._getPreviewHeaderStyle()}
-              tabIndex={0}
-              onFocus={this.handleFocus}
-              onBlur={this.handleBlur}>
+            <div {...this._getCuePointPreviewHeaderProps(data)} ref={node => (this._previewHeaderElement = node)}>
               <div className={styles.itemsWrapper} data-testid="cuePointPreviewHeaderItems">
                 {this._renderHeader(relevantChapter, data)}
               </div>
@@ -392,11 +403,11 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
         <div
           className={styles.imageContainer}
           data-testid="cuePointPreviewImageContainer"
-          style={getFramePreviewImgContainerStyle(thumbnailInfo())}
+          style={getFramePreviewImgContainerStyle(thumbnailInfo)}
           onMouseDown={this.onThumbnailClick}
           ref={node => (this._thumbnailContainerElement = node)}>
           {isExtraSmallPlayer ? this._renderSmallPlayerHeader(relevantChapter, data) : null}
-          {this._renderThumbnail(thumbnailInfo())}
+          {this._renderThumbnail(thumbnailInfo)}
         </div>
       </div>
     );

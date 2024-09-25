@@ -91,8 +91,8 @@ class TimelineManager {
     return this.navigationPlugin.isVisible();
   };
 
-  private _seekTo = (time: number) => {
-    this._player.currentTime = time;
+  private _seekTo = () => {
+    this._player.currentTime = this._state.seekbar.virtualTime;
   };
 
   private _handleChapter = (chapter: Chapter) => {
@@ -113,7 +113,7 @@ class TimelineManager {
     } else if (!clipTo && seekFrom && duration) {
       duration = duration - seekFrom;
     }
-    if (this._player.engineType === EngineType.YOUTUBE){
+    if (this._player.engineType === EngineType.YOUTUBE) {
       return Math.ceil(this._state.engine.duration) === duration;
     }
     return Math.round(this._state.engine.duration) === duration;
@@ -184,7 +184,7 @@ class TimelineManager {
           toggleNavigationPlugin={this._toggleNavigationPlugin}
           seekTo={this._seekTo}
           cuePointsData={[]}
-          thumbnailInfo={() => this._getThumbnailInfo(this._state.seekbar.virtualTime)}
+          getThumbnailInfo={() => this._getThumbnailInfo(this._state.seekbar.virtualTime)}
           getSeekBarNode={this._getSeekBarNode}
         />
       )
@@ -286,7 +286,7 @@ class TimelineManager {
               seekTo={this._seekTo}
               toggleNavigationPlugin={this._toggleNavigationPlugin}
               cuePointsData={timelineMarkerData.cuePointsData}
-              thumbnailInfo={() => this._getThumbnailInfo(markerStartTime)}
+              getThumbnailInfo={() => this._getThumbnailInfo(markerStartTime)}
               markerStartTime={markerStartTime}
               getSeekBarNode={this._getSeekBarNode}
             />
