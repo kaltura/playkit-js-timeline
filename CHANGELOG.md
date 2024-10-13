@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 3.0.19 (2024-10-13)
+
+
+### Bug Fixes
+
+* **ADA-1697:** aria-label and seek fix ([#42](https://github.com/kaltura/playkit-js-timeline/issues/42)) ([8191c8c](https://github.com/kaltura/playkit-js-timeline/commit/8191c8c))
+
+
+
 ### 3.0.18 (2024-09-19)
 
 
