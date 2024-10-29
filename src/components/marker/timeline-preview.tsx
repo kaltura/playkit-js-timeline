@@ -39,6 +39,7 @@ interface TimelinePreviewProps {
   showNavigationTranslate?: string;
   hideNavigationTranslate?: string;
   relevantChapter?: Chapter;
+  virtualTime?: number;
   duration?: number;
   getSeekBarNode: () => Element | null;
   moveOnHover?: boolean;
@@ -123,6 +124,7 @@ const mapStateToProps = (state: State, {markerStartTime}: TimelinePreviewProps) 
     isExtraSmallPlayer: state.shell.playerSize === PLAYER_SIZE.EXTRA_SMALL,
     hidePreview: state.shell.playerSize === PLAYER_SIZE.TINY,
     relevantChapter,
+    virtualTime: state.seekbar.virtualTime,
     duration: state.engine.duration
   };
 };
@@ -155,7 +157,11 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
   }
 
   shouldComponentUpdate(nextProps: Readonly<TimelinePreviewProps>, nextState: Readonly<{}>, nextContext: any): boolean {
-    return this.props.duration !== nextProps.duration || this.props.relevantChapter !== nextProps.relevantChapter;
+    return (
+      this.props.duration !== nextProps.duration ||
+      this.props.relevantChapter !== nextProps.relevantChapter ||
+      this.props.virtualTime !== nextProps.virtualTime
+    );
   }
 
   private _renderHeader(relevantChapter: Chapter | undefined, data: any) {
