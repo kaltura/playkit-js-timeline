@@ -52,7 +52,10 @@
     text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
     margin-bottom: 2px;
     position: absolute;
-    top: 10px;
+    top: -10px;
+    &.header_thumbnail {
+      top: 10px;
+    }
     .items-wrapper {
       display: flex;
       flex-direction: row;
