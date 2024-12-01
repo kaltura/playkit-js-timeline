@@ -368,13 +368,13 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
       ariaLabel = this.props.hotspotTitleAriaLabelTranslate!;
     }
 
-    let className = styles.header
+    const className = [styles.header];
     if(thumbnailInfo) {
-      className = styles.header + " " + styles.header_thumbnail
+      className.push(styles.headerThumbnail);
     }
 
     const cuePointPreviewHeaderProps = {
-      className: className,
+      className: className.join(" "),
       'data-testid': 'cuePointPreviewHeader',
       style: this._getPreviewHeaderStyle(),
       tabIndex: 0,
