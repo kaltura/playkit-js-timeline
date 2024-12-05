@@ -360,7 +360,7 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
     return <div style={getFramePreviewImgStyle(thumbnailInfo)} />;
   };
 
-  private _getCuePointPreviewHeaderProps = (data: any) => {
+  private _getCuePointPreviewHeaderProps = (data: any, thumbnailInfo: ThumbnailInfo | ThumbnailInfo[]) => {
     const {quizQuestions, hotspots, answerOnAir} = data;
 
     let ariaLabel = '';
@@ -368,8 +368,13 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
       ariaLabel = this.props.hotspotTitleAriaLabelTranslate!;
     }
 
+    const className = [styles.header];
+    if(thumbnailInfo) {
+      className.push(styles.headerThumbnail);
+    }
+
     const cuePointPreviewHeaderProps = {
-      className: styles.header,
+      className: className.join(" "),
       'data-testid': 'cuePointPreviewHeader',
       style: this._getPreviewHeaderStyle(),
       tabIndex: 0,
@@ -399,7 +404,7 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
         onMouseLeave={() => this.onMouseLeave(relevantChapter)}>
         {this._shouldRenderHeader(relevantChapter) ? (
           <A11yWrapper onClick={this.onPreviewHeaderClick}>
-            <div {...this._getCuePointPreviewHeaderProps(data)} ref={node => (this._previewHeaderElement = node)}>
+            <div {...this._getCuePointPreviewHeaderProps(data, thumbnailInfo)} ref={node => (this._previewHeaderElement = node)}>
               <div className={styles.itemsWrapper} data-testid="cuePointPreviewHeaderItems">
                 {this._renderHeader(relevantChapter, data)}
               </div>
