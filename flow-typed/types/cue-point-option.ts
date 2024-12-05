@@ -42,7 +42,6 @@ export type PreviewOptionsObject = {
 };
 
 export type TimelineMarkerDataObject = MarkerOptionsObject & {
-  cuePoints: Array<string>,
   id?: string,
   timelinePreviewRef: any,
   timelineMarkerRef: any,

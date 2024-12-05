@@ -54,5 +54,6 @@ export enum ItemTypes {
   AnswerOnAir = 'AnswerOnAir',
   Chapter = 'Chapter',
   Hotspot = 'Hotspot',
-  QuizQuestion = 'QuizQuestion'
+  QuizQuestion = 'QuizQuestion',
+  Summary = 'Summary'
 }
