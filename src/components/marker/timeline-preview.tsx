@@ -99,7 +99,11 @@ const Title = ({iconName, children, shouldDisplayTitle = true}: TitleProps) => {
   return (
     <div className={styles.titleWrapper}>
       <Icon size={IconSize.small} name={iconName} />
-      {shouldDisplayTitle && <span className={styles.title}>{children}</span>}
+      {shouldDisplayTitle && (
+        <span className={styles.title} data-testid="cuePointPreviewHeaderTitle">
+          {children}
+        </span>
+      )}
     </div>
   );
 };

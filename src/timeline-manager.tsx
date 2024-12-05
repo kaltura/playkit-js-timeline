@@ -73,7 +73,9 @@ class TimelineManager {
         this._addSeekBarPreview();
         this._getThumbnailInfoFn = fn;
       },
-      addSeekBarPreview: this._addSeekBarPreview
+      addSeekBarPreview: this._addSeekBarPreview,
+      // Expose the timelineManager to Cypress for testing purposes
+      ...(window.Cypress ? {timelineManager: this} : {})
     };
   }
 
@@ -112,7 +114,7 @@ class TimelineManager {
       replaceComponent: 'ProgressIndicator',
       get: SegmentsWrapper
     });
-    this._addSeekBarPreview(false, chapter.onPreviewClick);
+    this._addSeekBarPreview(false, chapter?.onPreviewClick);
   };
 
   private _isDurationCorrect = () => {
