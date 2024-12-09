@@ -74,8 +74,8 @@ class TimelineManager {
         this._getThumbnailInfoFn = fn;
       },
       addSeekBarPreview: this._addSeekBarPreview,
-      // Expose the timelineManager to Cypress for testing purposes
-      ...(window.Cypress ? {timelineManager: this} : {})
+      // Expose entire timelineManager for testing purposes
+      ...((window as any)._TEST_ENV ? {timelineManager: this} : {})
     };
   }
 
