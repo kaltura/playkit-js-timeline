@@ -283,8 +283,7 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
 
   onPreviewHeaderClick = (e: OnClickEvent, byKeyboard: boolean) => {
     const relevantQuizQuestion = this.props.cuePointsData.find(cp => cp.type === ItemTypes.QuizQuestion);
-    // @ts-ignore
-    relevantQuizQuestion ? relevantQuizQuestion.cuePointData?.onClick() : this.props.onPreviewClick(e, byKeyboard, this.props.relevantChapter);
+    relevantQuizQuestion ? relevantQuizQuestion.cuePointData?.onClick() : this.props.onPreviewClick(e, byKeyboard, this.props.relevantChapter!);
   };
 
   _getPreviewHeaderLeft(): number | null {
