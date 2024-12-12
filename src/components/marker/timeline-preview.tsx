@@ -23,7 +23,7 @@ const translates = {
 };
 
 interface TimelinePreviewProps {
-  onPreviewClick: (e: OnClickEvent, byKeyboard: boolean) => void;
+  onPreviewClick: (e: OnClickEvent, byKeyboard: boolean, chapter: Chapter) => void;
   seekTo: () => void;
   cuePointsData: Array<CuePointMarker>;
   getThumbnailInfo: () => ThumbnailInfo | ThumbnailInfo[];
@@ -283,7 +283,8 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
 
   onPreviewHeaderClick = (e: OnClickEvent, byKeyboard: boolean) => {
     const relevantQuizQuestion = this.props.cuePointsData.find(cp => cp.type === ItemTypes.QuizQuestion);
-    relevantQuizQuestion ? relevantQuizQuestion.cuePointData?.onClick() : this.props.onPreviewClick(e, byKeyboard);
+    // @ts-ignore
+    relevantQuizQuestion ? relevantQuizQuestion.cuePointData?.onClick() : this.props.onPreviewClick(e, byKeyboard, this.props.relevantChapter);
   };
 
   _getPreviewHeaderLeft(): number | null {

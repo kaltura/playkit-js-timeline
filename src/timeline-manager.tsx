@@ -160,7 +160,10 @@ class TimelineManager {
     });
   }
 
-  private _addSeekBarPreview = (moveOnHover: boolean = true, onPreviewClick: (e: OnClickEvent, byKeyboard: boolean) => void = this._seekTo) => {
+  private _addSeekBarPreview = (
+    moveOnHover: boolean = true,
+    onPreviewClick: (e: OnClickEvent, byKeyboard: boolean, chapter: Chapter) => void = this._seekTo
+  ) => {
     // replace the default seekbar frame preview with timeline preview
     this._uiManager.addComponent({
       label: 'Chapter preview',
@@ -211,8 +214,8 @@ class TimelineManager {
           endTime: this._state.engine.duration,
           isHovered: false,
           isDummy: false,
-          onPreviewClick: (e: OnClickEvent, byKeyboard: boolean) => {
-            cuePointData?.onClick?.({e, byKeyboard, cuePoint: chapter});
+          onPreviewClick: (e: OnClickEvent, byKeyboard: boolean, relevantChapter: Chapter) => {
+            cuePointData?.onClick?.({e, byKeyboard, cuePoint: relevantChapter});
           }
         };
         this._handleChapter(chapter);
@@ -235,7 +238,7 @@ class TimelineManager {
           useQuizQuestionMarkerSize: type === ItemTypes.QuizQuestion,
           onMarkerClick: cuePointData?.onClick ?? this._seekTo,
           onPreviewClick: (e: OnClickEvent, byKeyboard: boolean) => {
-            cuePointData?.onClick?.({e, byKeyboard, cuePoint}) ?? this._seekTo();
+            cuePointData?.onClick?.({e, byKeyboard, cuePoint: {...cuePoint, startTime}}) ?? this._seekTo();
           },
           isMarkerDisabled: cuePointData?.isMarkerDisabled ?? false
         };
