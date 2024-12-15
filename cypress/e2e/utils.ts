@@ -4,7 +4,11 @@ const getPlayer = () => {
 };
 
 const preparePage = (pluginConf = {}, playbackConf = {}) => {
-  cy.visit('index.html');
+  cy.visit('index.html', {
+    onBeforeLoad: (contentWindow: any) => {
+      contentWindow._TEST_ENV = true;
+    }
+  });
   return cy.window().then(win => {
     try {
       // @ts-ignore
@@ -19,7 +23,7 @@ const preparePage = (pluginConf = {}, playbackConf = {}) => {
         },
         playback: {muted: true, autoplay: true, ...playbackConf},
         plugins: {
-          timeline: {}
+          timeline: pluginConf
         }
       });
       return kalturaPlayer.loadMedia({entryId: '0_wifqaipd'});
