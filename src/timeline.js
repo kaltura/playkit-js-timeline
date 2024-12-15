@@ -35,8 +35,10 @@ class Timeline extends BasePlugin {
    */
   constructor(name: string, player: Player, config: Object) {
     super(name, player, config);
-    const timelineManager = new TimelineManager(this.player, this.logger, this.eventManager);
-    this.player.registerService(TIMELINE_SERVICE, timelineManager.timelineManagerAPI);
+    this.player.registerService(
+      TIMELINE_SERVICE,
+      new TimelineManager(this.player, this.logger, (event: string, payload: any) => this.dispatchEvent(event, payload), this.eventManager)
+    );
   }
 
   loadMedia() {
