@@ -23,7 +23,7 @@ const translates = {
 };
 
 interface TimelinePreviewProps {
-  onPreviewClick: (e: OnClickEvent, byKeyboard: boolean, chapter: Chapter) => void;
+  toggleNavigationPlugin: (e: OnClickEvent, byKeyboard: boolean, cuePointType: string) => void;
   seekTo: () => void;
   cuePointsData: Array<CuePointMarker>;
   getThumbnailInfo: () => ThumbnailInfo | ThumbnailInfo[];
@@ -99,11 +99,7 @@ const Title = ({iconName, children, shouldDisplayTitle = true}: TitleProps) => {
   return (
     <div className={styles.titleWrapper}>
       <Icon size={IconSize.small} name={iconName} />
-      {shouldDisplayTitle && (
-        <span className={styles.title} data-testid="cuePointPreviewHeaderTitle">
-          {children}
-        </span>
-      )}
+      {shouldDisplayTitle && <span className={styles.title}>{children}</span>}
     </div>
   );
 };
@@ -174,11 +170,11 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
     let quizQuestionTitle = {type: '', firstIndex: 1, lastIndex: ''};
     if (quizQuestions.length) {
       //@ts-ignore
-      const reflectionPoint = quizQuestions.find(qq => qq.cuePointData.type === 3);
+      const reflectionPoint = quizQuestions.find(qq => qq.quizQuestionData.type === 3);
       quizQuestionTitle = {
         type: quizQuestions.length === 1 && reflectionPoint ? this.props.reflectionPointTranslate! : this.props.questionTranslate!,
-        firstIndex: quizQuestions[0].cuePointData.index + 1,
-        lastIndex: quizQuestions.length > 1 ? `-${quizQuestions[quizQuestions.length - 1].cuePointData.index + 1}` : ''
+        firstIndex: quizQuestions[0].quizQuestionData.index + 1,
+        lastIndex: quizQuestions.length > 1 ? `-${quizQuestions[quizQuestions.length - 1].quizQuestionData.index + 1}` : ''
       };
     }
 
@@ -283,7 +279,8 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
 
   onPreviewHeaderClick = (e: OnClickEvent, byKeyboard: boolean) => {
     const relevantQuizQuestion = this.props.cuePointsData.find(cp => cp.type === ItemTypes.QuizQuestion);
-    relevantQuizQuestion ? relevantQuizQuestion.cuePointData?.onClick() : this.props.onPreviewClick(e, byKeyboard, this.props.relevantChapter!);
+    relevantQuizQuestion ? relevantQuizQuestion.quizQuestionData?.onClick() : this.props.seekTo();
+    this.props.toggleNavigationPlugin(e, byKeyboard, this.props.cuePointsData[0]?.type || ItemTypes.Chapter);
   };
 
   _getPreviewHeaderLeft(): number | null {

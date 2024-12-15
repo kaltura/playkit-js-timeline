@@ -5,9 +5,6 @@
   position: absolute;
 }
 
-.chapters-container > div {
-  border-radius: 4px;
-  &:not(:last-child) {
-    margin-right: 4px;
-  }
+.chapters-container > div:not(:last-child) {
+  margin-right: 2px;
 }

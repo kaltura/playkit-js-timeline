@@ -227,7 +227,7 @@ describe('Timeline plugin', () => {
       mockKalturaBe();
       loadPlayer().then(player => {
         const timelineService = player.getService('timeline');
-        cy.stub(timelineService.timelineManager, '_isDurationCorrect', () => true);
+        cy.stub(timelineService, '_isDurationCorrect', () => true);
         timelineService.addKalturaCuePoint(10, 'Hotspot', '1');
         cy.get('[data-testid="cuePointContainer"]').should('exist');
         cy.wait(1000);
@@ -249,7 +249,7 @@ describe('Timeline plugin', () => {
       mockKalturaBe();
       loadPlayer().then(player => {
         const timelineService = player.getService('timeline');
-        cy.stub(timelineService.timelineManager, '_isDurationCorrect', () => true);
+        cy.stub(timelineService, '_isDurationCorrect', () => true);
         timelineService.addKalturaCuePoint(0, 'Chapter', '1', 'Chapter 1');
         timelineService.addKalturaCuePoint(18, 'Chapter', '2', 'Chapter 2');
         cy.get('[data-testid="segmentsWrapper"]').should('exist');
@@ -261,7 +261,7 @@ describe('Timeline plugin', () => {
       mockKalturaBe();
       loadPlayer().then(player => {
         const timelineService = player.getService('timeline');
-        cy.stub(timelineService.timelineManager, '_isDurationCorrect', () => true);
+        cy.stub(timelineService, '_isDurationCorrect', () => true);
         timelineService.addKalturaCuePoint(10, 'Chapter', '1', 'Chapter 1');
         timelineService.addKalturaCuePoint(18, 'Chapter', '2', 'Chapter 2');
         cy.get('[data-testid="segmentsWrapper"]').should('exist');
@@ -273,7 +273,7 @@ describe('Timeline plugin', () => {
       mockKalturaBe();
       loadPlayer().then(player => {
         const timelineService = player.getService('timeline');
-        cy.stub(timelineService.timelineManager, '_isDurationCorrect', () => true);
+        cy.stub(timelineService, '_isDurationCorrect', () => true);
         timelineService.addKalturaCuePoint(10, 'Chapter', '1', 'Chapter 1');
         timelineService.addKalturaCuePoint(18, 'Chapter', '2', 'Chapter 2');
         cy.get('[data-testid="segmentsWrapper"]').should('exist');
@@ -299,7 +299,7 @@ describe('Timeline plugin', () => {
       mockKalturaBe();
       loadPlayer().then(player => {
         const timelineService = player.getService('timeline');
-        cy.stub(timelineService.timelineManager, '_isDurationCorrect', () => true);
+        cy.stub(timelineService, '_isDurationCorrect', () => true);
         timelineService.addKalturaCuePoint(0, 'Chapter', '1', 'Chapter 1');
         timelineService.addKalturaCuePoint(18, 'Chapter', '2', 'Chapter 2');
         cy.get('[data-testid="segmentsWrapper"]').should('exist');
@@ -318,26 +318,6 @@ describe('Timeline plugin', () => {
               .first()
               .trigger('mouseleave', {force: true})
               .then(() => done());
-          });
-      });
-    });
-
-    it('Should trigger callback method on previes click', done => {
-      mockKalturaBe();
-      loadPlayer().then(player => {
-        const timelineService = player.getService('timeline');
-        cy.stub(timelineService.timelineManager, '_isDurationCorrect', () => true);
-        const callback = cy.stub();
-        timelineService.addKalturaCuePoint(10, 'Hotspot', '1', 'Hotspot 1', {onClick: callback});
-        cy.get('[data-testid="cuePointContainer"]').should('exist');
-        cy.wait(1000);
-        cy.get('[data-testid="cuePointMarkerContainer"]').focus();
-        cy.get('[data-testid="cuePointPreviewHeaderTitle"]').should('have.text', 'Hotspot');
-        cy.get('[data-testid="cuePointPreviewHeaderTitle"]')
-          .click({force: true})
-          .then(() => {
-            expect(callback).to.have.been.called;
-            done();
           });
       });
     });
@@ -360,31 +340,18 @@ describe('Timeline plugin', () => {
         });
       });
     });
-
-    it('Should remove all added cue points', done => {
-      mockKalturaBe();
-      loadPlayer().then(player => {
-        const timelineService = player.getService('timeline');
-        cy.stub(timelineService.timelineManager, '_isDurationCorrect', () => true);
-        timelineService.addKalturaCuePoint(0, 'Chapter', '1', 'Chapter 1');
-        timelineService.addKalturaCuePoint(18, 'Chapter', '2', 'Chapter 2');
-        cy.get('[data-testid="segmentsWrapper"]').children().should('have.length', 2);
-        timelineService.removeAllKalturaCuePoints();
-        setTimeout(() => {
-          cy.get('[data-testid="segmentsWrapper"]').children().should('have.length', 0);
-          done();
-        }, 500);
-      });
-    });
   });
 
   describe('dual-screen timeline preview', () => {
     it('Should test single preview on segments', () => {
       mockKalturaBe();
       loadPlayer().then(player => {
+        const fakeDualScreenPlugin = {
+          getDualScreenThumbs: (time: number) => player.getThumbnail(time)
+        };
+        player.registerService('dualScreen', fakeDualScreenPlugin);
         const timelineService = player.getService('timeline');
-        timelineService.setGetThumbnailInfo((time: number) => player.getThumbnail(time));
-        cy.stub(timelineService.timelineManager, '_isDurationCorrect', () => true);
+        cy.stub(timelineService, '_isDurationCorrect', () => true);
         timelineService.addKalturaCuePoint(10, 'Chapter', '1', 'Chapter 1');
         cy.get('[data-testid="cuePointPreviewImageContainer"]').children().should('have.length', 1);
       });
@@ -392,9 +359,12 @@ describe('Timeline plugin', () => {
     it('Should test dual preview on segments', () => {
       mockKalturaBe();
       loadPlayer().then(player => {
+        const fakeDualScreenPlugin = {
+          getDualScreenThumbs: (time: number) => [player.getThumbnail(time), player.getThumbnail(time)]
+        };
+        player.registerService('dualScreen', fakeDualScreenPlugin);
         const timelineService = player.getService('timeline');
-        timelineService.setGetThumbnailInfo((time: number) => [player.getThumbnail(time), player.getThumbnail(time)]);
-        cy.stub(timelineService.timelineManager, '_isDurationCorrect', () => true);
+        cy.stub(timelineService, '_isDurationCorrect', () => true);
         timelineService.addKalturaCuePoint(10, 'Chapter', '1', 'Chapter 1');
         cy.get('[data-testid="cuePointPreviewImageContainer"]').children().should('have.length', 2);
       });
@@ -402,9 +372,12 @@ describe('Timeline plugin', () => {
     it('Should test dual preview', () => {
       mockKalturaBe();
       loadPlayer().then(player => {
+        const fakeDualScreenPlugin = {
+          getDualScreenThumbs: (time: number) => [player.getThumbnail(time), player.getThumbnail(time)]
+        };
+        player.registerService('dualScreen', fakeDualScreenPlugin);
         const timelineService = player.getService('timeline');
-        timelineService.setGetThumbnailInfo((time: number) => [player.getThumbnail(time), player.getThumbnail(time)]);
-        timelineService.addSeekBarPreview();
+        timelineService._addSeekBarPreview();
         cy.get('[data-testid="cuePointPreviewImageContainer"]').children().should('have.length', 2);
       });
     });
