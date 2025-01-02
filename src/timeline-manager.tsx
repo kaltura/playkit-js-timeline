@@ -74,6 +74,7 @@ class TimelineManager {
         this._getThumbnailInfoFn = fn;
       },
       addSeekBarPreview: this._addSeekBarPreview,
+      reset: () => this.reset(),
       // Expose entire timelineManager for testing purposes
       ...((window as any)._TEST_ENV ? {timelineManager: this} : {})
     };
