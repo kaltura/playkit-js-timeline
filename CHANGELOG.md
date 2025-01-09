@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 3.0.22 (2025-01-09)
+
+
+### Bug Fixes
+
+* **FEC-14300:** gaps in the timeline progress ([#48](https://github.com/kaltura/playkit-js-timeline/issues/48)) ([77eb454](https://github.com/kaltura/playkit-js-timeline/commit/77eb454))
+
+
+
 ### 3.0.21 (2024-12-19)
 
 
