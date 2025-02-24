@@ -39,6 +39,7 @@ class TimelineManager {
   _resolveTimelineDurationPromise = () => {};
   _timelineDurationPromise: Promise<void>;
   _getThumbnailInfoFn: (virtualTime: number) => ThumbnailInfo | Array<ThumbnailInfo>;
+  _shouldIncludeChapters: boolean;
 
   /**
    * @constructor
@@ -52,6 +53,7 @@ class TimelineManager {
     this._cuePointsMap = new Map();
     this._timelineDurationPromise = this._makeTimelineDurationPromise();
     this._getThumbnailInfoFn = this._player.getThumbnail.bind(this._player);
+    this._shouldIncludeChapters = true;
   }
 
   get _uiManager() {
@@ -59,6 +61,12 @@ class TimelineManager {
   }
   get _state(): any {
     return this._store.getState();
+  }
+
+  public disableChapters() {
+    this._shouldIncludeChapters = false;
+    // if there are chapters, reset the array
+    this._chapters = [];
   }
 
   public get timelineManagerAPI() {
@@ -75,6 +83,7 @@ class TimelineManager {
       },
       addSeekBarPreview: this._addSeekBarPreview,
       reset: () => this.reset(),
+      disableChapters: () => this.disableChapters(),
       // Expose entire timelineManager for testing purposes
       ...((window as any)._TEST_ENV ? {timelineManager: this} : {})
     };
@@ -122,8 +131,12 @@ class TimelineManager {
     // @ts-ignore
     const {clipTo, seekFrom} = this._player.sources;
     let duration = this._player.sources.duration;
-    if (clipTo && typeof seekFrom === 'number') {
-      duration = clipTo - seekFrom;
+    if (clipTo) {
+      if (typeof seekFrom === 'number' && seekFrom > 0) {
+        duration = clipTo - seekFrom;
+      } else {
+        duration = clipTo;
+      }
     } else if (!clipTo && seekFrom && duration) {
       duration = duration - seekFrom;
     }
@@ -201,12 +214,16 @@ class TimelineManager {
     title?: string,
     cuePointData?: QuizQuestionData | NavigationChapterData | any
   ) => {
-    if (this._state.shell.playerSize === PLAYER_SIZE.TINY || this._uiManager.store.getState().seekbar.isPreventSeek) {
+    if (
+      this._state.shell.playerSize === PLAYER_SIZE.TINY ||
+      this._uiManager.store.getState().seekbar.isPreventSeek ||
+      (type === ItemTypes.Chapter && !this._shouldIncludeChapters)
+    ) {
       return;
     }
     // wait for the duration to be correct and stable
     this._timelineDurationPromise.then(() => {
-      if (type === ItemTypes.Chapter) {
+      if (type === ItemTypes.Chapter || type === ItemTypes.SummaryAndChapters) {
         const chapter: Chapter = {
           type: ItemTypes.Chapter,
           id: cuePointId,
@@ -439,6 +456,7 @@ class TimelineManager {
       this._store.dispatch(actions.updateSeekbarSegments([]));
       this._chapters = [];
     }
+    this._shouldIncludeChapters = true;
   };
 
   private _getThumbnailInfo(virtualTime: number): ThumbnailInfo | Array<ThumbnailInfo> {
