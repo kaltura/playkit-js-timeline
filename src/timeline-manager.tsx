@@ -214,15 +214,15 @@ class TimelineManager {
     title?: string,
     cuePointData?: QuizQuestionData | NavigationChapterData | any
   ) => {
-    if (
-      this._state.shell.playerSize === PLAYER_SIZE.TINY ||
-      this._uiManager.store.getState().seekbar.isPreventSeek ||
-      (type === ItemTypes.Chapter && !this._shouldIncludeChapters)
-    ) {
+    if (this._state.shell.playerSize === PLAYER_SIZE.TINY || this._uiManager.store.getState().seekbar.isPreventSeek) {
       return;
     }
     // wait for the duration to be correct and stable
     this._timelineDurationPromise.then(() => {
+      if (type === ItemTypes.Chapter && !this._shouldIncludeChapters) {
+        // do not add chapters cuePoints
+        return;
+      }
       if (type === ItemTypes.Chapter || type === ItemTypes.SummaryAndChapters) {
         const chapter: Chapter = {
           type: ItemTypes.Chapter,
