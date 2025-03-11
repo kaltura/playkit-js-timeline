@@ -56,4 +56,5 @@ export enum ItemTypes {
   Hotspot = 'Hotspot',
   QuizQuestion = 'QuizQuestion',
   SummaryAndChapters = 'SummaryAndChapters',
+  YouTubeClipChapter = 'YouTubeClipChapter',
 }
