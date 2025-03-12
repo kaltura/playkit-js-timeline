@@ -40,6 +40,7 @@ class TimelineManager {
   _timelineDurationPromise: Promise<void>;
   _getThumbnailInfoFn: (virtualTime: number) => ThumbnailInfo | Array<ThumbnailInfo>;
   _shouldIncludeChapters: boolean;
+  _chapterTypesArray: string[] = [];
 
   /**
    * @constructor
@@ -54,6 +55,7 @@ class TimelineManager {
     this._timelineDurationPromise = this._makeTimelineDurationPromise();
     this._getThumbnailInfoFn = this._player.getThumbnail.bind(this._player);
     this._shouldIncludeChapters = true;
+    this._chapterTypesArray = [ItemTypes.Chapter, ItemTypes.SummaryAndChapters, ItemTypes.YouTubeClipChapter];
   }
 
   get _uiManager() {
@@ -128,9 +130,13 @@ class TimelineManager {
   };
 
   private _isDurationCorrect = () => {
+    let duration = this._player.sources.duration;
+    if (this._player.engineType === EngineType.YOUTUBE) {
+      return Math.ceil(this._state.engine.duration) === duration;
+    }
+
     // @ts-ignore
     const {clipTo, seekFrom} = this._player.sources;
-    let duration = this._player.sources.duration;
     if (clipTo) {
       if (typeof seekFrom === 'number' && seekFrom > 0) {
         duration = clipTo - seekFrom;
@@ -139,9 +145,6 @@ class TimelineManager {
       }
     } else if (!clipTo && seekFrom && duration) {
       duration = duration - seekFrom;
-    }
-    if (this._player.engineType === EngineType.YOUTUBE) {
-      return Math.ceil(this._state.engine.duration) === duration;
     }
     return Math.round(this._state.engine.duration) === duration;
   };
@@ -223,7 +226,7 @@ class TimelineManager {
         // do not add chapters cuePoints
         return;
       }
-      if (type === ItemTypes.Chapter || type === ItemTypes.SummaryAndChapters) {
+      if (this._chapterTypesArray.includes(type)) {
         const chapter: Chapter = {
           type: ItemTypes.Chapter,
           id: cuePointId,
