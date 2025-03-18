@@ -160,7 +160,7 @@ class TimelineManager {
   };
 
   private _getProgressBarEl() {
-    return document.getElementsByClassName(style.progressBar)[0];
+    return document.querySelector(`#${this._player.config.targetId} .${style.progressBar}`);
   }
 
   private _restoreProgressIndicator() {
