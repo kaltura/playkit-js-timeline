@@ -74,6 +74,7 @@ class TimelineManager {
         this._getThumbnailInfoFn = fn;
       },
       addSeekBarPreview: this._addSeekBarPreview,
+      removeCueFromTimeline: this.removeCueFromTimeline,
       reset: () => this.reset(),
       // Expose entire timelineManager for testing purposes
       ...((window as any)._TEST_ENV ? {timelineManager: this} : {})
@@ -362,6 +363,25 @@ class TimelineManager {
       this._cuePointsRemoveMap.delete(id);
     }
   };
+
+    /**
+   * @param {{id: string, startTime: number}} cuePoint - An object contains the cue point id and cue point start time
+   * @returns {void}
+   */
+    public removeCueFromTimeline = (cuePoint: {id: string, startTime: number}): void => {
+      const {id, startTime} = cuePoint;
+      const fn = this._cuePointsRemoveMap.get(id);
+  
+      this._cuePointsRemoveMap.forEach((id) => {
+        console.log(id)
+      });
+      if (typeof fn === 'function') {
+        fn();
+        this._cuePointsRemoveMap.delete(id);
+      }
+  
+      this._cuePointsMap.delete(startTime);
+    };
 
   /**
    * @param {SeekbarPreviewOptionsObject} preview - The seekbar preview options
