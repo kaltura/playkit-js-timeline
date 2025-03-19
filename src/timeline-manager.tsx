@@ -371,15 +371,10 @@ class TimelineManager {
     public removeCueFromTimeline = (cuePoint: {id: string, startTime: number}): void => {
       const {id, startTime} = cuePoint;
       const fn = this._cuePointsRemoveMap.get(id);
-  
-      this._cuePointsRemoveMap.forEach((id) => {
-        console.log(id)
-      });
       if (typeof fn === 'function') {
         fn();
         this._cuePointsRemoveMap.delete(id);
       }
-  
       this._cuePointsMap.delete(startTime);
     };
 
