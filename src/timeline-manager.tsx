@@ -369,12 +369,8 @@ class TimelineManager {
    * @returns {void}
    */
     public removeCueFromTimeline = (cuePoint: {id: string, startTime: number}): void => {
-      const {id, startTime} = cuePoint;
-      const fn = this._cuePointsRemoveMap.get(id);
-      if (typeof fn === 'function') {
-        fn();
-        this._cuePointsRemoveMap.delete(id);
-      }
+      const {id, startTime} = cuePoint
+      this.removeCuePoint({id})
       this._cuePointsMap.delete(startTime);
     };
 
