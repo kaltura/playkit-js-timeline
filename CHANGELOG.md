@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 3.1.2 (2025-03-20)
+
+
+### Bug Fixes
+
+* **CR-320:** use player ID to get seekbar ([#54](https://github.com/kaltura/playkit-js-timeline/issues/54)) ([d525550](https://github.com/kaltura/playkit-js-timeline/commit/d525550))
+
+
+
 ### 3.1.1 (2025-03-09)
 
 
