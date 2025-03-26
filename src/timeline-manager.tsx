@@ -84,7 +84,6 @@ class TimelineManager {
         this._getThumbnailInfoFn = fn;
       },
       addSeekBarPreview: this._addSeekBarPreview,
-      removeCueFromTimeline: this.removeCueFromTimeline,
       reset: () => this.reset(),
       disableChapters: () => this.disableChapters(),
       // Expose entire timelineManager for testing purposes
@@ -383,16 +382,6 @@ class TimelineManager {
       this._cuePointsRemoveMap.delete(id);
     }
   };
-
-    /**
-   * @param {{id: string, startTime: number}} cuePoint - An object contains the cue point id and cue point start time
-   * @returns {void}
-   */
-    public removeCueFromTimeline = (cuePoint: {id: string, startTime: number}): void => {
-      const {id, startTime} = cuePoint
-      this.removeCuePoint({id})
-      this._cuePointsMap.delete(startTime);
-    };
 
   /**
    * @param {SeekbarPreviewOptionsObject} preview - The seekbar preview options
