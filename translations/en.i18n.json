@@ -3,6 +3,7 @@
     "timeline": {
       "hotspot_title": "Hotspot",
       "hotspot_title_aria_label": "Click to jump to hotspot video position",
+      "hotspot_aria_label": "Click to jump to {{title}} hotspot",
       "question_title": "Question",
       "reflection_point_title": "Reflection Point",
       "audience_asked_title": "Audience Asked",

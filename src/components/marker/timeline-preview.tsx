@@ -12,16 +12,28 @@ const {
   components: {PLAYER_SIZE}
 } = KalturaPlayer.ui;
 
-const translates = {
-  questionTranslate: <Text id="timeline.question_title">Question</Text>,
-  reflectionPointTranslate: <Text id="timeline.reflection_point_title">Reflection Point</Text>,
-  hotspotTranslate: <Text id="timeline.hotspot_title">Hotspot</Text>,
-  hotspotTitleAriaLabelTranslate: <Text id="timeline.hotspot_title_aria_label">Click to jump to hotspot video position</Text>,
-  aoaTranslate: <Text id="timeline.audience_asked_title">Audience Asked</Text>,
-  showNavigationTranslate: <Text id="navigation.show_plugin">Show Navigation</Text>,
-  hideNavigationTranslate: <Text id="navigation.hide_plugin">Hide Navigation</Text>
-};
+const translates = ({cuePointsData}: TimelinePreviewProps) => {
+  const hotspot = cuePointsData?.find(cp => cp.type === ItemTypes.Hotspot);
+  const hotspotTitle = hotspot?.title;
 
+  return {
+    hotspotTitleAriaLabelTranslate: hotspotTitle ? (
+      <Text id="timeline.hotspot_aria_label" fields={{ title: hotspotTitle }}>
+        {`Click to jump to ${hotspotTitle} hotspot`}
+      </Text>
+    ) : (
+      <Text id="timeline.hotspot_title_aria_label">
+        Click to jump to hotspot video position
+      </Text>
+    ),
+    questionTranslate: <Text id="timeline.question_title">Question</Text>,
+    reflectionPointTranslate: <Text id="timeline.reflection_point_title">Reflection Point</Text>,
+    hotspotTranslate: <Text id="timeline.hotspot_title">Hotspot</Text>,
+    aoaTranslate: <Text id="timeline.audience_asked_title">Audience Asked</Text>,
+    showNavigationTranslate: <Text id="navigation.show_plugin">Show Navigation</Text>,
+    hideNavigationTranslate: <Text id="navigation.hide_plugin">Hide Navigation</Text>
+  };
+};
 interface TimelinePreviewProps {
   onPreviewClick: (e: OnClickEvent, byKeyboard: boolean, chapter: Chapter) => void;
   seekTo: () => void;
