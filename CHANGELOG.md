@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 3.1.3 (2025-04-02)
+
+
+### Bug Fixes
+
+* **SUP-47479:** player with bumper prevents display of quiz timestamp on the timeline ([#58](https://github.com/kaltura/playkit-js-timeline/issues/58)) ([84b181a](https://github.com/kaltura/playkit-js-timeline/commit/84b181a))
+
+
+
 ### 3.1.2 (2025-03-20)
 
 
