@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 3.1.4 (2025-09-11)
+
+
+### Bug Fixes
+
+* **ADA-2810:** Chapters segments styling ([#59](https://github.com/kaltura/playkit-js-timeline/issues/59)) ([0fae0ed](https://github.com/kaltura/playkit-js-timeline/commit/0fae0ed))
+
+
+
 ### 3.1.3 (2025-04-02)
 
 
