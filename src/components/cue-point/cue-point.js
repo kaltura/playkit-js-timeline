@@ -23,7 +23,6 @@ const mapStateToProps = state => ({
 });
 
 const COMPONENT_NAME = 'CuePoint';
-const SEGMENT_GAP = 2;
 
 /**
  * CuePoint component
@@ -58,15 +57,6 @@ class CuePoint extends preact.Component {
           left = markerPosition - markerWidth / 2;
           styleObj.edge = 'none';
         }
-      }
-      // when the seekbar is segmented there are gaps of 2px each;
-      // hence, we need to move the marker according to the amount of segments before each marker
-      if (this.props.seekbarSegments.length) {
-        let segmentsBeforeMarker = 0;
-        this.props.seekbarSegments.forEach(segment => {
-          if (this.props.time >= segment.endTime) segmentsBeforeMarker++;
-        });
-        left += SEGMENT_GAP * segmentsBeforeMarker;
       }
       styleObj.left = `${left}px`;
     }
