@@ -1,13 +1,12 @@
 .chapters-container {
-  display: flex;
   width: 100%;
   height: 100%;
   position: absolute;
 }
 
 .chapters-container > div {
-  border-radius: 4px;
-  &:not(:last-child) {
-    margin-right: 4px;
-  }
+  position: absolute;
+  top: 0;
+  height: 100%;
+  cursor: pointer;
 }

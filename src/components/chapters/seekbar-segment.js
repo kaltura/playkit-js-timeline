@@ -33,6 +33,8 @@ const mapDispatchToProps = (dispatch: any) => {
 
 const COMPONENT_NAME = 'SeekBarSegment';
 
+const SEGMENT_GAP = 4;
+
 /**
  * SeekBarSegment component
  *
@@ -159,13 +161,19 @@ class SeekBarSegment extends Component {
    * @memberof SeekBarSegment
    */
   render(props: any): React$Element<any> {
-    const {virtualTime, currentTime, isDraggingActive, isHovered} = props;
+    const {virtualTime, currentTime, isDraggingActive, isHovered, dataLoaded, style, segments} = props;
     this._wasDragging = isDraggingActive !== this._prevDraggingState;
     this._prevDraggingState = isDraggingActive;
     const progressWidth = `${this._getProgressWidth(isDraggingActive || this._wasDragging ? virtualTime : currentTime)}%`;
 
     const totalBufferedWidth = Math.round(this.getTotalBufferedPercent());
     const segmentWidth = this._getSegmentWidth();
+
+    // Check if this is the last segment to decide whether to apply the visual gap
+    const isLastSegment = segments && segments.length > 0 && segments[segments.length - 1].id === this.props.id;
+    // Only subtract 4px for the gap if it's not the last segment
+    const visualSegmentWidth = isLastSegment ? segmentWidth : segmentWidth - SEGMENT_GAP;
+
     const segmentBufferedWidth = Math.round(this._getSegmentBufferedWidth(segmentWidth, totalBufferedWidth));
 
     const segmentStyleClass = [styles.seekBarSegment];
@@ -173,15 +181,18 @@ class SeekBarSegment extends Component {
       segmentStyleClass.push(styles.hovered);
     }
 
+    // Combine styles as a string
+    const combinedStyle = `${style || ''} width: ${visualSegmentWidth}px;`;
+
     return (
       <div
         onMouseOver={this.onMouseOver}
         onMouseLeave={this.onMouseLeave}
         className={segmentStyleClass.join(' ')}
-        style={`width: ${segmentWidth}px;`}
-        ref={node => (this._segmentEl = node)}>
+        style={combinedStyle}
+        ref={this._setSegmentRef}>
         <div className={styles.buffered} style={{width: `${segmentBufferedWidth}%`}} />
-        {props.dataLoaded ? <div className={styles.segmentProgress} style={{width: progressWidth}} /> : undefined}
+        {dataLoaded ? <div className={styles.segmentProgress} style={{width: progressWidth}} /> : undefined}
       </div>
     );
   }

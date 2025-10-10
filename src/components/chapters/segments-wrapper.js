@@ -19,7 +19,8 @@ const COMPONENT_NAME = 'SegmentsWrapper';
 const mapStateToProps = state => ({
   isMobile: state.shell.isMobile,
   duration: state.engine.duration,
-  segments: state.seekbar.segments
+  segments: state.seekbar.segments,
+  seekbarClientRect: state.seekbar.clientRect
 });
 
 const mapDispatchToProps = (dispatch: any) => {
@@ -57,9 +58,19 @@ class SegmentsWrapper extends Component {
   };
 
   render(props: any): React$Element<any> {
+    const {duration, seekbarClientRect} = props;
+    const seekbarWidth = seekbarClientRect?.width || 0;
+
     return (
       <div className={styles.chaptersContainer} data-testid={'segmentsWrapper'}>
         {props.segments.map((chapter: any) => {
+          // Calculate segment position - based on the time proportion
+          const startPercent = chapter.startTime / duration;
+          const position = startPercent * seekbarWidth;
+
+          // Create stringified style for left positioning
+          const styleString = `left: ${position}px;`;
+
           return (
             <SeekBarSegment
               key={chapter.id}
@@ -69,6 +80,8 @@ class SegmentsWrapper extends Component {
               title={chapter.title}
               isHovered={chapter.isHovered}
               isDummy={chapter.isDummy}
+              style={styleString} // Pass as string to match the component's expectation
+              segments={props.segments} // Pass all segments to each segment component
             />
           );
         })}
