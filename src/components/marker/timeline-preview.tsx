@@ -124,6 +124,7 @@ interface State {
   seekbar: {
     segments: Chapter[];
     virtualTime: number;
+    hidePreview: boolean;
   };
   shell: {
     playerSize: string;
@@ -138,7 +139,7 @@ const mapStateToProps = (state: State, {markerStartTime}: TimelinePreviewProps) 
   const relevantChapter = state.seekbar.segments!.find(chapter => chapter.startTime <= previewTime && previewTime < chapter.endTime);
   return {
     isExtraSmallPlayer: state.shell.playerSize === PLAYER_SIZE.EXTRA_SMALL,
-    hidePreview: state.shell.playerSize === PLAYER_SIZE.TINY,
+    hidePreview: state.seekbar.hidePreview || state.shell.playerSize === PLAYER_SIZE.TINY,
     relevantChapter,
     virtualTime: state.seekbar.virtualTime,
     duration: state.engine.duration
@@ -172,11 +173,12 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
     }
   }
 
-  shouldComponentUpdate(nextProps: Readonly<TimelinePreviewProps>, nextState: Readonly<{}>, nextContext: any): boolean {
+  shouldComponentUpdate(nextProps: Readonly<TimelinePreviewProps>) {
     return (
       this.props.duration !== nextProps.duration ||
       this.props.relevantChapter !== nextProps.relevantChapter ||
-      this.props.virtualTime !== nextProps.virtualTime
+      this.props.virtualTime !== nextProps.virtualTime ||
+      this.props.hidePreview !== nextProps.hidePreview
     );
   }
 
