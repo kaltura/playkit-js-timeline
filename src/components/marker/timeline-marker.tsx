@@ -5,6 +5,9 @@ import type {TimelineMarkerProps} from '../../types/timelineTypes';
 import {A11yWrapper} from '@playkit-js/common/dist/hoc/a11y-wrapper';
 import {useMemo, useRef, useEffect} from 'preact/hooks';
 import {Chapter} from '../../../flow-typed/types/cue-point-option';
+import {ui} from '@playkit-js/kaltura-player-js';
+
+const {KeyCode} = ui.utils
 
 const {
   redux: {useSelector, useDispatch},
@@ -42,13 +45,39 @@ export const TimelineMarker = withText(translates)(({
   useEffect(() => setMarkerRef(markerRef?.current), []);
   const renderMarker = useMemo(() => {
     const handleFocus = () => {
+      dispatch(reducers.seekbar.actions.updateHideSeekbarPreview(false));
       dispatch(reducers.seekbar.actions.updateVirtualTime(markerStartTime));
       const seekBarNode = getSeekBarNode();
       if (seekBarNode) {
         // change slider role to prevent interrupts reading marker content by screen-readers
         seekBarNode.setAttribute('role', 'none');
       }
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.code === KeyCode.Escape) {
+          e.preventDefault();
+          e.stopPropagation();
+          dispatch(reducers.seekbar.actions.updateHideSeekbarPreview(true));
+
+          if (seekBarNode){
+            seekBarNode.setAttribute("role", "slider");
+          }
+        }
+        
+      };
+
+      document.addEventListener("keydown", handleKeyDown);
+
+      const cleanup = () => {
+        document.removeEventListener("keydown", handleKeyDown);
+        if (seekBarNode) {
+          seekBarNode.setAttribute("role", "slider");
+        }
+        markerRef.current?.removeEventListener("blur", cleanup);
+      };
+
+      markerRef.current?.addEventListener("blur", cleanup);
     };
+
     const handleBlur = () => {
       const seekBarNode = getSeekBarNode();
       if (seekBarNode) {
