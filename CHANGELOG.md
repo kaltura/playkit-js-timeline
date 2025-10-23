@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 3.1.5 (2025-10-23)
+
+
+### Bug Fixes
+
+* **ADA-3035:** Make focus preview dismissable with ESC key ([#61](https://github.com/kaltura/playkit-js-timeline/issues/61)) ([f89231a](https://github.com/kaltura/playkit-js-timeline/commit/f89231a))
+
+
+
 ### 3.1.4 (2025-09-11)
 
 
