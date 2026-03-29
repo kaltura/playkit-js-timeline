@@ -57,7 +57,7 @@ interface TimelinePreviewProps {
   moveOnHover?: boolean;
 }
 
-const getFramePreviewImgContainerStyle = (thumbnailInfo: ThumbnailInfo | ThumbnailInfo[]): Record<string, string> => {
+const getFramePreviewImgContainerStyle = (thumbnailInfo?: ThumbnailInfo | ThumbnailInfo[]): Record<string, string> => {
   if (!thumbnailInfo) {
     return {
       borderColor: 'transparent'
@@ -370,14 +370,18 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
     return style;
   }
 
-  private _renderThumbnail = (thumbnailInfo: ThumbnailInfo | Array<ThumbnailInfo>) => {
+  private _renderThumbnail = (thumbnailInfo?: ThumbnailInfo | Array<ThumbnailInfo>) => {
+    if (!thumbnailInfo) {
+      return;
+    }
+
     if (Array.isArray(thumbnailInfo)) {
       return thumbnailInfo.map(info => <div style={getFramePreviewImgStyle(info)} />);
     }
     return <div style={getFramePreviewImgStyle(thumbnailInfo)} />;
   };
 
-  private _getCuePointPreviewHeaderProps = (data: any, thumbnailInfo: ThumbnailInfo | ThumbnailInfo[]) => {
+  private _getCuePointPreviewHeaderProps = (data: any, thumbnailInfo?: ThumbnailInfo | ThumbnailInfo[]) => {
     const {quizQuestions, hotspots, answerOnAir} = data;
 
     let ariaLabel = '';
@@ -409,7 +413,12 @@ export class TimelinePreview extends Component<TimelinePreviewProps> {
 
     const {getThumbnailInfo, isExtraSmallPlayer, relevantChapter} = this.props;
     const data = this._getData();
-    const thumbnailInfo = getThumbnailInfo();
+
+    const isAdChapterSegment = relevantChapter?.chapterType === ItemTypes.ADChapter || relevantChapter?.id === 'empty-segment';
+    let thumbnailInfo: ThumbnailInfo | ThumbnailInfo[] | undefined;
+    if (!isAdChapterSegment) {
+      thumbnailInfo = getThumbnailInfo();
+    }
     const className = [styles.container, this.props.isExtraSmallPlayer ? styles.xsPlayer : ''].join(' ');
 
     return (
