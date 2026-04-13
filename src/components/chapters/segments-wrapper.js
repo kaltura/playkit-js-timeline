@@ -80,6 +80,7 @@ class SegmentsWrapper extends Component {
               title={chapter.title}
               isHovered={chapter.isHovered}
               isDummy={chapter.isDummy}
+              chapterType={chapter.chapterType}
               style={styleString} // Pass as string to match the component's expectation
               segments={props.segments} // Pass all segments to each segment component
             />

@@ -57,4 +57,9 @@ export enum ItemTypes {
   QuizQuestion = 'QuizQuestion',
   SummaryAndChapters = 'SummaryAndChapters',
   YouTubeClipChapter = 'YouTubeClipChapter',
+  ADChapter = 'ADChapter',
+}
+
+export enum TimelineEventTypes {
+  ADChapterHover = 'ADChapterHover',
 }

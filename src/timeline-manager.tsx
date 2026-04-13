@@ -55,7 +55,7 @@ class TimelineManager {
     this._timelineDurationPromise = this._makeTimelineDurationPromise();
     this._getThumbnailInfoFn = this._player.getThumbnail.bind(this._player);
     this._shouldIncludeChapters = true;
-    this._chapterTypesArray = [ItemTypes.Chapter, ItemTypes.SummaryAndChapters, ItemTypes.YouTubeClipChapter];
+    this._chapterTypesArray = [ItemTypes.Chapter, ItemTypes.SummaryAndChapters, ItemTypes.YouTubeClipChapter, ItemTypes.ADChapter];
   }
 
   get _uiManager() {
@@ -86,6 +86,7 @@ class TimelineManager {
       addSeekBarPreview: this._addSeekBarPreview,
       removeCueFromTimeline: this.removeCueFromTimeline,
       reset: () => this.reset(),
+      resetChapters: () => this.resetChapters(),
       disableChapters: () => this.disableChapters(),
       // Expose entire timelineManager for testing purposes
       ...((window as any)._TEST_ENV ? {timelineManager: this} : {})
@@ -106,12 +107,38 @@ class TimelineManager {
     this._player.currentTime = this._state.seekbar.virtualTime;
   };
 
-  private _handleChapter = (chapter: Chapter) => {
-    if (this._chapters.length > 0) {
-      // set the previous chapter's endTime to be the current chapter's startTime
-      this._chapters[this._chapters.length - 1].endTime = chapter.startTime;
+  private _handleADChapter = (chapter: Chapter) => {
+    if (this._chapters.length !== 0) {
+      const lastChapter = this._chapters[this._chapters.length - 1];
+      const gap = chapter.startTime - lastChapter.endTime;
+
+      if (gap > 0) {
+        const emptySegment: Chapter = {
+          id: 'empty-segment',
+          type: ItemTypes.Chapter,
+          title: '',
+          startTime: lastChapter.endTime,
+          endTime: chapter.startTime,
+          isDummy: true,
+          isHovered: false,
+          onPreviewClick: () => {}
+        };
+        this._chapters.push(emptySegment);
+      }
     }
     this._chapters.push(chapter);
+  };
+
+  private _handleChapter = (chapter: Chapter) => {
+    if (chapter.chapterType === ItemTypes.ADChapter) {
+      this._handleADChapter(chapter);
+    } else {
+      if (this._chapters.length > 0) {
+        // set the previous chapter's endTime to be the current chapter's startTime
+        this._chapters[this._chapters.length - 1].endTime = chapter.startTime;
+      }
+      this._chapters.push(chapter);
+    }
 
     // add segement to seekbar
     const progressBarEl = this._getProgressBarEl();
@@ -228,14 +255,16 @@ class TimelineManager {
         return;
       }
       if (this._chapterTypesArray.includes(type)) {
+        const endTime = cuePointData?.endTime || this._state.engine.duration;
         const chapter: Chapter = {
           type: ItemTypes.Chapter,
           id: cuePointId,
           startTime: startTime,
           title: title!,
-          endTime: this._state.engine.duration,
+          endTime: endTime,
           isHovered: false,
           isDummy: false,
+          chapterType: type,
           onPreviewClick: (e: OnClickEvent, byKeyboard: boolean, relevantChapter: Chapter) => {
             cuePointData?.onClick?.({e, byKeyboard, cuePoint: relevantChapter});
           }
@@ -458,6 +487,13 @@ class TimelineManager {
     this.reset();
   }
 
+  
+  resetChapters = ()=> {
+    if (this._chapters.length) {
+      this._store.dispatch(actions.updateSeekbarSegments([]));
+      this._chapters = [];
+    }
+  }
   private _removeAllCuePoints = () => {
     this._cuePointsRemoveMap.forEach((fn, key) => {
       this.removeCuePoint({id: key});
@@ -466,10 +502,7 @@ class TimelineManager {
 
     this._restoreProgressIndicator();
     this._restoreSeekBarPreview();
-    if (this._chapters.length) {
-      this._store.dispatch(actions.updateSeekbarSegments([]));
-      this._chapters = [];
-    }
+    this.resetChapters()
     this._shouldIncludeChapters = true;
   };
 

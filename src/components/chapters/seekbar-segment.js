@@ -1,11 +1,13 @@
 //@flow
 import * as KalturaPlayer from '@playkit-js/kaltura-player-js';
+import {ItemTypes, TimelineEventTypes} from '../../types/timelineTypes';
 import styles from './seekbar-segment.scss';
 
 const {redux, reducers, preact, components} = KalturaPlayer.ui;
 const {Component} = preact;
 const {seekbar} = reducers;
 const {withPlayer} = components;
+const {FakeEvent} = KalturaPlayer.core;
 
 /**
  * mapping state to props
@@ -53,7 +55,7 @@ class SeekBarSegment extends Component {
    * @private
    */
   _getSegmentWidth(): number {
-    if (this._segmentEl && this.props.duration) {
+    if (this.props.seekbarClientRect && this.props.duration) {
       const seekbarRect = this.props.seekbarClientRect;
       const seekbarWidth = seekbarRect.width;
       const segmentStartTimePosition = (this.props.startTime < this.props.duration ? this.props.startTime / this.props.duration : 1) * seekbarWidth;
@@ -84,6 +86,12 @@ class SeekBarSegment extends Component {
   onMouseOver = (): void => {
     if (this.props.isMobile) return;
     this.props.updateHoveredSegment(this.props.id, true);
+    if (this.props.chapterType === ItemTypes.ADChapter) {
+      const hoveredSegment = this.props.segments.find(segment => segment.id === this.props.id);
+      this.props.player.dispatchEvent(
+        new FakeEvent(TimelineEventTypes.ADChapterHover, {startTime: hoveredSegment.startTime, endTime: hoveredSegment.endTime})
+      );
+    }
   };
 
   /**
@@ -179,6 +187,9 @@ class SeekBarSegment extends Component {
     const segmentStyleClass = [styles.seekBarSegment];
     if (isHovered) {
       segmentStyleClass.push(styles.hovered);
+    }
+    if (props.chapterType === ItemTypes.ADChapter) {
+      segmentStyleClass.push(styles.adSegment);
     }
 
     // Combine styles as a string

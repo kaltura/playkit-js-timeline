@@ -78,5 +78,6 @@ export type Chapter = {
   endTime: number;
   isDummy?: boolean;
   isHovered: boolean;
+  chapterType?: string;
   onPreviewClick: (e: OnClickEvent, byKeyboard: boolean, chapter: Chapter) => void;
 };
