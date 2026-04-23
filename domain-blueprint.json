@@ -1,0 +1,109 @@
+{
+  "name": "playkit-js-timeline",
+  "version": "3.1.5",
+  "coreResponsibility": {
+    "description": "A UI plugin for the Kaltura Player that manages custom visual components on the player seekbar, including cue point markers, thumbnail previews, and chapter segments.",
+    "type": "UI Component Plugin"
+  },
+  "domainAndLogicOwnership": {
+    "featureOwnership": [
+      "Cue point markers on seekbar (visual indicators for specific time positions)",
+      "Seekbar thumbnail preview customization",
+      "Chapter/segment visualization on seekbar",
+      "Quiz question markers and navigation",
+      "Hotspot markers and navigation",
+      "Answer-on-Air (AOA) markers",
+      "YouTube clip chapter support",
+      "AD chapter segment support",
+      "Custom marker and preview component rendering",
+      "Sticky/non-sticky preview interactions"
+    ],
+    "dataHandling": [
+      "Cue point time positions and metadata",
+      "Chapter/segment start and end times",
+      "Thumbnail sprite information (ThumbnailInfo)",
+      "Timeline marker state (hover, disabled, quiz question size)",
+      "Seekbar preview visibility and positioning",
+      "Virtual time state from seekbar redux store",
+      "Segment hover states"
+    ]
+  },
+  "integrationPoints": {
+    "upstream": [
+      "@playkit-js/kaltura-player-js (core player and UI framework)",
+      "@playkit-js/playkit-js-ui (UI components and Redux store)",
+      "@playkit-js/common (A11yWrapper, Icon components)",
+      "Kaltura backend (cue point data, thumbnails)"
+    ],
+    "downstream": [
+      "playkit-js-navigation (chapter navigation plugin)",
+      "playkit-js-quiz (quiz question markers)",
+      "playkit-js-hotspots (hotspot markers)",
+      "playkit-js-ivq (interactive video quizzes)",
+      "Any Kaltura Player application using timeline/cue point features"
+    ],
+    "externalAPIs": [
+      "Kaltura Player Service API (registerService, getService)",
+      "Kaltura Player UI Manager API (addComponent, replaceComponent)",
+      "Kaltura Redux Store (seekbar reducer and actions)",
+      "Preact rendering framework",
+      "css-vars-ponyfill (CSS variables polyfill for older browsers)"
+    ]
+  },
+  "technicalStack": {
+    "primaryLanguages": ["TypeScript", "JavaScript (Flow)"],
+    "frameworks": ["Preact", "Redux"],
+    "buildTools": ["Webpack", "Babel", "TypeScript Compiler"],
+    "testingFrameworks": ["Cypress"],
+    "entryPoints": {
+      "main": "src/index.js",
+      "pluginClass": "src/timeline.js",
+      "coreLogic": "src/timeline-manager.tsx",
+      "output": "dist/playkit-timeline.js"
+    },
+    "keyComponents": [
+      "src/components/cue-point/cue-point.js",
+      "src/components/marker/timeline-marker.tsx",
+      "src/components/marker/timeline-preview.tsx",
+      "src/components/chapters/segments-wrapper.js",
+      "src/components/chapters/seekbar-segment.js"
+    ]
+  },
+  "triageKeywords": [
+    "timeline",
+    "cue point",
+    "cuepoint",
+    "seekbar marker",
+    "seekbar preview",
+    "thumbnail preview",
+    "chapter segment",
+    "quiz marker",
+    "hotspot marker",
+    "answer on air",
+    "AOA marker",
+    "playkit-timeline",
+    "addCuePoint",
+    "removeCuePoint",
+    "setSeekbarPreview",
+    "TimelineManager",
+    "seekbar segments",
+    "timeline service",
+    "frame preview",
+    "video chapters",
+    "progress bar marker",
+    "sticky preview"
+  ],
+  "errorPatterns": [
+    "Cannot read property 'addCuePoint'",
+    "timeline service not found",
+    "Impossible to add cue points while LIVE",
+    "Cue point time is missing",
+    "seekbar.segments undefined",
+    "TimelineManager is not defined",
+    "Cannot replace SeekBarPreview",
+    "updateSeekbarSegments error",
+    "thumbnail preview not showing",
+    "chapter marker not visible",
+    "cue point marker position incorrect"
+  ]
+}
