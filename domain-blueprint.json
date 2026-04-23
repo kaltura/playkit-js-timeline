@@ -1,6 +1,6 @@
 {
   "name": "playkit-js-timeline",
-  "version": "3.1.5",
+  "versionSource": "package.json",
   "coreResponsibility": {
     "description": "A UI plugin for the Kaltura Player that manages custom visual components on the player seekbar, including cue point markers, thumbnail previews, and chapter segments.",
     "type": "UI Component Plugin"
@@ -36,10 +36,9 @@
       "Kaltura backend (cue point data, thumbnails)"
     ],
     "downstream": [
-      "playkit-js-navigation (chapter navigation plugin)",
-      "playkit-js-quiz (quiz question markers)",
-      "playkit-js-hotspots (hotspot markers)",
-      "playkit-js-ivq (interactive video quizzes)",
+      "@playkit-js/playkit-js-navigation (chapter navigation plugin)",
+      "@playkit-js/playkit-js-qna (Q&A plugin)",
+      "@playkit-js/playkit-js-ivq (interactive video quizzes)",
       "Any Kaltura Player application using timeline/cue point features"
     ],
     "externalAPIs": [
