@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 3.2.0 (2026-04-23)
+
+
+### Features
+
+* **FEC-14710:** Player UI display of EAD on scrubber timeline + real-time updates of cuepoints and scrubber position ([#63](https://github.com/kaltura/playkit-js-timeline/issues/63)) ([d0bd88c](https://github.com/kaltura/playkit-js-timeline/commit/d0bd88c))
+
+
+
 ### 3.1.5 (2025-10-23)
 
 
