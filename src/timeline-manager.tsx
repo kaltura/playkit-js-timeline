@@ -88,8 +88,7 @@ class TimelineManager {
       reset: () => this.reset(),
       resetChapters: () => this.resetChapters(),
       disableChapters: () => this.disableChapters(),
-      highlightSegmentByStartTime: this.highlightSegmentByStartTime,
-      unhighlightSegmentByStartTime: this.unhighlightSegmentByStartTime,
+      setSegmentHighlight: this.setSegmentHighlight,
       // Expose entire timelineManager for testing purposes
       ...((window as any)._TEST_ENV ? {timelineManager: this} : {})
     };
@@ -426,25 +425,14 @@ class TimelineManager {
     };
 
     /**
-     * Finds a segment by startTime and sets isHovered to false.
+     * Sets the highlight state of a segment by startTime.
      * @param {number} startTime - The start time of the segment
+     * @param {boolean} isHighlighted - Whether to highlight the segment
      */
-    public unhighlightSegmentByStartTime = (startTime: number): void => {
+    public setSegmentHighlight = (startTime: number, isHighlight: boolean): void => {
       const segment = this._chapters.find(ch => ch.startTime === startTime);
       if (segment) {
-        segment.isHovered = false;
-      }
-      this._store.dispatch(actions.updateSeekbarSegments([...this._chapters]));
-    };
-
-     /**
-     * Finds a segment by startTime and sets isHovered to true.
-     * @param {number} startTime - The start time of the segment to highlight
-     */
-    public highlightSegmentByStartTime = (startTime: number): void => {
-      const segment = this._chapters.find(ch => ch.startTime === startTime);
-      if (segment) {
-        segment.isHovered = true;
+        segment.isHovered = isHighlight;
       }
       this._store.dispatch(actions.updateSeekbarSegments([...this._chapters]));
     };  
