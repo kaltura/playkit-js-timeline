@@ -88,6 +88,7 @@ class TimelineManager {
       reset: () => this.reset(),
       resetChapters: () => this.resetChapters(),
       disableChapters: () => this.disableChapters(),
+      setSegmentHighlight: this.setSegmentHighlight,
       // Expose entire timelineManager for testing purposes
       ...((window as any)._TEST_ENV ? {timelineManager: this} : {})
     };
@@ -422,6 +423,19 @@ class TimelineManager {
       this.removeCuePoint({id})
       this._cuePointsMap.delete(startTime);
     };
+
+    /**
+     * Sets the highlight state of a segment by startTime.
+     * @param {number} startTime - The start time of the segment
+     * @param {boolean} isHighlighted - Whether to highlight the segment
+     */
+    public setSegmentHighlight = (startTime: number, isHighlight: boolean): void => {
+      const segment = this._chapters.find(ch => ch.startTime === startTime);
+      if (segment) {
+        segment.isHovered = isHighlight;
+      }
+      this._store.dispatch(actions.updateSeekbarSegments([...this._chapters]));
+    };  
 
   /**
    * @param {SeekbarPreviewOptionsObject} preview - The seekbar preview options
