@@ -175,7 +175,7 @@ class TimelineManager {
     } else if (!clipTo && seekFrom && duration) {
       duration = duration - seekFrom;
     }
-    return Math.round(this._state.engine.duration) === duration;
+    return duration !== undefined && Math.abs(this._state.engine.duration - duration) <= 1;
   };
 
   private _listenerDuration = () => {
