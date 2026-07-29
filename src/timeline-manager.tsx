@@ -161,7 +161,7 @@ class TimelineManager {
   private _isDurationCorrect = () => {
     let duration = this._player.sources.duration;
     if (this._player.engineType === EngineType.YOUTUBE) {
-      return Math.ceil(this._state.engine.duration) === duration;
+      return duration !== undefined && Math.abs(this._state.engine.duration - duration) <= 1;
     }
 
     // @ts-ignore
@@ -175,7 +175,7 @@ class TimelineManager {
     } else if (!clipTo && seekFrom && duration) {
       duration = duration - seekFrom;
     }
-    return Math.round(this._state.engine.duration) === duration;
+    return duration !== undefined && Math.abs(this._state.engine.duration - duration) <= 1;
   };
 
   private _listenerDuration = () => {
@@ -435,7 +435,7 @@ class TimelineManager {
         segment.isHovered = isHighlight;
       }
       this._store.dispatch(actions.updateSeekbarSegments([...this._chapters]));
-    };  
+    };
 
   /**
    * @param {SeekbarPreviewOptionsObject} preview - The seekbar preview options
@@ -501,7 +501,7 @@ class TimelineManager {
     this.reset();
   }
 
-  
+
   resetChapters = ()=> {
     if (this._chapters.length) {
       this._store.dispatch(actions.updateSeekbarSegments([]));
