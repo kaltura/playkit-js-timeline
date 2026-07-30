@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 3.2.2 (2026-07-30)
+
+
+### Bug Fixes
+
+* **SUP-52947:** quiz cuepoints not visible on timeline  ([#67](https://github.com/kaltura/playkit-js-timeline/issues/67)) ([86bb351](https://github.com/kaltura/playkit-js-timeline/commit/86bb351))
+
+
+
 ### 3.2.1 (2026-05-07)
 
 
